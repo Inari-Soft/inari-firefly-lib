@@ -9,8 +9,8 @@ import com.inari.commons.lang.ImmutablePair;
 import com.inari.firefly.asset.AssetSystem.AssetBuilder;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.component.attr.ComponentAttributeMap;
+import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
-import com.inari.firefly.renderer.sprite.TextureAsset;
 import com.inari.firefly.system.FFContext;
 
 public class SpriteAssetBatch extends AssetBatch {
