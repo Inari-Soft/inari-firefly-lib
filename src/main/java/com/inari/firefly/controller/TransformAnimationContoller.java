@@ -123,31 +123,31 @@ public final class TransformAnimationContoller extends EntityController {
         ETransform transform = entitySystem.getComponent( entityId, ETransform.COMPONENT_TYPE );
 
         if ( animationActive( xposAnimationId ) ) {
-            transform.setXpos( animationSystem.getValue( xposAnimationId, time, entityId, transform.getXpos() ) );
+            transform.setXpos( animationSystem.getValue( xposAnimationId, entityId, transform.getXpos() ) );
         } else {
             xposAnimationId = -1;
         }
 
         if ( animationActive( yposAnimationId ) ) {
-            transform.setYpos( animationSystem.getValue( yposAnimationId, time, entityId, transform.getYpos() ) );
+            transform.setYpos( animationSystem.getValue( yposAnimationId, entityId, transform.getYpos() ) );
         } else {
             yposAnimationId = -1;
         }
 
         if ( animationActive( xscaleAnimationId ) ) {
-            transform.setScalex( animationSystem.getValue( xscaleAnimationId, time, entityId, transform.getScalex() ) );
+            transform.setScalex( animationSystem.getValue( xscaleAnimationId, entityId, transform.getScalex() ) );
         } else {
             xscaleAnimationId = -1;
         }
 
         if ( animationActive( yscaleAnimationId ) ) {
-            transform.setScaley( animationSystem.getValue( yscaleAnimationId, time, entityId, transform.getScaley() ) );
+            transform.setScaley( animationSystem.getValue( yscaleAnimationId, entityId, transform.getScaley() ) );
         } else {
             yscaleAnimationId = -1;
         }
         
         if ( animationActive( rotAnimationId ) ) {
-            transform.setRotation( animationSystem.getValue( rotAnimationId, time, entityId, transform.getRotation() ) );
+            transform.setRotation( animationSystem.getValue( rotAnimationId, entityId, transform.getRotation() ) );
         } else {
             rotAnimationId = -1;
         }

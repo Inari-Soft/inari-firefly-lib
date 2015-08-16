@@ -20,12 +20,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Vector2f;
-import com.inari.firefly.movement.EMovement;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
+import com.inari.firefly.movement.EMovement;
+import com.inari.firefly.system.FFContext;
 
 public class MovementAnimationController extends EntityController {
     
@@ -96,14 +96,14 @@ public class MovementAnimationController extends EntityController {
         Vector2f velocityVector = movement.getVelocityVector();
 
         if ( velocityXAnimationId >= 0 && animationSystem.exists( velocityXAnimationId ) ) {
-            velocityVector.dx = animationSystem.getValue( velocityXAnimationId, time, entityId, velocityVector.dx );
+            velocityVector.dx = animationSystem.getValue( velocityXAnimationId, entityId, velocityVector.dx );
         } else {
             velocityXAnimationId = -1;
             velocityVector.dx = 0;
         }
 
         if ( velocityYAnimationId >= 0 && animationSystem.exists( velocityYAnimationId ) ) {
-            velocityVector.dy = animationSystem.getValue( velocityYAnimationId, time, entityId, velocityVector.dy );
+            velocityVector.dy = animationSystem.getValue( velocityYAnimationId, entityId, velocityVector.dy );
         } else {
             velocityYAnimationId = -1;
             velocityVector.dy = 0;

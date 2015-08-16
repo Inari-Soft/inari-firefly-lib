@@ -136,31 +136,31 @@ public class SpriteAnimationController extends EntityController {
         RGBColor tintColor = sprite.getTintColor();
 
         if ( spriteAnimationId >= 0 && animationSystem.exists( spriteAnimationId ) ) {
-            sprite.setSpriteId( animationSystem.getValue( spriteAnimationId, time, entityId, sprite.getSpriteId() ) );
+            sprite.setSpriteId( animationSystem.getValue( spriteAnimationId, entityId, sprite.getSpriteId() ) );
         } else {
             spriteAnimationId = -1;
         }
 
         if ( tintRedAnimationId >= 0 && animationSystem.exists( tintRedAnimationId ) ) {
-            tintColor.r = animationSystem.getValue( tintRedAnimationId, time, entityId, tintColor.r );
+            tintColor.r = animationSystem.getValue( tintRedAnimationId, entityId, tintColor.r );
         } else {
             tintRedAnimationId = -1;
         }
 
         if ( tintGreenAnimationId >= 0 && animationSystem.exists( tintGreenAnimationId ) ) {
-            tintColor.g = animationSystem.getValue( tintGreenAnimationId, time, entityId, tintColor.r );
+            tintColor.g = animationSystem.getValue( tintGreenAnimationId, entityId, tintColor.r );
         } else {
             tintGreenAnimationId = -1;
         }
 
         if ( tintBlueAnimationId >= 0 && animationSystem.exists( tintBlueAnimationId ) ) {
-            tintColor.b = animationSystem.getValue( tintBlueAnimationId, time, entityId, tintColor.r );
+            tintColor.b = animationSystem.getValue( tintBlueAnimationId, entityId, tintColor.r );
         } else {
             tintBlueAnimationId = -1;
         }
 
         if ( tintAlphaAnimationId >= 0 && animationSystem.exists( tintAlphaAnimationId ) ) {
-            tintColor.a = animationSystem.getValue( tintAlphaAnimationId, time, entityId, tintColor.r );
+            tintColor.a = animationSystem.getValue( tintAlphaAnimationId, entityId, tintColor.r );
         } else {
             tintAlphaAnimationId = -1;
         }
