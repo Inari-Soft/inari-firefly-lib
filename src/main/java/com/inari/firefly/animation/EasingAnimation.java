@@ -6,6 +6,7 @@ import java.util.Set;
 import com.inari.commons.geom.Easing;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFTimer;
 
 public final class EasingAnimation extends FloatAnimation {
     
@@ -66,10 +67,10 @@ public final class EasingAnimation extends FloatAnimation {
     private long time;
 
     @Override
-    public void update( long update ) {
-        super.update( update );
+    public final void update( FFTimer timer ) {
+        super.update( timer );
         if ( active ) {
-            time = update - startTime;
+            time = timer.getTime() - startTime;
             
             if ( time > startTime + duration ) {
                 if ( looping ) {

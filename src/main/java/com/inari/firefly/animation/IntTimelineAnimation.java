@@ -6,29 +6,58 @@ import java.util.List;
 import java.util.Set;
 
 import com.inari.commons.StringUtils;
+import com.inari.commons.lang.IntIterator;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.FFTimer;
 
 
-public final class SpriteIdAnimation extends IntAnimation {
+public final class IntTimelineAnimation extends IntAnimation {
     
-    public static final AttributeKey<String> TIMELINE_DATA = new AttributeKey<String>( "timelineData", String.class, SpriteIdAnimation.class );
+    public static final AttributeKey<String> TIMELINE_DATA = new AttributeKey<String>( "timelineData", String.class, IntTimelineAnimation.class );
     
-    private final List<SpriteIdTimePair> timelineData;
+    private final List<IntTimePair> timelineData;
     
-    private SpriteIdTimePair currentData;
-    private Iterator<SpriteIdTimePair> iterator;
+    private IntTimePair currentData;
+    private Iterator<IntTimePair> iterator;
     private long lastUpdate;
     
 
-    protected SpriteIdAnimation( int id ) {
+    protected IntTimelineAnimation( int id ) {
         super( id );
-        timelineData = new ArrayList<SpriteIdTimePair>();
+        timelineData = new ArrayList<IntTimePair>();
+    }
+
+    public final List<IntTimePair> getTimelineData() {
+        return timelineData;
+    }
+    
+    public final IntTimelineAnimation addTimelineData( int value, long time ) {
+        if ( active ) {
+            throw new IllegalStateException( "An active Animation is not mutable" );
+        }
+        
+        timelineData.add( new IntTimePair( value, time ) );
+        
+        return this;
+    }
+    
+    public final IntTimelineAnimation createTimelineData( IntIterator values, long time ) {
+        if ( active ) {
+            throw new IllegalStateException( "An active Animation is not mutable" );
+        }
+        
+        while ( values.hasNext() ) {
+            timelineData.add( new IntTimePair( values.next(), time ) );
+        }
+        
+        return this;
     }
 
     @Override
-    public void update( long updateTime ) {
-        super.update( updateTime );
+    public void update( FFTimer timer ) {
+        super.update( timer );
+        long updateTime = timer.getTime();
         if ( active ) {
             if ( iterator == null ) {
                 iterator = timelineData.iterator();
@@ -39,9 +68,10 @@ public final class SpriteIdAnimation extends IntAnimation {
                 return;
             }
             
+            lastUpdate = updateTime;
+            
             if ( iterator.hasNext() ) {
                 currentData = iterator.next();
-                lastUpdate = updateTime;
             } else {
                 if ( looping ) {
                     iterator = timelineData.iterator();
@@ -56,7 +86,7 @@ public final class SpriteIdAnimation extends IntAnimation {
 
     @Override
     public final int getValue( int component, int currentValue ) {
-        return currentData.spriteId;
+        return currentData.value;
     }
     
     @Override
@@ -84,37 +114,13 @@ public final class SpriteIdAnimation extends IntAnimation {
     }
     
 
-    private List<SpriteIdTimePair> stringToTimelineData( String value ) {
-        List<SpriteIdTimePair> result = new ArrayList<SpriteIdTimePair>();
+    private List<IntTimePair> stringToTimelineData( String value ) {
+        List<IntTimePair> result = new ArrayList<IntTimePair>();
         String[] values = StringUtils.splitToArray( value, StringUtils.LIST_VALUE_SEPARATOR_STRING );
         for ( int i = 0; i < values.length; i++ ) {
-            result.add( new SpriteIdTimePair( values[ i ] ) );
+            result.add( new IntTimePair( values[ i ] ) );
         }
         return result;
     }
-    
-    public static final class SpriteIdTimePair {
-        
-        public final int spriteId;
-        public final long time;
-        
-        private SpriteIdTimePair( int spriteId, long time ) {
-            this.spriteId = spriteId;
-            this.time = time;
-        }
-        
-        private SpriteIdTimePair( String stringValue ) {
-            String[] stringValues = StringUtils.splitToArray( stringValue, StringUtils.VALUE_SEPARATOR_STRING );
-            this.spriteId = Integer.parseInt( stringValues[ 0 ] );
-            this.time = Long.parseLong( stringValues[ 1 ] );
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append( spriteId ).append( StringUtils.VALUE_SEPARATOR ).append( time );
-            return builder.toString();
-        }
-    }
-
+  
 }

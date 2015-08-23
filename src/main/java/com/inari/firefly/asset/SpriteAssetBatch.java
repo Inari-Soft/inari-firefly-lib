@@ -7,8 +7,6 @@ import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.ImmutablePair;
 import com.inari.firefly.asset.AssetSystem.AssetBuilder;
-import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.component.attr.ComponentAttributeMap;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
@@ -16,11 +14,9 @@ import com.inari.firefly.system.FFContext;
 public class SpriteAssetBatch extends AssetBatch {
     
     private final TextureAsset textureAsset;
-    private final AttributeMap attributes;
 
     public SpriteAssetBatch( FFContext context, AssetNameKey textureAssetKey ) {
         super( context );
-        
         
         AssetTypeKey typeKey = assetSystem.getAssetTypeKey( textureAssetKey );
         if ( typeKey == null || typeKey.type != TextureAsset.class ) {
@@ -28,8 +24,6 @@ public class SpriteAssetBatch extends AssetBatch {
         }
         
         this.textureAsset = assetSystem.getAsset( textureAssetKey, TextureAsset.class );
-        attributes = new ComponentAttributeMap()
-            .put( SpriteAsset.TEXTURE_ID, textureAsset.typeKey.id );
     }
     
     public final Collection<ImmutablePair<AssetNameKey, AssetTypeKey>> createSprites( 
@@ -41,7 +35,7 @@ public class SpriteAssetBatch extends AssetBatch {
         
         Collection<ImmutablePair<AssetNameKey, AssetTypeKey>> result = new ArrayList<ImmutablePair<AssetNameKey, AssetTypeKey>>( hNum * vNum );
         AssetBuilder<SpriteAsset> spriteAssetBuilder = assetSystem.getAssetBuilder( SpriteAsset.class );
-        spriteAssetBuilder.setAttributes( attributes );
+        spriteAssetBuilder.setAttribute( SpriteAsset.TEXTURE_ID, textureAsset.typeKey.id );
         
         for ( int y = 0; ( vNum < 0 )? y > vNum: y < vNum;  y = ( vNum < 0 )? --y : ++y ) {
             for ( int x = 0; ( hNum < 0 )? x > hNum: x < hNum;  x = ( hNum < 0 )? --x : ++x ) {
@@ -50,12 +44,13 @@ public class SpriteAssetBatch extends AssetBatch {
                 clip.y = clip.y + ( y * clip.height );
                 
                 AssetNameKey nameKey = new AssetNameKey( group, namePrefix + "_" + x + "_" + y );
-                attributes
-                    .put( SpriteAsset.TEXTURE_REGION, clip )
-                    .put( SpriteAsset.ASSET_GROUP, nameKey.group )
-                    .put( SpriteAsset.NAME, nameKey.name );
+                spriteAssetBuilder
+                    .setAttribute( SpriteAsset.TEXTURE_REGION, clip )
+                    .setAttribute( SpriteAsset.ASSET_GROUP, nameKey.group )
+                    .setAttribute( SpriteAsset.NAME, nameKey.name );
                 
                 SpriteAsset asset = spriteAssetBuilder.build();
+                add( nameKey );
                 result.add( new ImmutablePair<AssetNameKey, AssetTypeKey>( nameKey, asset.typeKey ) );
             }
         }
@@ -66,8 +61,8 @@ public class SpriteAssetBatch extends AssetBatch {
     private void checkBounds( Rectangle startClip, int hNum, int vNum ) {
         Rectangle textureArea = new Rectangle( 0, 0, textureAsset.getWidth(), textureAsset.getHeight() );
         Rectangle endClip = new Rectangle( startClip );
-        endClip.x = endClip.x + ( vNum * startClip.width );
-        endClip.y = endClip.y + ( hNum * startClip.height );
+        endClip.x = endClip.x + ( ( vNum - 1 ) * startClip.width );
+        endClip.y = endClip.y + ( ( hNum - 1 ) * startClip.height );
         
         if ( !GeomUtils.contains( textureArea, startClip ) || !GeomUtils.contains( textureArea, endClip ) ) {
             throw new IllegalArgumentException( "The texture area: " + textureArea + " do not conatins start/endClip: " + startClip + "/" + endClip );

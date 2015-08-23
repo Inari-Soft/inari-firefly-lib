@@ -26,8 +26,14 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.movement.EMovement;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFTimer;
 
 public class MovementAnimationController extends EntityController {
+    
+    public static final AttributeKey<?>[] CONTROLLED_ATTRIBUTES = new AttributeKey[] {
+        EMovement.VELOCITY_X,
+        EMovement.VELOCITY_Y
+    };
     
     public static final AttributeKey<Integer> VELOCITY_X_ANIMATION_ID = new AttributeKey<Integer>( "velocityXAnimationId", Integer.class, MovementAnimationController.class );
     public static final AttributeKey<Integer> VELOCITY_Y_ANIMATION_ID = new AttributeKey<Integer>( "velocityYAnimationId", Integer.class, MovementAnimationController.class );
@@ -35,7 +41,7 @@ public class MovementAnimationController extends EntityController {
         VELOCITY_X_ANIMATION_ID,
         VELOCITY_Y_ANIMATION_ID
     };
-    
+
     private AnimationSystem animationSystem;
 
     private int velocityXAnimationId = -1;
@@ -61,6 +67,11 @@ public class MovementAnimationController extends EntityController {
     public final void setVelocityYAnimationId( int velocityYAnimationId ) {
         this.velocityYAnimationId = velocityYAnimationId;
     }
+    
+    @Override
+    public final AttributeKey<?>[] getControlledAttribute() {
+        return CONTROLLED_ATTRIBUTES;
+    }
 
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
@@ -85,13 +96,9 @@ public class MovementAnimationController extends EntityController {
         attributes.put( VELOCITY_Y_ANIMATION_ID, velocityYAnimationId );
     }
 
-    @Override
-    protected final int getControlledComponentTypeId() {
-        return EMovement.COMPONENT_TYPE;
-    }
 
     @Override
-    protected final void update( long time, int entityId ) {
+    protected final void update( final FFTimer timer, int entityId ) {
         EMovement movement = entitySystem.getComponent( entityId, EMovement.COMPONENT_TYPE );
         Vector2f velocityVector = movement.getVelocityVector();
 

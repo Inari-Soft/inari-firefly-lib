@@ -25,7 +25,18 @@ public class AssetBatch implements Loadable, Disposable, Clearable {
         if ( keys == null ) {
             return;
         }
-        assets.addAll( Arrays.asList( keys ) );
+        
+        for ( AssetNameKey key : keys ) {
+            add( key );
+        }
+    }
+
+    public final void add( AssetNameKey key ) {
+        if ( ! assetSystem.hasAsset( key ) ) {
+            throw new IllegalArgumentException( "No Asset with AssetNameKey: " + key + " registered on AssetProvider" );
+        }
+        
+        assets.add( key );
     }
     
     public final void remove( AssetNameKey... keys ) {
