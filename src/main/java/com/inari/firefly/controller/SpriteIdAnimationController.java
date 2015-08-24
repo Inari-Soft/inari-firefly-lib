@@ -34,16 +34,8 @@ public class SpriteIdAnimationController extends EntityController {
     };
     
     public static final AttributeKey<Integer> SPRITE_ID_ANIMATION_ID = new AttributeKey<Integer>( "spriteAnimationId", Integer.class, SpriteIdAnimationController.class );
-//    public static final AttributeKey<Integer> TINT_RED_ANIMATION_ID = new AttributeKey<Integer>( "tintRedAnimationId", Integer.class, SpriteIdAnimationController.class );
-//    public static final AttributeKey<Integer> TINT_GREEN_ANIMATION_ID = new AttributeKey<Integer>( "tintGreenAnimationId", Integer.class, SpriteIdAnimationController.class );
-//    public static final AttributeKey<Integer> TINT_BLUE_ANIMATION_ID = new AttributeKey<Integer>( "tintBlueAnimationId", Integer.class, SpriteIdAnimationController.class );
-//    public static final AttributeKey<Integer> TINT_ALPHA_ANIMATION_ID = new AttributeKey<Integer>( "tintAlphaAnimationId", Integer.class, SpriteIdAnimationController.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         SPRITE_ID_ANIMATION_ID,
-//        TINT_RED_ANIMATION_ID,
-//        TINT_GREEN_ANIMATION_ID,
-//        TINT_BLUE_ANIMATION_ID,
-//        TINT_ALPHA_ANIMATION_ID
     };
 
     private final AnimationSystem animationSystem;
@@ -64,38 +56,6 @@ public class SpriteIdAnimationController extends EntityController {
     public final void setSpriteAnimationId( int spriteAnimationId ) {
         this.spriteAnimationId = spriteAnimationId;
     }
-
-//    public final int getTintRedAnimationId() {
-//        return tintRedAnimationId;
-//    }
-//
-//    public final void setTintRedAnimationId( int tintRedAnimationId ) {
-//        this.tintRedAnimationId = tintRedAnimationId;
-//    }
-//
-//    public final int getTintGreenAnimationId() {
-//        return tintGreenAnimationId;
-//    }
-//
-//    public final void setTintGreenAnimationId( int tintGreenAnimationId ) {
-//        this.tintGreenAnimationId = tintGreenAnimationId;
-//    }
-//
-//    public final int getTintBlueAnimationId() {
-//        return tintBlueAnimationId;
-//    }
-//
-//    public final void setTintBlueAnimationId( int tintBlueAnimationId ) {
-//        this.tintBlueAnimationId = tintBlueAnimationId;
-//    }
-//
-//    public final int getTintAlphaAnimationId() {
-//        return tintAlphaAnimationId;
-//    }
-//
-//    public final void setTintAlphaAnimationId( int tintAlphaAnimationId ) {
-//        this.tintAlphaAnimationId = tintAlphaAnimationId;
-//    }
     
     @Override
     public final AttributeKey<?>[] getControlledAttribute() {
@@ -114,10 +74,6 @@ public class SpriteIdAnimationController extends EntityController {
         super.fromAttributes( attributes );
         
         spriteAnimationId = attributes.getValue( SPRITE_ID_ANIMATION_ID, spriteAnimationId );
-//        tintRedAnimationId = attributes.getValue( TINT_RED_ANIMATION_ID, tintRedAnimationId );
-//        tintGreenAnimationId = attributes.getValue( TINT_GREEN_ANIMATION_ID, tintGreenAnimationId );
-//        tintBlueAnimationId = attributes.getValue( TINT_BLUE_ANIMATION_ID, tintBlueAnimationId );
-//        tintAlphaAnimationId = attributes.getValue( TINT_ALPHA_ANIMATION_ID, tintAlphaAnimationId );
     }
 
     @Override
@@ -125,10 +81,6 @@ public class SpriteIdAnimationController extends EntityController {
         super.toAttributes( attributes );
         
         attributes.put( SPRITE_ID_ANIMATION_ID, spriteAnimationId );
-//        attributes.put( TINT_RED_ANIMATION_ID, tintRedAnimationId );
-//        attributes.put( TINT_GREEN_ANIMATION_ID, tintGreenAnimationId );
-//        attributes.put( TINT_BLUE_ANIMATION_ID, tintBlueAnimationId );
-//        attributes.put( TINT_ALPHA_ANIMATION_ID, tintAlphaAnimationId );
     } 
 
     @Override
@@ -140,30 +92,6 @@ public class SpriteIdAnimationController extends EntityController {
         } else {
             spriteAnimationId = -1;
         }
-
-//        if ( tintRedAnimationId >= 0 && animationSystem.exists( tintRedAnimationId ) ) {
-//            tintColor.r = animationSystem.getValue( tintRedAnimationId, entityId, tintColor.r );
-//        } else {
-//            tintRedAnimationId = -1;
-//        }
-//
-//        if ( tintGreenAnimationId >= 0 && animationSystem.exists( tintGreenAnimationId ) ) {
-//            tintColor.g = animationSystem.getValue( tintGreenAnimationId, entityId, tintColor.r );
-//        } else {
-//            tintGreenAnimationId = -1;
-//        }
-//
-//        if ( tintBlueAnimationId >= 0 && animationSystem.exists( tintBlueAnimationId ) ) {
-//            tintColor.b = animationSystem.getValue( tintBlueAnimationId, entityId, tintColor.r );
-//        } else {
-//            tintBlueAnimationId = -1;
-//        }
-//
-//        if ( tintAlphaAnimationId >= 0 && animationSystem.exists( tintAlphaAnimationId ) ) {
-//            tintColor.a = animationSystem.getValue( tintAlphaAnimationId, entityId, tintColor.r );
-//        } else {
-//            tintAlphaAnimationId = -1;
-//        }
     }
 
 }

@@ -96,14 +96,14 @@ public final class EasingAnimation extends FloatAnimation {
     }
     
     @Override
-    public Set<AttributeKey<?>> attributeKeys() {
+    public final Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
         attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
         return attributeKeys;
     }
 
     @Override
-    public void fromAttributes( AttributeMap attributes ) {
+    public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         easingType = attributes.getValue( EASING_TYPE, easingType );
         if ( attributes.contains( START_VALUE) ) {
@@ -115,7 +115,7 @@ public final class EasingAnimation extends FloatAnimation {
     }
 
     @Override
-    public void toAttributes( AttributeMap attributes ) {
+    public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         attributes.put( EASING_TYPE, easingType );
         attributes.put( START_VALUE, startValue );

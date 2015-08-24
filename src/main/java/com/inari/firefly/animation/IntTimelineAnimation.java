@@ -58,28 +58,30 @@ public final class IntTimelineAnimation extends IntAnimation {
     public void update( FFTimer timer ) {
         super.update( timer );
         long updateTime = timer.getTime();
-        if ( active ) {
-            if ( iterator == null ) {
+        if ( !active ) {
+            return;
+        }
+        
+        if ( iterator == null ) {
+            iterator = timelineData.iterator();
+            currentData = iterator.next();
+        }
+        
+        if ( updateTime - lastUpdate < currentData.time ) {
+            return;
+        }
+        
+        lastUpdate = updateTime;
+        
+        if ( iterator.hasNext() ) {
+            currentData = iterator.next();
+        } else {
+            if ( looping ) {
                 iterator = timelineData.iterator();
                 currentData = iterator.next();
-            }
-            
-            if ( updateTime - lastUpdate < currentData.time ) {
-                return;
-            }
-            
-            lastUpdate = updateTime;
-            
-            if ( iterator.hasNext() ) {
-                currentData = iterator.next();
             } else {
-                if ( looping ) {
-                    iterator = timelineData.iterator();
-                    currentData = iterator.next();
-                } else {
-                    active = false;
-                    return;
-                }
+                active = false;
+                return;
             }
         }
     }
@@ -90,14 +92,14 @@ public final class IntTimelineAnimation extends IntAnimation {
     }
     
     @Override
-    public Set<AttributeKey<?>> attributeKeys() {
+    public final Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
         attributeKeys.add( TIMELINE_DATA );
         return attributeKeys;
     }
 
     @Override
-    public void fromAttributes( AttributeMap attributes ) {
+    public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
         if ( attributes.contains( TIMELINE_DATA ) ) {
@@ -107,7 +109,7 @@ public final class IntTimelineAnimation extends IntAnimation {
     }
 
     @Override
-    public void toAttributes( AttributeMap attributes ) {
+    public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         
         attributes.put( TIMELINE_DATA, StringUtils.join( timelineData, StringUtils.LIST_VALUE_SEPARATOR_STRING ) );

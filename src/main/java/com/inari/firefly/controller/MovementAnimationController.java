@@ -44,11 +44,12 @@ public class MovementAnimationController extends EntityController {
 
     private AnimationSystem animationSystem;
 
-    private int velocityXAnimationId = -1;
-    private int velocityYAnimationId = -1;
+    private int velocityXAnimationId, velocityYAnimationId;
 
     MovementAnimationController( int id, FFContext context ) {
         super( id, context );
+        velocityXAnimationId = -1;
+        velocityYAnimationId = -1;
         animationSystem = context.getComponent( FFContext.Systems.ANIMATION_SYSTEM );
     }
 
