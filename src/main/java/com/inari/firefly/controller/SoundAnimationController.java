@@ -106,7 +106,6 @@ public final class SoundAnimationController extends SoundController {
             float newVolume = animationSystem.getValue( volumeAnimationId, sound.index(), volume );
             if ( newVolume != volume ) {
                 sound.setVolume( newVolume );
-                lowerSystemFacade.soundAttributesChanged( sound );
             }
         } else {
             volumeAnimationId = -1;
@@ -117,7 +116,6 @@ public final class SoundAnimationController extends SoundController {
             float newPitch = animationSystem.getValue( pitchAnimationId, sound.index(), pitch );
             if ( newPitch != pitch ) {
                 sound.setPitch( newPitch );
-                lowerSystemFacade.soundAttributesChanged( sound );
             }
         } else {
             pitchAnimationId = -1;
@@ -128,10 +126,17 @@ public final class SoundAnimationController extends SoundController {
             float newPan = animationSystem.getValue( panAnimationId, sound.index(), pan );
             if ( newPan != pan ) {
                 sound.setPan( newPan );
-                lowerSystemFacade.soundAttributesChanged( sound );
             }
         } else {
             panAnimationId = -1;
+        }
+        
+        if ( volumeAnimationId >= 0 || pitchAnimationId >= 0 || panAnimationId >= 0 ) {
+            if ( sound.isStreaming() ) {
+                lowerSystemFacade.changeMusic( sound.getAssetId(), sound.getVolume(), sound.getPan() );
+            } else {
+                lowerSystemFacade.changeSound( sound.getAssetId(), sound.getInstanceId(), sound.getVolume(), sound.getPitch(), sound.getPan() );
+            }
         }
     }
 
