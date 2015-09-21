@@ -17,7 +17,7 @@ public class AssetBatch implements Loadable, Disposable, Clearable {
     private boolean loaded = false;
     
     public AssetBatch( FFContext context ) {
-        assetSystem = context.getComponent( FFContext.Systems.ASSET_SYSTEM );
+        assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
         assets = new ArrayList<AssetNameKey>();
     }
     

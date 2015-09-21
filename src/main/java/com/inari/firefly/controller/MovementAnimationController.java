@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Vector2f;
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
@@ -42,15 +41,12 @@ public class MovementAnimationController extends EntityController {
         VELOCITY_Y_ANIMATION_ID
     };
 
-    private AnimationSystem animationSystem;
-
     private int velocityXAnimationId, velocityYAnimationId;
 
     MovementAnimationController( int id, FFContext context ) {
         super( id, context );
         velocityXAnimationId = -1;
         velocityYAnimationId = -1;
-        animationSystem = context.getComponent( FFContext.Systems.ANIMATION_SYSTEM );
     }
 
     public final int getVelocityXAnimationId() {

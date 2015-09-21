@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
@@ -37,14 +36,11 @@ public class SpriteIdAnimationController extends EntityController {
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         SPRITE_ID_ANIMATION_ID,
     };
-
-    private final AnimationSystem animationSystem;
     
     private int spriteAnimationId;
     
     SpriteIdAnimationController( int id, FFContext context ) {
         super( id, context );
-        animationSystem = context.getComponent( FFContext.Systems.ANIMATION_SYSTEM );
         
         spriteAnimationId = -1;
     }

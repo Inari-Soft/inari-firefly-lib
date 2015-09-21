@@ -1,6 +1,5 @@
 package com.inari.firefly.controller;
 
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.ETransform;
@@ -22,15 +21,12 @@ public class ScaleAnimationController extends EntityController {
         SCALE_Y_ANIMATION_ID
     };
 
-    private final AnimationSystem animationSystem;
-
     private int scaleXAnimationId, scaleYAnimationId;
     
     ScaleAnimationController( int id, FFContext context ) {
         super( id, context );
         scaleXAnimationId = -1;
         scaleYAnimationId = -1;
-        animationSystem = context.getComponent( FFContext.Systems.ANIMATION_SYSTEM );
     }
 
     public final int getScaleXAnimationId() {

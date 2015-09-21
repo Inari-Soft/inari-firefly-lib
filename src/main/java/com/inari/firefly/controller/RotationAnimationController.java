@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.ETransform;
@@ -23,14 +22,11 @@ public class RotationAnimationController extends EntityController {
         ROTATION_ANIMATION_ID
     };
 
-    private final AnimationSystem animationSystem;
-
     private int rotationAnimationId;
     
     RotationAnimationController( int id, FFContext context ) {
         super( id, context );
         rotationAnimationId = -1;
-        animationSystem = context.getComponent( FFContext.Systems.ANIMATION_SYSTEM );
     }
 
     public final int getRotationAnimationId() {

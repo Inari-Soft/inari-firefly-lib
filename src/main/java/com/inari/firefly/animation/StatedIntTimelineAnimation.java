@@ -45,7 +45,7 @@ public final class StatedIntTimelineAnimation extends IntAnimation implements St
     
     @Override
     public final void init( FFContext context ) {
-        StateSystem stateSystem = context.getComponent( FFContext.Systems.STATE_SYSTEM );
+        StateSystem stateSystem = context.getComponent( StateSystem.CONTEXT_KEY );
         if ( !stateSystem.hasWorkflow( workflowId ) ) {
             throw new FFInitException( "The Workflow with id: " + workflowId + " does not exists within stateSystem" );
         }
