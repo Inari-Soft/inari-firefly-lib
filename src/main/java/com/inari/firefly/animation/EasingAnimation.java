@@ -10,61 +10,51 @@ import com.inari.firefly.system.FFTimer;
 
 public final class EasingAnimation extends FloatAnimation {
     
-    public static final AttributeKey<Easing.Type> EASING_TYPE = new AttributeKey<Easing.Type>( "easingType", Easing.Type.class, EasingAnimation.class );
-    public static final AttributeKey<Float> START_VALUE = new AttributeKey<Float>( "startValue", Float.class, EasingAnimation.class );
-    public static final AttributeKey<Float> CHANGE_IN_VALUE = new AttributeKey<Float>( "changeInValue", Float.class, EasingAnimation.class );
-    public static final AttributeKey<Long> DURATION = new AttributeKey<Long>( "duration", Long.class, EasingAnimation.class );
+    public static final AttributeKey<EasingData> EASING_DATA = new AttributeKey<EasingData>( "easingData", EasingData.class, EasingAnimation.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
-        EASING_TYPE,
-        START_VALUE,
-        CHANGE_IN_VALUE,
-        DURATION
+        EASING_DATA
     };
     
-    private Easing.Type easingType;
-    private float startValue;
-    private float changeInValue;
-    private long duration;
+    private EasingData easingData;
     
     private boolean startValueSet = false;
+    private long time;
 
     EasingAnimation( int id ) {
         super( id );
     }
 
     public final Easing.Type getEasingType() {
-        return easingType;
+        return easingData.easingType;
     }
 
     public final void setEasingType( Easing.Type easingType ) {
-        this.easingType = easingType;
+        easingData.easingType = easingType;
     }
 
     public final float getStartValue() {
-        return startValue;
+        return easingData.startValue;
     }
 
     public final void setStartValue( float startValue ) {
-        this.startValue = startValue;
+        easingData.startValue = startValue;
     }
 
     public final float getChangeInValue() {
-        return changeInValue;
+        return easingData.changeInValue;
     }
 
     public final void setChangeInValue( float changeInValue ) {
-        this.changeInValue = changeInValue;
+        easingData.changeInValue = changeInValue;
     }
 
     public final long getDuration() {
-        return duration;
+        return easingData.duration;
     }
 
     public final void setDuration( long duration ) {
-        this.duration = duration;
+        easingData.duration = duration;
     }
-    
-    private long time;
 
     @Override
     public final void update( FFTimer timer ) {
@@ -72,11 +62,11 @@ public final class EasingAnimation extends FloatAnimation {
         if ( active ) {
             time = timer.getTime() - startTime;
             
-            if ( time > startTime + duration ) {
+            if ( time > startTime + easingData.duration ) {
                 if ( looping ) {
-                    float temp = changeInValue;
-                    changeInValue = startValue;
-                    startValue = temp;
+                    float temp = easingData.changeInValue;
+                    easingData.changeInValue = easingData.startValue;
+                    easingData.startValue = temp;
                     startTime = time;
                 } else {
                     active = false;
@@ -88,11 +78,11 @@ public final class EasingAnimation extends FloatAnimation {
     @Override
     public final float getValue( int componentId, float currentValue ) {
         if ( !startValueSet ) {
-            startValue = currentValue;
+            easingData.startValue = currentValue;
             startValueSet = true;
         }
 
-        return easingType.calc( time , startValue, changeInValue, duration );
+        return easingData.easingType.calc( time , easingData.startValue, easingData.changeInValue, easingData.duration );
     }
     
     @Override
@@ -105,22 +95,13 @@ public final class EasingAnimation extends FloatAnimation {
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
-        easingType = attributes.getValue( EASING_TYPE, easingType );
-        if ( attributes.contains( START_VALUE) ) {
-            startValue = attributes.getValue( START_VALUE );
-            startValueSet = true;
-        }
-        changeInValue = attributes.getValue( CHANGE_IN_VALUE, changeInValue );
-        duration = attributes.getValue( DURATION, duration );
+        easingData = attributes.getValue( EASING_DATA, easingData );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
-        attributes.put( EASING_TYPE, easingType );
-        attributes.put( START_VALUE, startValue );
-        attributes.put( CHANGE_IN_VALUE, changeInValue );
-        attributes.put( DURATION, duration );
+        attributes.put( EASING_DATA, easingData );
     }
 
 }
