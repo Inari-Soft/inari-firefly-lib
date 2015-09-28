@@ -35,7 +35,7 @@ public class SpriteAssetBatch extends AssetBatch {
         
         Collection<ImmutablePair<AssetNameKey, AssetTypeKey>> result = new ArrayList<ImmutablePair<AssetNameKey, AssetTypeKey>>( hNum * vNum );
         AssetBuilder<SpriteAsset> spriteAssetBuilder = assetSystem.getAssetBuilder( SpriteAsset.class );
-        spriteAssetBuilder.setAttribute( SpriteAsset.TEXTURE_ID, textureAsset.typeKey.id );
+        spriteAssetBuilder.set( SpriteAsset.TEXTURE_ID, textureAsset.typeKey.id );
         
         for ( int y = 0; ( vNum < 0 )? y > vNum: y < vNum;  y = ( vNum < 0 )? --y : ++y ) {
             for ( int x = 0; ( hNum < 0 )? x > hNum: x < hNum;  x = ( hNum < 0 )? --x : ++x ) {
@@ -45,9 +45,9 @@ public class SpriteAssetBatch extends AssetBatch {
                 
                 AssetNameKey nameKey = new AssetNameKey( group, namePrefix + "_" + x + "_" + y );
                 spriteAssetBuilder
-                    .setAttribute( SpriteAsset.TEXTURE_REGION, clip )
-                    .setAttribute( SpriteAsset.ASSET_GROUP, nameKey.group )
-                    .setAttribute( SpriteAsset.NAME, nameKey.name );
+                    .set( SpriteAsset.TEXTURE_REGION, clip )
+                    .set( SpriteAsset.ASSET_GROUP, nameKey.group )
+                    .set( SpriteAsset.NAME, nameKey.name );
                 
                 SpriteAsset asset = spriteAssetBuilder.build();
                 add( nameKey );

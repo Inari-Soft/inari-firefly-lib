@@ -124,6 +124,7 @@ public final class StatedIntTimelineAnimation extends IntAnimation implements St
                 currentData = iterator.next();
             } else {
                 active = false;
+                finished = true;
                 return;
             }
         }

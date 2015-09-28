@@ -70,6 +70,7 @@ public final class EasingAnimation extends FloatAnimation {
                     startTime = time;
                 } else {
                     active = false;
+                    finished = true;
                 }
             }
         }
