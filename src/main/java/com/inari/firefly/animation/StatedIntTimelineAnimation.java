@@ -19,6 +19,7 @@ import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.FFTimer;
 
+@Deprecated // create a SpriteAnimation using a SpriteBatch instead
 public final class StatedIntTimelineAnimation extends IntAnimation implements StateChangeListener, FFContextInitiable {
     
     public static final AttributeKey<String> TIMELINE_DATA = new AttributeKey<String>( "statedTimelineDataMap", String.class, StatedIntTimelineAnimation.class );
@@ -36,6 +37,7 @@ public final class StatedIntTimelineAnimation extends IntAnimation implements St
     private Iterator<IntTimePair> iterator;
     private long lastUpdate;
     
+    @Deprecated // create a SpriteAnimation using a SpriteBatch instead
     protected StatedIntTimelineAnimation( int id ) {
         super( id );
         workflowId = -1;

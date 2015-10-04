@@ -31,11 +31,11 @@ public class Font extends NamedIndexedComponent {
     }
     
     public final void setCharSpriteMapping( char character, int spriteId ) {
-        charSpriteMap.set( Character.getNumericValue( character ), spriteId );
+        charSpriteMap.set( character, spriteId );
     }
     
     public final int getSpriteId( char character ) {
-        return charSpriteMap.getFast( Character.getNumericValue( character ) );
+        return charSpriteMap.getFast( character );
     }
 
     public final int getCharWidth() {

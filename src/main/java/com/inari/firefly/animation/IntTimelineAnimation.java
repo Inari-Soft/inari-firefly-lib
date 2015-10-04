@@ -56,11 +56,12 @@ public final class IntTimelineAnimation extends IntAnimation {
 
     @Override
     public void update( FFTimer timer ) {
-        super.update( timer );
-        long updateTime = timer.getTime();
         if ( !active ) {
             return;
         }
+        
+        super.update( timer );
+        long updateTime = timer.getTime();
         
         if ( iterator == null ) {
             iterator = timelineData.iterator();

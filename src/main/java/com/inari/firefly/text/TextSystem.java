@@ -66,6 +66,16 @@ public class TextSystem
         return fonts.get( fontId );
     }
     
+    public final int getFontId( String name ) {
+        for ( Font font : fonts ) {
+            if ( name.equals( font.getName() ) ) {
+                return font.getId();
+            }
+        }
+        
+        return -1;
+    }
+    
     public final void deleteFont( int fontId ) {
         Font font = fonts.remove( fontId );
         if ( font != null ) {
@@ -199,6 +209,8 @@ public class TextSystem
             return font;
         }
     }
+
+    
 
     
     
