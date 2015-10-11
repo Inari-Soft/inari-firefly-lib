@@ -4,10 +4,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.event.IEventDispatcher;
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.TypedKey;
-import com.inari.commons.lang.aspect.IndexedAspect;
+import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.asset.AssetNameKey;
+import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.ComponentBuilderHelper;
 import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
@@ -18,6 +21,8 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
+import com.inari.firefly.renderer.TextureAsset;
+import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
@@ -32,6 +37,7 @@ public class TextSystem
     public static final TypedKey<TextSystem> CONTEXT_KEY = TypedKey.create( "TextSystem", TextSystem.class );
     
     private EntitySystem entitySystem;
+    private AssetSystem assetSystem;
 
     private final DynArray<Font> fonts;
     private final DynArray<DynArray<DynArray<IndexedTypeSet>>> textPerViewAndLayer;
@@ -44,6 +50,7 @@ public class TextSystem
     @Override
     public final void init( FFContext context ) throws FFInitException {
         entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
 
         IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
         eventDispatcher.register( EntityActivationEvent.class, this );
@@ -76,6 +83,20 @@ public class TextSystem
         return -1;
     }
     
+    public final void loadFont( int fontId ) {
+        Font font = fonts.get( fontId );
+        String name = font.getName();
+        assetSystem.loadAsset( new AssetNameKey( name, name ) );
+        assetSystem.loadAssets( name );
+    }
+    
+    public final void disposeFont( int fontId ) {
+        Font font = fonts.get( fontId );
+        String name = font.getName();
+        assetSystem.disposeAssets( name );
+        assetSystem.disposeAsset( new AssetNameKey( name, name ) );
+    }
+    
     public final void deleteFont( int fontId ) {
         Font font = fonts.remove( fontId );
         if ( font != null ) {
@@ -91,7 +112,7 @@ public class TextSystem
     }
 
     @Override
-    public final boolean match( IndexedAspect aspect ) {
+    public final boolean match( AspectBitSet aspect ) {
         return aspect.contains( EText.COMPONENT_TYPE );
     }
 
@@ -153,7 +174,11 @@ public class TextSystem
     }
     
     public final FontBuilder getFontBuilder() {
-        return new FontBuilder( this );
+        return new FontBuilder( this, false );
+    }
+    
+    public final FontBuilder getFontBuilderWithAutoLoad() {
+        return new FontBuilder( this, true );
     }
 
     private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
@@ -194,9 +219,12 @@ public class TextSystem
     }
 
     public final class FontBuilder extends BaseComponentBuilder<Font> {
+        
+        private final boolean autoLoad;
 
-        protected FontBuilder( TextSystem textSystem ) {
+        protected FontBuilder( TextSystem textSystem, boolean autoLoad ) {
             super( textSystem );
+            this.autoLoad = autoLoad;
         }
 
         @Override
@@ -205,14 +233,46 @@ public class TextSystem
             font.fromAttributes( attributes );
             
             checkName( font );
+            
+
+            Rectangle textureRegion = new Rectangle( 0, 0, font.getCharWidth(), font.getCharHeight() );
+            char[][] charTextureMap = font.getCharTextureMap();
+            int charWidth = font.getCharWidth();
+            int charHeight = font.getCharHeight();
+            String fontName = font.getName();
+            
+            TextureAsset fontTexture = assetSystem.getAssetBuilder( TextureAsset.class )
+                .set( TextureAsset.NAME, fontName )
+                .set( TextureAsset.ASSET_GROUP, fontName )
+                .set( TextureAsset.RESOURCE_NAME, font.getFontTextureResourceName() )
+                .set( TextureAsset.TEXTURE_WIDTH, charTextureMap[ 0 ].length * font.getCharWidth() )
+                .set( TextureAsset.TEXTURE_HEIGHT, charTextureMap.length * font.getCharHeight() )
+            .build();
+            
+            for ( int y = 0; y < charTextureMap.length; y++ ) {
+                for ( int x = 0; x < charTextureMap[ y ].length; x++ ) {
+                    textureRegion.x = x * charWidth;
+                    textureRegion.y = y * charHeight;
+                    
+                    SpriteAsset charSpriteAsset = assetSystem.getAssetBuilder( SpriteAsset.class )
+                        .set( SpriteAsset.TEXTURE_ID, fontTexture.getId() )
+                        .set( SpriteAsset.TEXTURE_REGION, textureRegion )
+                        .set( SpriteAsset.ASSET_GROUP, fontName )
+                        .set( SpriteAsset.NAME, fontName + "_" + x + "_"+ y )
+                    .build();
+                    
+                    font.setCharSpriteMapping( charTextureMap[ y ][ x ], charSpriteAsset.getId() );
+                }
+            }
+ 
             fonts.set( font.index(), font );
+            
+            if ( autoLoad ) {
+                loadFont( font.index() );
+            }
+            
             return font;
         }
     }
-
-    
-
-    
-    
 
 }

@@ -10,32 +10,71 @@ import com.inari.firefly.component.attr.AttributeMap;
 
 public class Font extends NamedIndexedComponent {
     
-    public static final AttributeKey<IntMap> CHAR_SPRITE_MAP = new AttributeKey<IntMap>( "workflowId", IntMap.class, Font.class );
+    public static final AttributeKey<String> FONT_TEXTURE_RESOURCE_NAME = new AttributeKey<String>( "fontTextureId", String.class, Font.class );
+    public static final AttributeKey<char[][]> CHAR_TEXTURE_MAP = new AttributeKey<char[][]>( "charTextureMap", char[][].class, Font.class );
     public static final AttributeKey<Integer> CHAR_WIDTH = new AttributeKey<Integer>( "charWidth", Integer.class, Font.class );
     public static final AttributeKey<Integer> CHAR_HEIGHT = new AttributeKey<Integer>( "charHeight", Integer.class, Font.class );
     public static final AttributeKey<Integer> CHAR_SPACE = new AttributeKey<Integer>( "charSpace", Integer.class, Font.class );
     public static final AttributeKey<Integer> LINE_SPACE = new AttributeKey<Integer>( "lineSpace", Integer.class, Font.class );
+    public static final AttributeKey<Integer> DEFAULT_CHAR = new AttributeKey<Integer>( "defaultChar", Integer.class, Font.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
-        CHAR_SPRITE_MAP
+        FONT_TEXTURE_RESOURCE_NAME,
+        CHAR_TEXTURE_MAP,
+        CHAR_WIDTH,
+        CHAR_HEIGHT,
+        CHAR_HEIGHT,
+        LINE_SPACE,
+        DEFAULT_CHAR
     };
 
-    private IntMap charSpriteMap;
+    private String fontTextureResourceName;
+    private char[][] charTextureMap;
     private int charWidth;
     private int charHeight;
     private int charSpace;
     private int lineSpace;
+    private int defaultChar;
+    
+    private IntMap charSpriteMap;
     
     protected Font( int id ) {
         super( id );
+        charTextureMap = null;
         charSpriteMap = new IntMap( -1, 256 );
+        charWidth = 0;
+        charHeight = 0;
+        charSpace = 0;
+        lineSpace = 0;
+        defaultChar = -1;
     }
     
-    public final void setCharSpriteMapping( char character, int spriteId ) {
+    final void setCharSpriteMapping( char character, int spriteId ) {
         charSpriteMap.set( character, spriteId );
     }
     
     public final int getSpriteId( char character ) {
-        return charSpriteMap.getFast( character );
+        int spriteId = charSpriteMap.getFast( character );
+        if ( spriteId >= 0 ) {
+            return spriteId;
+        }
+        
+        return charSpriteMap.getFast( defaultChar );
+    }
+
+    public final String getFontTextureResourceName() {
+        return fontTextureResourceName;
+    }
+
+    public final void setFontTextureResourceName( String fontTextureResourceName ) {
+        this.fontTextureResourceName = fontTextureResourceName;
+    }
+
+    public final char[][] getCharTextureMap() {
+        return charTextureMap;
+    }
+
+    public final void setCharTextureMap( char[][] charTextureMap ) {
+        this.charTextureMap = charTextureMap;
     }
 
     public final int getCharWidth() {
@@ -70,6 +109,14 @@ public class Font extends NamedIndexedComponent {
         this.lineSpace = lineSpace;
     }
 
+    public final int getDefaultChar() {
+        return defaultChar;
+    }
+
+    public final void setDefaultChar( int defaultChar ) {
+        this.defaultChar = defaultChar;
+    }
+
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
@@ -81,22 +128,26 @@ public class Font extends NamedIndexedComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        charSpriteMap = attributes.getValue( CHAR_SPRITE_MAP, charSpriteMap );
+        fontTextureResourceName = attributes.getValue( FONT_TEXTURE_RESOURCE_NAME, fontTextureResourceName );
+        charTextureMap = attributes.getValue( CHAR_TEXTURE_MAP, charTextureMap );
         charWidth = attributes.getValue( CHAR_WIDTH, charWidth );
         charHeight = attributes.getValue( CHAR_HEIGHT, charHeight );
         charSpace = attributes.getValue( CHAR_SPACE, charSpace );
         lineSpace = attributes.getValue( LINE_SPACE, lineSpace );
+        defaultChar = attributes.getValue( DEFAULT_CHAR, defaultChar );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
 
-        attributes.put( CHAR_SPRITE_MAP, charSpriteMap );
+        attributes.put( FONT_TEXTURE_RESOURCE_NAME, fontTextureResourceName );
+        attributes.put( CHAR_TEXTURE_MAP, charTextureMap );
         attributes.put( CHAR_WIDTH, charWidth );
         attributes.put( CHAR_HEIGHT, charHeight );
         attributes.put( CHAR_SPACE, charSpace );
         attributes.put( LINE_SPACE, lineSpace );
+        attributes.put( DEFAULT_CHAR, defaultChar );
     }
 
 }

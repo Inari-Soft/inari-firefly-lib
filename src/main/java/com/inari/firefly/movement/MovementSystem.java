@@ -17,7 +17,7 @@ package com.inari.firefly.movement;
 
 import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
-import com.inari.commons.lang.aspect.IndexedAspect;
+import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeAspectBuilder;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.entity.ETransform;
@@ -34,7 +34,7 @@ public final class MovementSystem implements FFContextInitiable, UpdateEventList
     
     public static final TypedKey<MovementSystem> CONTEXT_KEY = TypedKey.create( "FF_MOVEMENT_SYSTEM", MovementSystem.class );
     
-    private final static IndexedAspect MOVEMENT_ASPECT = IndexedTypeAspectBuilder.build( EntityComponent.class, EMovement.class );
+    private final static AspectBitSet MOVEMENT_ASPECT = IndexedTypeAspectBuilder.build( EntityComponent.class, EMovement.class );
 
     private IEventDispatcher eventDispatcher;
     private EntitySystem entitySystem;

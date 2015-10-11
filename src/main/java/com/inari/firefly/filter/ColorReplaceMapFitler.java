@@ -19,4 +19,13 @@ public class ColorReplaceMapFitler implements IColorFilter {
         return colorValue;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "ColorReplaceMapFitler [colorMap=" );
+        builder.append( colorMap );
+        builder.append( "]" );
+        return builder.toString();
+    }
+
 }
