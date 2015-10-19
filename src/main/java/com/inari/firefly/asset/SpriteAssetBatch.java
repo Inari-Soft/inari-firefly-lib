@@ -15,7 +15,12 @@ public class SpriteAssetBatch extends AssetBatch {
     
     private final TextureAsset textureAsset;
 
-    public SpriteAssetBatch( FFContext context, AssetNameKey textureAssetKey ) {
+    public SpriteAssetBatch( 
+        FFContext context, 
+        AssetNameKey textureAssetKey, 
+        Rectangle startClip, 
+        int hNum, int vNum
+    ) {
         super( context );
         
         AssetTypeKey typeKey = assetSystem.getAssetTypeKey( textureAssetKey );
@@ -24,16 +29,25 @@ public class SpriteAssetBatch extends AssetBatch {
         }
         
         this.textureAsset = assetSystem.getAsset( textureAssetKey, TextureAsset.class );
+        createSprites( startClip, hNum, vNum, textureAssetKey.group, textureAssetKey.name );
     }
     
-    public final Collection<ImmutablePair<AssetNameKey, AssetTypeKey>> createSprites( 
+    public final Collection<ImmutablePair<AssetNameKey, AssetTypeKey>> getAssetKeys() {
+        Collection<ImmutablePair<AssetNameKey, AssetTypeKey>> result = new ArrayList<ImmutablePair<AssetNameKey, AssetTypeKey>>( assets.size() );
+        for ( AssetNameKey assetNameKey : assets ) {
+            AssetTypeKey assetTypeKey = assetSystem.getAssetTypeKey( assetNameKey );
+            result.add( new ImmutablePair<AssetNameKey, AssetTypeKey>( assetNameKey, assetTypeKey ) );
+        }
+        return result;
+    }
+    
+    
+    private  void createSprites( 
         Rectangle startClip, 
         int hNum, int vNum, 
         String group, String namePrefix 
     ) {
         checkBounds( startClip, hNum, vNum );
-        
-        Collection<ImmutablePair<AssetNameKey, AssetTypeKey>> result = new ArrayList<ImmutablePair<AssetNameKey, AssetTypeKey>>( hNum * vNum );
         AssetBuilder<SpriteAsset> spriteAssetBuilder = assetSystem.getAssetBuilder( SpriteAsset.class );
         spriteAssetBuilder.set( SpriteAsset.TEXTURE_ID, textureAsset.typeKey.id );
         
@@ -49,13 +63,9 @@ public class SpriteAssetBatch extends AssetBatch {
                     .set( SpriteAsset.ASSET_GROUP, nameKey.group )
                     .set( SpriteAsset.NAME, nameKey.name );
                 
-                SpriteAsset asset = spriteAssetBuilder.build();
                 add( nameKey );
-                result.add( new ImmutablePair<AssetNameKey, AssetTypeKey>( nameKey, asset.typeKey ) );
             }
         }
-        
-        return result;
      }
 
     private void checkBounds( Rectangle startClip, int hNum, int vNum ) {
