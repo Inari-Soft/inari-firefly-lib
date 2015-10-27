@@ -16,7 +16,8 @@ public class EText extends EntityComponent {
     public static final int COMPONENT_TYPE = Indexer.getIndexForType( EText.class, EntityComponent.class );
     
     public static final AttributeKey<Integer> FONT_ID = new AttributeKey<Integer>( "fontId", Integer.class, EText.class );
-    public static final AttributeKey<String> TEXT = new AttributeKey<String>( "text", String.class, EText.class );
+    public static final AttributeKey<char[]> TEXT = new AttributeKey<char[]>( "text", char[].class, EText.class );
+    public static final AttributeKey<String> TEXT_STRING = new AttributeKey<String>( "text_string", String.class, EText.class );
     public static final AttributeKey<RGBColor> TINT_COLOR = new AttributeKey<RGBColor>( "tintColor", RGBColor.class, EText.class );
     public static final AttributeKey<BlendMode> BLEND_MODE = new AttributeKey<BlendMode>( "blendMode", BlendMode.class, EText.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
@@ -27,15 +28,20 @@ public class EText extends EntityComponent {
     };
     
     private int fontId;
-    private String text;
-    private final RGBColor tintColor;
+    private char[] text;
+    private final RGBColor tintColor = new RGBColor();
     private BlendMode blendMode;
     
     public EText() {
         super();
+        resetAttributes();
+    }
+
+    @Override
+    public final void resetAttributes() {
         fontId = -1;
         text = null;
-        tintColor = new RGBColor( 1, 1, 1, 1 );
+        setTintColor( new RGBColor( 1, 1, 1, 1 ) );
         blendMode = BlendMode.NONE;
     }
 
@@ -52,11 +58,11 @@ public class EText extends EntityComponent {
         this.fontId = fontId;
     }
 
-    public final String getText() {
+    public final char[] getText() {
         return text;
     }
 
-    public final void setText( String text ) {
+    public final void setText( char[] text ) {
         this.text = text;
     }
 
@@ -88,6 +94,9 @@ public class EText extends EntityComponent {
     public final void fromAttributes( AttributeMap attributes ) {
         fontId = attributes.getValue( FONT_ID, fontId );
         text = attributes.getValue( TEXT, text );
+        if ( attributes.contains( TEXT_STRING ) ) {
+            text = attributes.getValue( TEXT_STRING ).toCharArray();
+        }
         setTintColor( attributes.getValue( TINT_COLOR, tintColor ) );
         blendMode = attributes.getValue( BLEND_MODE, blendMode );
     }
@@ -96,7 +105,7 @@ public class EText extends EntityComponent {
     public final void toAttributes( AttributeMap attributes ) {
         attributes.put( FONT_ID, fontId );
         attributes.put( TEXT, text );
-        attributes.put( TINT_COLOR, tintColor );
+        attributes.put( TINT_COLOR, new RGBColor( tintColor ) );
         attributes.put( BLEND_MODE, blendMode );
     }
 

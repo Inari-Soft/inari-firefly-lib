@@ -1,4 +1,4 @@
-package com.inari.firefly.controller;
+package com.inari.firefly.controller.entity;
 
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;

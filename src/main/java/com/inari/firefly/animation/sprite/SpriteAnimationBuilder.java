@@ -14,7 +14,7 @@ import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.asset.AssetTypeKey;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.ControllerSystem;
-import com.inari.firefly.controller.SpriteIdAnimationController;
+import com.inari.firefly.controller.entity.SpriteIdAnimationController;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;

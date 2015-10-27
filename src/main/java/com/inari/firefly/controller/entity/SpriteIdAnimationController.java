@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.controller;
+package com.inari.firefly.controller.entity;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -81,6 +81,9 @@ public class SpriteIdAnimationController extends EntityController {
 
     @Override
     protected final void update( final FFTimer timer, int entityId ) {
+        if ( !entitySystem.isActive( entityId ) ) {
+            System.out.println( "stop in debugger" );
+        }
         ESprite sprite = entitySystem.getComponent( entityId, ESprite.COMPONENT_TYPE );
 
         if ( spriteAnimationId >= 0 ) {

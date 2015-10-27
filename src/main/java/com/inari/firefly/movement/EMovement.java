@@ -37,11 +37,33 @@ public final class EMovement extends EntityComponent {
         VELOCITY_Y
     };
     
-    private final Vector2f velocityVector;
+    private final Vector2f velocityVector = new Vector2f( 0, 0 );
 
     public EMovement() {
         super();
-        velocityVector = new Vector2f( 0, 0 );
+        resetAttributes();
+    }
+
+    @Override
+    public final void resetAttributes() {
+        setVelocityX( 0f );
+        setVelocityY( 0f );
+    }
+    
+    public final void setVelocityX( float velocityX ) {
+        velocityVector.dx = velocityVector.dx;
+    }
+    
+    public final float getVelocityX() {
+        return velocityVector.dx;
+    }
+    
+    public final void setVelocityY( float velocityY ) {
+        velocityVector.dy = velocityVector.dy;
+    }
+    
+    public final float getVelocityY() {
+        return velocityVector.dy;
     }
 
     public final Vector2f getVelocityVector() {

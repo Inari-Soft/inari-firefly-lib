@@ -53,7 +53,7 @@ public class TextRenderer extends BaseRenderer implements RenderEventListener {
             ETransform transform = components.get( ETransform.COMPONENT_TYPE );
             Font font = textSystem.getFont( text.getFontId() );
             
-            char[] chars = text.getText().toCharArray();
+            char[] chars = text.getText();
             RENDERABLE.blendMode = text.getBlendMode();
             RENDERABLE.tintColor = text.getTintColor();
             transformCollector.set( transform );

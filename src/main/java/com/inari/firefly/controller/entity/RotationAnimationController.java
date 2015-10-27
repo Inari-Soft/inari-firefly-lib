@@ -1,4 +1,4 @@
-package com.inari.firefly.controller;
+package com.inari.firefly.controller.entity;
 
 import java.util.Arrays;
 import java.util.HashSet;
