@@ -32,6 +32,7 @@ public class EText extends EntityComponent {
     private final RGBColor tintColor = new RGBColor();
     private BlendMode blendMode;
     
+    
     public EText() {
         super();
         resetAttributes();
@@ -41,7 +42,7 @@ public class EText extends EntityComponent {
     public final void resetAttributes() {
         fontId = -1;
         text = null;
-        setTintColor( new RGBColor( 1, 1, 1, 1 ) );
+        setTintColor( new RGBColor( 1f, 1f, 1f, 1f ) );
         blendMode = BlendMode.NONE;
     }
 
