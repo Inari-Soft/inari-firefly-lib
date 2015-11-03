@@ -26,7 +26,7 @@ public class PositionAnimationController extends EntityController {
     };
 
     private int xPosAnimationId, yPosAnimationId;
-    
+
     PositionAnimationController( int id, FFContext context ) {
         super( id, context );
         xPosAnimationId = -1;
@@ -80,7 +80,7 @@ public class PositionAnimationController extends EntityController {
 
     @Override
     protected final void update( final FFTimer timer, int entityId ) {
-        ETransform transform = entitySystem.getComponent( entityId, ETransform.COMPONENT_TYPE );
+        ETransform transform = entitySystem.getComponent( entityId, COMPONENT_ID_ETRANSFORM );
 
         if ( xPosAnimationId >= 0 && animationSystem.exists( xPosAnimationId ) ) {
             transform.setXpos( animationSystem.getValue( xPosAnimationId, entityId, transform.getXpos() ) );

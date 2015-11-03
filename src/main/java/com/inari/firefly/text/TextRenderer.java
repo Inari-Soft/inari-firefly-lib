@@ -3,8 +3,10 @@ package com.inari.firefly.text;
 import com.inari.commons.graphics.RGBColor;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.renderer.BaseRenderer;
 import com.inari.firefly.renderer.BlendMode;
 import com.inari.firefly.renderer.SpriteRenderable;
@@ -14,6 +16,8 @@ import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 
 public class TextRenderer extends BaseRenderer implements RenderEventListener {
+    
+    private final int COMPONENT_ID_ETEXT = Indexer.getIndexForType( EText.class, EntityComponent.class );
     
     public static final TypedKey<TextRenderer> CONTEXT_KEY = TypedKey.create( "TextRenderer", TextRenderer.class );
     
@@ -49,8 +53,8 @@ public class TextRenderer extends BaseRenderer implements RenderEventListener {
                 continue;
             }
             
-            EText text = components.get( EText.COMPONENT_TYPE );
-            ETransform transform = components.get( ETransform.COMPONENT_TYPE );
+            EText text = components.get( COMPONENT_ID_ETEXT );
+            ETransform transform = components.get( COMPONENT_ID_ETRANSFORM );
             Font font = textSystem.getFont( text.getFontId() );
             
             char[] chars = text.getText();
