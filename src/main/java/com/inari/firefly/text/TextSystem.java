@@ -17,7 +17,6 @@ import com.inari.firefly.component.ComponentSystem;
 import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
@@ -26,15 +25,12 @@ import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 
 public class TextSystem 
     implements 
-        FFContextInitiable, 
-        EntityActivationListener, 
-        ComponentSystem, 
-        ComponentBuilderFactory {
+        ComponentSystem,
+        EntityActivationListener {
     
     private final int COMPONENT_ID_ETRANFORM = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
     private final int COMPONENT_ID_ETEXT = Indexer.getIndexForType( EText.class, EntityComponent.class );

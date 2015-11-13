@@ -14,7 +14,6 @@ import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
@@ -23,9 +22,7 @@ import com.inari.firefly.system.UpdateEventListener;
 
 public class SceneSystem 
     implements
-        FFContextInitiable,
         ComponentSystem,
-        ComponentBuilderFactory,
         UpdateEventListener,
         RenderEventListener,
         SceneEventListener {
