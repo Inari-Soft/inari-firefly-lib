@@ -20,10 +20,9 @@ import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeAspectBuilder;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
-import com.inari.firefly.entity.EntityComponent;
+import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.event.MoveEvent;
 import com.inari.firefly.system.FFContext;
@@ -33,12 +32,9 @@ import com.inari.firefly.system.UpdateEventListener;
 
 public final class MovementSystem implements FFContextInitiable, UpdateEventListener {
     
-    private final int COMPONENT_ID_EMOVEMENT = Indexer.getIndexForType( EMovement.class, EntityComponent.class );
-    private final int COMPONENT_ID_ETRANSFORM = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
-    
     public static final TypedKey<MovementSystem> CONTEXT_KEY = TypedKey.create( "FF_MOVEMENT_SYSTEM", MovementSystem.class );
     
-    private final static AspectBitSet MOVEMENT_ASPECT = IndexedTypeAspectBuilder.build( EntityComponent.class, EMovement.class );
+    private final static AspectBitSet MOVEMENT_ASPECT = IndexedTypeAspectBuilder.build( EntityComponentTypeKey.class, EMovement.class );
 
     private IEventDispatcher eventDispatcher;
     private EntitySystem entitySystem;
@@ -64,12 +60,12 @@ public final class MovementSystem implements FFContextInitiable, UpdateEventList
         MoveEvent moveEvent = new MoveEvent();
         for ( Entity entity : entitySystem.entities( MOVEMENT_ASPECT ) ) {
             IndexedTypeSet components = entitySystem.getComponents( entity.getId() );
-            EMovement movement = components.get( COMPONENT_ID_EMOVEMENT );
+            EMovement movement = components.get( EMovement.TYPE_KEY );
             if ( !movement.isMoving() ) {
                 continue;
             }
             
-            ETransform transform = components.get( COMPONENT_ID_ETRANSFORM );
+            ETransform transform = components.get( ETransform.TYPE_KEY );
             transform.move( movement.getVelocityVector(), true );
             
             moveEvent.add( entity.getId() );

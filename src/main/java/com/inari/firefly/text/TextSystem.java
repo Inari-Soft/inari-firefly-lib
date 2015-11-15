@@ -8,7 +8,6 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
@@ -18,7 +17,6 @@ import com.inari.firefly.component.attr.Attributes;
 import com.inari.firefly.component.build.BaseComponentBuilder;
 import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
 import com.inari.firefly.entity.event.EntityActivationListener;
@@ -31,9 +29,6 @@ public class TextSystem
     implements 
         ComponentSystem,
         EntityActivationListener {
-    
-    private final int COMPONENT_ID_ETRANFORM = Indexer.getIndexForType( ETransform.class, EntityComponent.class );
-    private final int COMPONENT_ID_ETEXT = Indexer.getIndexForType( EText.class, EntityComponent.class );
     
     public static final TypedKey<TextSystem> CONTEXT_KEY = TypedKey.create( "TextSystem", TextSystem.class );
     
@@ -114,13 +109,13 @@ public class TextSystem
 
     @Override
     public final boolean match( AspectBitSet aspect ) {
-        return aspect.contains( COMPONENT_ID_ETEXT );
+        return aspect.contains( EText.TYPE_KEY );
     }
 
     @Override
     public void onEntityActivationEvent( EntityActivationEvent event ) {
         IndexedTypeSet components = entitySystem.getComponents( event.entityId );
-        ETransform transform = components.get( COMPONENT_ID_ETRANFORM );
+        ETransform transform = components.get( ETransform.TYPE_KEY );
         int viewId = transform.getViewId();
         int layerId = transform.getLayerId();
         switch ( event.eventType ) {

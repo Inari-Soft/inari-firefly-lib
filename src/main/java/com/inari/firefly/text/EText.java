@@ -12,6 +12,8 @@ import com.inari.firefly.renderer.BlendMode;
 
 public class EText extends EntityComponent {
     
+    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( EText.class );
+    
     public static final AttributeKey<Integer> FONT_ID = new AttributeKey<Integer>( "fontId", Integer.class, EText.class );
     public static final AttributeKey<char[]> TEXT = new AttributeKey<char[]>( "text", char[].class, EText.class );
     public static final AttributeKey<String> TEXT_STRING = new AttributeKey<String>( "text_string", String.class, EText.class );
@@ -31,7 +33,7 @@ public class EText extends EntityComponent {
     
     
     public EText() {
-        super();
+        super( TYPE_KEY );
         resetAttributes();
     }
 

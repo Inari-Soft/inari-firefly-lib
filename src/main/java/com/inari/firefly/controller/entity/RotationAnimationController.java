@@ -66,7 +66,7 @@ public class RotationAnimationController extends EntityController {
 
     @Override
     protected final void update( final FFTimer timer, int entityId ) {
-        ETransform transform = entitySystem.getComponent( entityId, COMPONENT_ID_ETRANSFORM );
+        ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
 
         if ( rotationAnimationId >= 0 && animationSystem.exists( rotationAnimationId ) ) {
             transform.setRotation( animationSystem.getValue( rotationAnimationId, entityId, transform.getRotation() ) );

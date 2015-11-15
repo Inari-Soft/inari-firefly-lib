@@ -66,7 +66,7 @@ public class SpriteTintColorAnimationController extends EntityController {
 
     @Override
     protected final void update( final FFTimer timer, int entityId ) {
-        ESprite sprite = entitySystem.getComponent( entityId, COMPONENT_ID_ESPRITE );
+        ESprite sprite = entitySystem.getComponent( entityId, ESprite.TYPE_KEY );
 
         if ( tintColorAnimationId >= 0 && animationSystem.exists( tintColorAnimationId ) ) {
             sprite.setTintColor( animationSystem.getValue( tintColorAnimationId, entityId, sprite.getTintColor() ) );

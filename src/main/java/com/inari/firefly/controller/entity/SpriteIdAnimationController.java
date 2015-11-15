@@ -84,7 +84,7 @@ public class SpriteIdAnimationController extends EntityController {
         if ( !entitySystem.isActive( entityId ) ) {
             System.out.println( "stop in debugger" );
         }
-        ESprite sprite = entitySystem.getComponent( entityId, COMPONENT_ID_ESPRITE );
+        ESprite sprite = entitySystem.getComponent( entityId, ESprite.TYPE_KEY );
 
         if ( spriteAnimationId >= 0 ) {
             sprite.setSpriteId( animationSystem.getValue( spriteAnimationId, entityId, sprite.getSpriteId() ) );

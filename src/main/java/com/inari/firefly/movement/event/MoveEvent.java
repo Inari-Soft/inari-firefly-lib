@@ -20,7 +20,13 @@ import com.inari.commons.lang.list.IntBag;
 
 public final class MoveEvent extends Event<MoveEventListener> {
     
+    public static final EventTypeKey TYPE_KEY = createTypeKey( MoveEvent.class );
+    
     public final IntBag entityIds = new IntBag( 100, -1 );
+    
+    public MoveEvent() {
+        super( TYPE_KEY );
+    }
     
     public void add( int entityId ) {
         entityIds.add( entityId );

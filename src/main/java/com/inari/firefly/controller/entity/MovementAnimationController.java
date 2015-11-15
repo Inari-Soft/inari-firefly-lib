@@ -20,18 +20,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Vector2f;
-import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.entity.EntityComponent;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.movement.EMovement;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
 
 public class MovementAnimationController extends EntityController {
-    
-    protected final int COMPONENT_ID_EMOVEMENT = Indexer.getIndexForType( EMovement.class, EntityComponent.class );
     
     public static final AttributeKey<?>[] CONTROLLED_ATTRIBUTES = new AttributeKey[] {
         EMovement.VELOCITY_X,
@@ -100,7 +96,7 @@ public class MovementAnimationController extends EntityController {
 
     @Override
     protected final void update( final FFTimer timer, int entityId ) {
-        EMovement movement = entitySystem.getComponent( entityId, COMPONENT_ID_EMOVEMENT );
+        EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
         Vector2f velocityVector = movement.getVelocityVector();
 
         if ( velocityXAnimationId >= 0 && animationSystem.exists( velocityXAnimationId ) ) {

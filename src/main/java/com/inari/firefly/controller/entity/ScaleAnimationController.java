@@ -68,7 +68,7 @@ public class ScaleAnimationController extends EntityController {
 
     @Override
     protected final void update( final FFTimer timer, int entityId ) {
-        ETransform transform = entitySystem.getComponent( entityId, COMPONENT_ID_ETRANSFORM );
+        ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
 
         if ( scaleXAnimationId >= 0 && animationSystem.exists( scaleXAnimationId ) ) {
             transform.setScalex( animationSystem.getValue( scaleXAnimationId, entityId, transform.getScalex() ) );
