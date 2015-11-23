@@ -4,13 +4,15 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.firefly.Disposable;
-import com.inari.firefly.component.NamedIndexedComponent;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.component.SystemComponent;
 
-public abstract class Scene extends NamedIndexedComponent implements Disposable {
+public abstract class Scene extends SystemComponent implements Disposable {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Scene.class );
     
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, Scene.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, Scene.class );
@@ -98,7 +100,7 @@ public abstract class Scene extends NamedIndexedComponent implements Disposable 
         }
         
         if ( updateScheduler == null && updateResolution >= 0 ) {
-            updateScheduler = context.getComponent( FFContext.TIMER ).createUpdateScheduler( updateResolution );
+            updateScheduler = context.getTimer().createUpdateScheduler( updateResolution );
         }
         
         active = true;

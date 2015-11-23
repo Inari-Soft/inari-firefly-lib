@@ -11,6 +11,7 @@ import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 
+//TODO this needs a refactoring, should be a component and be initialized within the FFContext
 public class SpriteAssetBatch extends AssetBatch {
     
     private final TextureAsset textureAsset;
@@ -48,7 +49,7 @@ public class SpriteAssetBatch extends AssetBatch {
         String group, String namePrefix 
     ) {
         checkBounds( startClip, hNum, vNum );
-        AssetBuilder<SpriteAsset> spriteAssetBuilder = assetSystem.getAssetBuilder( SpriteAsset.class );
+        AssetBuilder spriteAssetBuilder = assetSystem.getAssetBuilder();
         spriteAssetBuilder.set( SpriteAsset.TEXTURE_ID, textureAsset.typeKey.id );
         
         for ( int y = 0; ( vNum < 0 )? y > vNum: y < vNum;  y = ( vNum < 0 )? --y : ++y ) {

@@ -74,7 +74,7 @@ public final class EMovement extends EntityComponent {
     }
     
     @Override
-    public final Class<? extends Component> getComponentType() {
+    public final Class<? extends Component> componentType() {
         return EMovement.class;
     }
 

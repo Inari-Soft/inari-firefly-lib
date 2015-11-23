@@ -15,7 +15,6 @@
  ******************************************************************************/ 
 package com.inari.firefly.movement;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeAspectBuilder;
@@ -26,17 +25,17 @@ import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.event.MoveEvent;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFContextInitiable;
+import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
 
-public final class MovementSystem implements FFContextInitiable, UpdateEventListener {
+public final class MovementSystem implements FFSystem, UpdateEventListener {
     
     public static final TypedKey<MovementSystem> CONTEXT_KEY = TypedKey.create( "FF_MOVEMENT_SYSTEM", MovementSystem.class );
     
     private final static AspectBitSet MOVEMENT_ASPECT = IndexedTypeAspectBuilder.build( EntityComponentTypeKey.class, EMovement.class );
 
-    private IEventDispatcher eventDispatcher;
+    private FFContext context;
     private EntitySystem entitySystem;
 
     MovementSystem() {
@@ -44,15 +43,16 @@ public final class MovementSystem implements FFContextInitiable, UpdateEventList
     
     @Override
     public void init( FFContext context ) {
-        eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
+        this.context = context;
         
-        eventDispatcher.register( UpdateEvent.class, this );
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        
+        context.registerListener( UpdateEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        eventDispatcher.unregister( UpdateEvent.class, this );
+        context.disposeListener( UpdateEvent.class, this );
     }
 
     @Override
@@ -70,7 +70,7 @@ public final class MovementSystem implements FFContextInitiable, UpdateEventList
             
             moveEvent.add( entity.getId() );
         }
-        eventDispatcher.notify( moveEvent );
+        context.notify( moveEvent );
     }
 
 }

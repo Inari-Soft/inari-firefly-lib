@@ -1,31 +1,32 @@
 package com.inari.firefly.scene;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.Component;
-import com.inari.firefly.component.ComponentBuilderHelper;
-import com.inari.firefly.component.ComponentSystem;
-import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilderFactory;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 import com.inari.firefly.system.UpdateEvent;
 import com.inari.firefly.system.UpdateEventListener;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public class SceneSystem 
+    extends 
+        ComponentSystem
     implements
-        ComponentSystem,
         UpdateEventListener,
         RenderEventListener,
         SceneEventListener {
+    
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        Scene.TYPE_KEY
+    };
     
     public final static TypedKey<SceneSystem> CONTEXT_KEY = TypedKey.create( "SceneSystem", SceneSystem.class );
 
@@ -40,18 +41,17 @@ public class SceneSystem
     @Override
     public final void init( FFContext context ) throws FFInitException {
         this.context = context;
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        eventDispatcher.register( UpdateEvent.class, this );
-        eventDispatcher.register( RenderEvent.class, this );
-        eventDispatcher.register( SceneEvent.class, this );
+
+        context.registerListener( UpdateEvent.class, this );
+        context.registerListener( RenderEvent.class, this );
+        context.registerListener( SceneEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        eventDispatcher.unregister( UpdateEvent.class, this );
-        eventDispatcher.unregister( RenderEvent.class, this );
-        eventDispatcher.unregister( SceneEvent.class, this );
+        context.disposeListener( UpdateEvent.class, this );
+        context.disposeListener( RenderEvent.class, this );
+        context.disposeListener( SceneEvent.class, this );
     }
     
     @Override
@@ -98,7 +98,7 @@ public class SceneSystem
         scene.dispose();
     }
     
-    private final void clear() {
+    public final void clear() {
         for ( int i = 0; i < scenes.capacity(); i++ ) {
             if ( scenes.contains( i ) ) {
                 deleteScene( i );
@@ -129,75 +129,54 @@ public class SceneSystem
         }
     }
 
-    @SuppressWarnings( { "unchecked", "rawtypes" } )
     @Override
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( Scene.class.isAssignableFrom( type ) ) {
-            return new SceneBuilder( this, type );
-        }
-        
-        throw new IllegalArgumentException( "Unsupported Component type for SceneSystem Builder. Type: " + type );
-    }
-    
-    public final <S extends Scene> SceneBuilder<S> getSceneBuilder( Class<S> sceneType ) {
-        return new SceneBuilder<S>( this, sceneType );
-    }
-
-    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
-    @Override
-    public final Set<Class<?>> supportedComponentTypes() {
-        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
-            SUPPORTED_COMPONENT_TYPES.add( Scene.class );
-        }
+    public final SystemComponentKey[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final void fromAttributes( Attributes attributes ) {
-        fromAttributes( attributes, BuildType.CLEAR_OLD );
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter<?>[] {
+            new SceneBuilderHelper( this )
+        };
     }
 
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public void fromAttributes( Attributes attributes, BuildType buildType ) {
-        if ( buildType == BuildType.CLEAR_OLD ) {
-            clear();
-        }
-        for ( Class<? extends Scene> sceneType : attributes.getAllSubTypes( Scene.class ) ) {
-            new ComponentBuilderHelper<Scene>() {
-                @Override
-                public Scene get( int id ) {
-                    return scenes.get( id );
-                }
-                @Override
-                public void delete( int id ) {
-                    deleteScene( id );
-                }
-            }.buildComponents( Scene.class, buildType, (SceneBuilder<Scene>) getSceneBuilder( sceneType ), attributes );
-        }
-    }
-
-    @Override
-    public final void toAttributes( Attributes attributes ) {
-        ComponentBuilderHelper.toAttributes( attributes, Scene.class, scenes );
-    }
-    
-    public final class SceneBuilder<C extends Scene> extends BaseComponentBuilder<C> {
-        
-        private final Class<C> sceneType;
-
-        protected SceneBuilder( ComponentBuilderFactory componentFactory, Class<C> sceneType ) {
-            super( componentFactory );
-            this.sceneType = sceneType;
-        }
+    public final class SceneBuilder extends SystemComponentBuilder {
 
         @Override
-        public C build( int componentId ) {
+        public final SystemComponentKey systemComponentKey() {
+            return Scene.TYPE_KEY;
+        }
+        
+        @Override
+        public final int doBuild( int componentId, Class<?> sceneType ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, sceneType.getName() );
-            C result = getInstance( context, componentId );
+            Scene result = getInstance( context, componentId );
             result.fromAttributes( attributes );
             scenes.set( result.index(), result );
-            return result;
+            return result.getId();
+        }
+    }
+    
+    private final class SceneBuilderHelper extends SystemBuilderAdapter<Scene> {
+        public SceneBuilderHelper( ComponentSystem system ) {
+            super( system, new SceneBuilder() );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return Scene.TYPE_KEY;
+        }
+        @Override
+        public final Scene get( int id, Class<? extends Scene> subtype ) {
+            return scenes.get( id );
+        }
+        @Override
+        public final void delete( int id, Class<? extends Scene> subtype ) {
+            deleteScene( id );
+        }
+        @Override
+        public final Iterator<Scene> getAll() {
+            return scenes.iterator();
         }
     }
 

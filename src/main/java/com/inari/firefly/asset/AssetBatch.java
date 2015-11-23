@@ -9,6 +9,7 @@ import com.inari.commons.lang.functional.Disposable;
 import com.inari.commons.lang.functional.Loadable;
 import com.inari.firefly.system.FFContext;
 
+// TODO this needs a refactoring, should be a component and be initialized within the FFContext
 public class AssetBatch implements Loadable, Disposable, Clearable {
 
     protected final AssetSystem assetSystem;
@@ -17,7 +18,7 @@ public class AssetBatch implements Loadable, Disposable, Clearable {
     private boolean loaded = false;
     
     public AssetBatch( FFContext context ) {
-        assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
+        assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
         assets = new ArrayList<AssetNameKey>();
     }
     

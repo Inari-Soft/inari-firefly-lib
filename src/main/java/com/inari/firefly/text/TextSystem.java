@@ -1,9 +1,7 @@
 package com.inari.firefly.text;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 
-import com.inari.commons.event.IEventDispatcher;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
@@ -11,11 +9,6 @@ import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.component.ComponentBuilderHelper;
-import com.inari.firefly.component.ComponentSystem;
-import com.inari.firefly.component.attr.Attributes;
-import com.inari.firefly.component.build.BaseComponentBuilder;
-import com.inari.firefly.component.build.ComponentBuilder;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.entity.event.EntityActivationEvent;
@@ -24,11 +17,20 @@ import com.inari.firefly.renderer.TextureAsset;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFInitException;
+import com.inari.firefly.system.component.ComponentSystem;
+import com.inari.firefly.system.component.SystemBuilderAdapter;
+import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public class TextSystem 
+    extends 
+        ComponentSystem
     implements 
-        ComponentSystem,
         EntityActivationListener {
+    
+    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+        Font.TYPE_KEY
+    };
     
     public static final TypedKey<TextSystem> CONTEXT_KEY = TypedKey.create( "TextSystem", TextSystem.class );
     
@@ -45,17 +47,15 @@ public class TextSystem
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        entitySystem = context.getComponent( EntitySystem.CONTEXT_KEY );
-        assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
 
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        eventDispatcher.register( EntityActivationEvent.class, this );
+        context.registerListener( EntityActivationEvent.class, this );
     }
 
     @Override
     public final void dispose( FFContext context ) {
-        IEventDispatcher eventDispatcher = context.getComponent( FFContext.EVENT_DISPATCHER );
-        eventDispatcher.unregister( EntityActivationEvent.class, this );
+        context.disposeListener( EntityActivationEvent.class, this );
         
         textPerViewAndLayer.clear();
         clear();
@@ -158,73 +158,42 @@ public class TextSystem
         
         return textOfLayer;
     }
-
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public final <C> ComponentBuilder<C> getComponentBuilder( Class<C> type ) {
-        if ( type == Font.class ) {
-            return (ComponentBuilder<C>) getFontBuilder();
-        }
-        
-        throw new IllegalArgumentException( "Unsupported IComponent type for TextSystem. Type: " + type );
-    }
     
     public final FontBuilder getFontBuilder() {
-        return new FontBuilder( this, false );
+        return new FontBuilder( false );
     }
     
     public final FontBuilder getFontBuilderWithAutoLoad() {
-        return new FontBuilder( this, true );
+        return new FontBuilder( true );
     }
 
-    private static final Set<Class<?>> SUPPORTED_COMPONENT_TYPES = new HashSet<Class<?>>();
     @Override
-    public final Set<Class<?>> supportedComponentTypes() {
-        if ( SUPPORTED_COMPONENT_TYPES.isEmpty() ) {
-            SUPPORTED_COMPONENT_TYPES.add( Font.class );
-        }
+    public final SystemComponentKey[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
     @Override
-    public final void fromAttributes( Attributes attributes ) {
-        fromAttributes( attributes, BuildType.CLEAR_OLD );
+    public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
+        return new SystemBuilderAdapter<?>[] {
+            new FontBuilderHelper( this )
+        };
     }
 
-    @Override
-    public final void fromAttributes( Attributes attributes, BuildType buildType ) {
-        if ( buildType == BuildType.CLEAR_OLD ) {
-            clear();
-        }
-        
-        new ComponentBuilderHelper<Font>() {
-            @Override
-            public Font get( int id ) {
-                return fonts.get( id );
-            }
-            @Override
-            public void delete( int id ) {
-                deleteFont( id );
-            }
-        }.buildComponents( Font.class, buildType, getFontBuilder(), attributes );
-    }
-
-    @Override
-    public final void toAttributes( Attributes attributes ) {
-        ComponentBuilderHelper.toAttributes( attributes, Font.class, fonts );
-    }
-
-    public final class FontBuilder extends BaseComponentBuilder<Font> {
+    public final class FontBuilder extends SystemComponentBuilder {
         
         private final boolean autoLoad;
 
-        protected FontBuilder( TextSystem textSystem, boolean autoLoad ) {
-            super( textSystem );
+        protected FontBuilder( boolean autoLoad ) {
             this.autoLoad = autoLoad;
+        }
+        
+        @Override
+        public final SystemComponentKey systemComponentKey() {
+            return Font.TYPE_KEY;
         }
 
         @Override
-        public final Font build( int componentId ) {
+        public final int doBuild( int componentId, Class<?> subType ) {
             Font font = new Font( componentId );
             font.fromAttributes( attributes );
             
@@ -237,27 +206,27 @@ public class TextSystem
             int charHeight = font.getCharHeight();
             String fontName = font.getName();
             
-            TextureAsset fontTexture = assetSystem.getAssetBuilder( TextureAsset.class )
+            int fontTextureId = assetSystem.getAssetBuilder()
                 .set( TextureAsset.NAME, fontName )
                 .set( TextureAsset.ASSET_GROUP, fontName )
                 .set( TextureAsset.RESOURCE_NAME, font.getFontTextureResourceName() )
                 .set( TextureAsset.TEXTURE_WIDTH, charTextureMap[ 0 ].length * font.getCharWidth() )
                 .set( TextureAsset.TEXTURE_HEIGHT, charTextureMap.length * font.getCharHeight() )
-            .build();
+            .build( TextureAsset.class );
             
             for ( int y = 0; y < charTextureMap.length; y++ ) {
                 for ( int x = 0; x < charTextureMap[ y ].length; x++ ) {
                     textureRegion.x = x * charWidth;
                     textureRegion.y = y * charHeight;
                     
-                    SpriteAsset charSpriteAsset = assetSystem.getAssetBuilder( SpriteAsset.class )
-                        .set( SpriteAsset.TEXTURE_ID, fontTexture.getId() )
+                    int charSpriteAssetId = assetSystem.getAssetBuilder()
+                        .set( SpriteAsset.TEXTURE_ID, fontTextureId )
                         .set( SpriteAsset.TEXTURE_REGION, textureRegion )
                         .set( SpriteAsset.ASSET_GROUP, fontName )
                         .set( SpriteAsset.NAME, fontName + "_" + x + "_"+ y )
-                    .build();
+                    .build(  SpriteAsset.class  );
                     
-                    font.setCharSpriteMapping( charTextureMap[ y ][ x ], charSpriteAsset.getId() );
+                    font.setCharSpriteMapping( charTextureMap[ y ][ x ], charSpriteAssetId );
                 }
             }
  
@@ -267,8 +236,29 @@ public class TextSystem
                 loadFont( font.index() );
             }
             
-            return font;
+            return font.getId();
         }
     }
-
+    
+    private final class FontBuilderHelper extends SystemBuilderAdapter<Font> {
+        public FontBuilderHelper( ComponentSystem system ) {
+            super( system, new FontBuilder( false ) );
+        }
+        @Override
+        public final SystemComponentKey componentTypeKey() {
+            return Font.TYPE_KEY;
+        }
+        @Override
+        public final Font get( int id, Class<? extends Font> subtype ) {
+            return fonts.get( id );
+        }
+        @Override
+        public final void delete( int id, Class<? extends Font> subtype ) {
+            deleteFont( id );
+        }
+        @Override
+        public final Iterator<Font> getAll() {
+            return fonts.iterator();
+        }
+    }
 }

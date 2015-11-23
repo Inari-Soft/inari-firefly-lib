@@ -39,9 +39,9 @@ public final class SpriteAnimationBuilder {
 
     
     public SpriteAnimationBuilder( FFContext context ) {
-        assetSystem = context.getComponent( AssetSystem.CONTEXT_KEY );
-        controllerSystem = context.getComponent( ControllerSystem.CONTEXT_KEY );
-        animationSystem = context.getComponent( AnimationSystem.CONTEXT_KEY );
+        assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
+        animationSystem = context.getSystem( AnimationSystem.CONTEXT_KEY );
         
         reset();
     }
@@ -203,18 +203,18 @@ public final class SpriteAnimationBuilder {
         private final void create() {
             if ( data.size() > 1 ) {
                 
-                StatedSpriteAnimation animation = animationSystem.getAnimationBuilder( statedType )
+                animationId = animationSystem.getAnimationBuilder()
                     .set( SpriteAnimation.NAME, assetNamePrefix )
                     .set( SpriteAnimation.LOOPING, isLooping )
                     .set( SpriteAnimation.START_TIME, startTime )
-                .build();
-                animationId = animation.getId();
+                .build( statedType );
+                StatedSpriteAnimation animation = animationSystem.getAnimationAs( animationId, StatedSpriteAnimation.class );
                 
-                controllerId = controllerSystem.getControllerBuilder( SpriteIdAnimationController.class )
+                controllerId = controllerSystem.getControllerBuilder()
                     .set( SpriteIdAnimationController.NAME, assetNamePrefix )
                     .set( SpriteIdAnimationController.SPRITE_ID_ANIMATION_ID, animationId )
                     .set( SpriteIdAnimationController.UPDATE_RESOLUTION, resolution )
-                .build().getId();
+                .build( SpriteIdAnimationController.class );
                 
                 int count = 0;
                 for ( AnimationData animData : data ) {
@@ -229,29 +229,30 @@ public final class SpriteAnimationBuilder {
                 SpriteAnimationTimeline animTimeline = new SpriteAnimationTimeline();
                 createTimeline( 0, animData, animTimeline );
                 
-                animationId = animationSystem.getAnimationBuilder( SpriteAnimation.class )
+                animationId = animationSystem.getAnimationBuilder()
                     .set( SpriteAnimation.NAME, assetNamePrefix )
                     .set( SpriteAnimation.SPRITE_ANIMATION_TIMELINE, animTimeline )
                     .set( SpriteAnimation.LOOPING, isLooping )
                     .set( SpriteAnimation.START_TIME, startTime )
-                .build().getId();
+                .build( SpriteAnimation.class );
                 
-                controllerId = controllerSystem.getControllerBuilder( SpriteIdAnimationController.class )
+                controllerId = controllerSystem.getControllerBuilder()
                     .set( SpriteIdAnimationController.NAME, assetNamePrefix )
                     .set( SpriteIdAnimationController.SPRITE_ID_ANIMATION_ID, animationId )
                     .set( SpriteIdAnimationController.UPDATE_RESOLUTION, resolution )
-                .build().getId();
+                .build( SpriteIdAnimationController.class );
             }
         }
 
         private int createTimeline( int count, AnimationData animData, SpriteAnimationTimeline animTimeline ) {
             for ( AnimationValue value : animData.values ) {
-                SpriteAsset spriteAsset = assetSystem.getAssetBuilder( SpriteAsset.class )
+                int spriteId = assetSystem.getAssetBuilder()
                     .set( SpriteAsset.NAME, assetNamePrefix + "_" + count )
                     .set( SpriteAsset.ASSET_GROUP, assetGroup )
                     .set( SpriteAsset.TEXTURE_REGION, value.textureRegion )
                     .set( SpriteAsset.TEXTURE_ID, textureKey.id )
-                .build();
+                .build( SpriteAsset.class );
+                SpriteAsset spriteAsset = assetSystem.getAsset( new AssetTypeKey( spriteId, SpriteAsset.class ), SpriteAsset.class );
                 
                 value.assetTypeKey = spriteAsset.getTypeKey();
                 animTimeline.add( spriteAsset.getId(), value.time );

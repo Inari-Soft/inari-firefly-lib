@@ -25,6 +25,7 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.sound.Sound;
 import com.inari.firefly.sound.SoundController;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.FFSystemInterface;
 import com.inari.firefly.system.FFTimer;
 
 
@@ -40,6 +41,7 @@ public final class SoundAnimationController extends SoundController {
     };
     
     private AnimationSystem animationSystem;
+    private FFSystemInterface systemInterface;
     
     private int volumeAnimationId = -1;
     private int pitchAnimationId = -1;
@@ -47,7 +49,8 @@ public final class SoundAnimationController extends SoundController {
 
     SoundAnimationController( int id, FFContext context ) {
         super( id, context );
-        animationSystem = context.getComponent( AnimationSystem.CONTEXT_KEY );
+        animationSystem = context.getSystem( AnimationSystem.CONTEXT_KEY );
+        systemInterface = context.getSystemInterface();
     }
 
     public final int getVolumeAnimationId() {
@@ -133,9 +136,9 @@ public final class SoundAnimationController extends SoundController {
         
         if ( volumeAnimationId >= 0 || pitchAnimationId >= 0 || panAnimationId >= 0 ) {
             if ( sound.isStreaming() ) {
-                lowerSystemFacade.changeMusic( sound.getAssetId(), sound.getVolume(), sound.getPan() );
+                systemInterface.changeMusic( sound.getAssetId(), sound.getVolume(), sound.getPan() );
             } else {
-                lowerSystemFacade.changeSound( sound.getAssetId(), sound.getInstanceId(), sound.getVolume(), sound.getPitch(), sound.getPan() );
+                systemInterface.changeSound( sound.getAssetId(), sound.getInstanceId(), sound.getVolume(), sound.getPitch(), sound.getPan() );
             }
         }
     }

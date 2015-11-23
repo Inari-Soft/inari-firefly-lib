@@ -22,14 +22,14 @@ public class TextRenderer extends BaseRenderer implements RenderEventListener {
     @Override
     public void init( FFContext context ) throws FFInitException {
         super.init( context );
-        textSystem = context.getComponent( TextSystem.CONTEXT_KEY );
+        textSystem = context.getSystem( TextSystem.CONTEXT_KEY );
         
-        context.getComponent( FFContext.EVENT_DISPATCHER ).register( RenderEvent.class, this );
+        context.registerListener( RenderEvent.class, this );
     }
     
     @Override
     public void dispose( FFContext context ) {
-        context.getComponent( FFContext.EVENT_DISPATCHER ).unregister( RenderEvent.class, this );
+        context.disposeListener( RenderEvent.class, this );
     }
 
     @Override

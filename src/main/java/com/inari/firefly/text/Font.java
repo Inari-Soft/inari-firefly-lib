@@ -3,12 +3,15 @@ package com.inari.firefly.text;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.commons.lang.list.IntMap;
-import com.inari.firefly.component.NamedIndexedComponent;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.system.component.SystemComponent;
 
-public class Font extends NamedIndexedComponent {
+public class Font extends SystemComponent {
+    
+    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Font.class );
     
     public static final AttributeKey<String> FONT_TEXTURE_RESOURCE_NAME = new AttributeKey<String>( "fontTextureId", String.class, Font.class );
     public static final AttributeKey<char[][]> CHAR_TEXTURE_MAP = new AttributeKey<char[][]>( "charTextureMap", char[][].class, Font.class );
@@ -35,12 +38,12 @@ public class Font extends NamedIndexedComponent {
     private int lineSpace;
     private int defaultChar;
     
-    private IntMap charSpriteMap;
+    private IntBag charSpriteMap;
     
     protected Font( int id ) {
         super( id );
         charTextureMap = null;
-        charSpriteMap = new IntMap( -1, 256 );
+        charSpriteMap = new IntBag( -1, 256 );
         charWidth = 0;
         charHeight = 0;
         charSpace = 0;
@@ -48,17 +51,22 @@ public class Font extends NamedIndexedComponent {
         defaultChar = -1;
     }
     
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
+    }
+    
     final void setCharSpriteMapping( char character, int spriteId ) {
         charSpriteMap.set( character, spriteId );
     }
     
     public final int getSpriteId( char character ) {
-        int spriteId = charSpriteMap.getFast( character );
+        int spriteId = charSpriteMap.get( character );
         if ( spriteId >= 0 ) {
             return spriteId;
         }
         
-        return charSpriteMap.getFast( defaultChar );
+        return charSpriteMap.get( defaultChar );
     }
 
     public final String getFontTextureResourceName() {

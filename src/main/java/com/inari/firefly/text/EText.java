@@ -46,7 +46,7 @@ public class EText extends EntityComponent {
     }
 
     @Override
-    public final Class<EText> getComponentType() {
+    public final Class<EText> componentType() {
         return EText.class;
     }
 
