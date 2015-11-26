@@ -49,6 +49,8 @@ public class TextSystem
     public final void init( FFContext context ) throws FFInitException {
         entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
         assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
+        
+        context.loadSystem( TextRenderer.CONTEXT_KEY );
 
         context.registerListener( EntityActivationEvent.class, this );
     }
@@ -56,6 +58,8 @@ public class TextSystem
     @Override
     public final void dispose( FFContext context ) {
         context.disposeListener( EntityActivationEvent.class, this );
+        
+        context.disposeSystem( TextRenderer.CONTEXT_KEY );
         
         textPerViewAndLayer.clear();
         clear();

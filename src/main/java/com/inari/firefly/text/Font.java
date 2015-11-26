@@ -43,7 +43,7 @@ public class Font extends SystemComponent {
     protected Font( int id ) {
         super( id );
         charTextureMap = null;
-        charSpriteMap = new IntBag( -1, 256 );
+        charSpriteMap = new IntBag( 256, -1 );
         charWidth = 0;
         charHeight = 0;
         charSpace = 0;

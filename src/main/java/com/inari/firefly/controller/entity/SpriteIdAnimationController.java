@@ -81,10 +81,7 @@ public class SpriteIdAnimationController extends EntityController {
 
     @Override
     protected final void update( final FFTimer timer, int entityId ) {
-        if ( !entitySystem.isActive( entityId ) ) {
-            System.out.println( "stop in debugger" );
-        }
-        ESprite sprite = entitySystem.getComponent( entityId, ESprite.TYPE_KEY );
+        ESprite sprite = context.getEntityComponent( entityId, ESprite.TYPE_KEY );
 
         if ( spriteAnimationId >= 0 ) {
             sprite.setSpriteId( animationSystem.getValue( spriteAnimationId, entityId, sprite.getSpriteId() ) );

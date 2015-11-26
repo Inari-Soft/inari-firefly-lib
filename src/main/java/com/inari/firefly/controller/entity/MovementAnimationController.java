@@ -96,7 +96,7 @@ public class MovementAnimationController extends EntityController {
 
     @Override
     protected final void update( final FFTimer timer, int entityId ) {
-        EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
+        EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
         Vector2f velocityVector = movement.getVelocityVector();
 
         if ( velocityXAnimationId >= 0 && animationSystem.exists( velocityXAnimationId ) ) {
