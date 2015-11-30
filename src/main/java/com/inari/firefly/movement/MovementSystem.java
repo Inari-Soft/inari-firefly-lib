@@ -15,9 +15,9 @@
  ******************************************************************************/ 
 package com.inari.firefly.movement;
 
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeAspectBuilder;
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.Entity;
@@ -31,7 +31,7 @@ import com.inari.firefly.system.UpdateEventListener;
 
 public final class MovementSystem implements FFSystem, UpdateEventListener {
     
-    public static final TypedKey<MovementSystem> CONTEXT_KEY = TypedKey.create( "FF_MOVEMENT_SYSTEM", MovementSystem.class );
+    public static final FFSystemTypeKey<MovementSystem> SYSTEM_KEY = FFSystemTypeKey.create( MovementSystem.class );
     
     private final static AspectBitSet MOVEMENT_ASPECT = IndexedTypeAspectBuilder.build( EntityComponentTypeKey.class, EMovement.class );
 
@@ -42,10 +42,20 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     }
     
     @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return SYSTEM_KEY;
+    }
+
+    @Override
+    public final FFSystemTypeKey<MovementSystem> systemTypeKey() {
+        return SYSTEM_KEY;
+    }
+    
+    @Override
     public void init( FFContext context ) {
         this.context = context;
         
-        entitySystem = context.getSystem( EntitySystem.CONTEXT_KEY );
+        entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
         context.registerListener( UpdateEvent.class, this );
     }

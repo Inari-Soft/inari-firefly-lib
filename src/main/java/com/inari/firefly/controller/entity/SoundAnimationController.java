@@ -49,7 +49,7 @@ public final class SoundAnimationController extends SoundController {
 
     SoundAnimationController( int id, FFContext context ) {
         super( id, context );
-        animationSystem = context.getSystem( AnimationSystem.CONTEXT_KEY );
+        animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         systemInterface = context.getSystemInterface();
     }
 

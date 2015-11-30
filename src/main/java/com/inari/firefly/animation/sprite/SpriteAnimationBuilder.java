@@ -39,9 +39,9 @@ public final class SpriteAnimationBuilder {
 
     
     public SpriteAnimationBuilder( FFContext context ) {
-        assetSystem = context.getSystem( AssetSystem.CONTEXT_KEY );
-        controllerSystem = context.getSystem( ControllerSystem.CONTEXT_KEY );
-        animationSystem = context.getSystem( AnimationSystem.CONTEXT_KEY );
+        assetSystem = context.getSystem( AssetSystem.SYSTEM_KEY );
+        controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
+        animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         
         reset();
     }

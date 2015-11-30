@@ -2,7 +2,6 @@ package com.inari.firefly.scene;
 
 import java.util.Iterator;
 
-import com.inari.commons.lang.TypedKey;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
@@ -18,23 +17,23 @@ import com.inari.firefly.system.component.SystemComponentBuilder;
 
 public class SceneSystem 
     extends 
-        ComponentSystem
+        ComponentSystem<SceneSystem>
     implements
         UpdateEventListener,
         RenderEventListener,
         SceneEventListener {
     
+    public final static FFSystemTypeKey<SceneSystem> SYSTEM_KEY = FFSystemTypeKey.create( SceneSystem.class );
+    
     private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Scene.TYPE_KEY
     };
-    
-    public final static TypedKey<SceneSystem> CONTEXT_KEY = TypedKey.create( "SceneSystem", SceneSystem.class );
-
     private FFContext context;
 
     private final DynArray<Scene> scenes;
     
     public SceneSystem() {
+        super( SYSTEM_KEY );
         scenes = new DynArray<Scene>();
     }
     
@@ -149,7 +148,7 @@ public class SceneSystem
         }
         
         @Override
-        public final int doBuild( int componentId, Class<?> sceneType ) {
+        public final int doBuild( int componentId, Class<?> sceneType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, sceneType.getName() );
             Scene result = getInstance( context, componentId );
             result.fromAttributes( attributes );
@@ -159,7 +158,7 @@ public class SceneSystem
     }
     
     private final class SceneBuilderHelper extends SystemBuilderAdapter<Scene> {
-        public SceneBuilderHelper( ComponentSystem system ) {
+        public SceneBuilderHelper( SceneSystem system ) {
             super( system, new SceneBuilder() );
         }
         @Override
