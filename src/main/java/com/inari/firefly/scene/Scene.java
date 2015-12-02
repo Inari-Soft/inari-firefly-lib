@@ -3,6 +3,7 @@ package com.inari.firefly.scene;
 import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -43,6 +44,11 @@ public abstract class Scene extends SystemComponent implements Disposable {
         active = false;
         paused = false;
         updateScheduler = null;
+    }
+    
+    @Override
+    public final IndexedTypeKey indexedTypeKey() {
+        return TYPE_KEY;
     }
 
     public final int getViewId() {
@@ -131,7 +137,7 @@ public abstract class Scene extends SystemComponent implements Disposable {
     }
     
     public abstract void update( long tick );
-    public abstract void render( int layerId );
+    public abstract void render();
 
 
     @Override
@@ -146,7 +152,7 @@ public abstract class Scene extends SystemComponent implements Disposable {
         super.fromAttributes( attributes );
         
         viewId = attributes.getValue( VIEW_ID, viewId );
-        layerId = attributes.getValue( LAYER_ID, viewId );
+        layerId = attributes.getValue( LAYER_ID, layerId );
         updateResolution = attributes.getValue( UPDATE_RESOLUTION, updateResolution );
         runOnce = attributes.getValue( RUN_ONCE, runOnce );
     }

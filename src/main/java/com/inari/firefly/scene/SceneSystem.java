@@ -55,21 +55,21 @@ public class SceneSystem
     
     @Override
     public void notifySceneEvent( SceneEvent event ) {
+        Scene scene = ( event.sceneName != null )? scenes.get( getSceneId( event.sceneName ) ) : scenes.get( event.sceneId );
         switch ( event.type ) {
-            case ACTIVATE : {
-                scenes.get( event.sceneId ).run( context );
+            case RUN : {
+                scene.run( context );
                 break;
             }
             case PAUSE : {
-                scenes.get( event.sceneId ).pause();
+                scene.pause();
                 break;
             }
             case RESUME : {
-                scenes.get( event.sceneId ).resume();
+                scene.resume();
                 break;
             }
             case STOP : {
-                Scene scene = scenes.get( event.sceneId );
                 scene.stop( context );
                 if ( scene.isRunOnce() ) {
                     scene.dispose( context );
@@ -78,13 +78,23 @@ public class SceneSystem
                 break;
             }
             case DELETE : {
-                scenes.get( event.sceneId ).dispose( context );
-                deleteScene( event.sceneId );
+                scene.dispose( context );
+                deleteScene( scene.getId() );
                 break;
             }
         }
     }
     
+    public final int getSceneId( String sceneName ) {
+        for ( Scene scene : scenes ) {
+            if ( sceneName.equals( scene.getName() ) ) {
+                return scene.getId();
+            }
+        }
+        
+        return -1;
+    }
+
     public final void deleteScene( int sceneId ) {
         if ( !scenes.contains( sceneId ) ) {
             return;
@@ -120,9 +130,9 @@ public class SceneSystem
         for ( Scene scene : scenes ) {
             if ( scene.isActive() && scene.getViewId() == event.getViewId() ) {
                 if ( scene.getLayerId() == event.getLayerId() ) {
-                    scene.render( event.getLayerId() );
+                    scene.render();
                 } else if ( scene.getLayerId() < 0 ) {
-                    scene.render( event.getLayerId() );
+                    scene.render();
                 }
             }
         }
