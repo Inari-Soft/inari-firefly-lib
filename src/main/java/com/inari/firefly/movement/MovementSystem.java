@@ -15,12 +15,12 @@
  ******************************************************************************/ 
 package com.inari.firefly.movement;
 
+import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.indexed.IndexedTypeAspectBuilder;
 import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.entity.ETransform;
-import com.inari.firefly.entity.Entity;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.movement.event.MoveEvent;
@@ -68,8 +68,10 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
     @Override
     public final void update( UpdateEvent event ) {
         MoveEvent moveEvent = new MoveEvent();
-        for ( Entity entity : entitySystem.entities( MOVEMENT_ASPECT ) ) {
-            IndexedTypeSet components = entitySystem.getComponents( entity.getId() );
+        IntIterator entities = entitySystem.entities( MOVEMENT_ASPECT );
+        while ( entities.hasNext() ) {
+            int entityId = entities.next();
+            IndexedTypeSet components = entitySystem.getComponents( entityId );
             EMovement movement = components.get( EMovement.TYPE_KEY );
             if ( !movement.isMoving() ) {
                 continue;
@@ -78,7 +80,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
             ETransform transform = components.get( ETransform.TYPE_KEY );
             transform.move( movement.getVelocityVector(), true );
             
-            moveEvent.add( entity.getId() );
+            moveEvent.add( entityId );
         }
         context.notify( moveEvent );
     }
