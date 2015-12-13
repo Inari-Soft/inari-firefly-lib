@@ -24,7 +24,7 @@ public class SpriteAssetBatch extends AssetBatch {
     ) {
         super( context );
         
-        AssetTypeKey typeKey = assetSystem.getAssetTypeKey( textureAssetKey );
+        AssetId typeKey = assetSystem.getAssetTypeKey( textureAssetKey );
         if ( typeKey == null || typeKey.type != TextureAsset.class ) {
             throw new IllegalArgumentException( "No texture Asset: " + textureAssetKey + " is registered within AssetSystem" );
         }
@@ -33,11 +33,11 @@ public class SpriteAssetBatch extends AssetBatch {
         createSprites( startClip, hNum, vNum, textureAssetKey.group, textureAssetKey.name );
     }
     
-    public final Collection<ImmutablePair<AssetNameKey, AssetTypeKey>> getAssetKeys() {
-        Collection<ImmutablePair<AssetNameKey, AssetTypeKey>> result = new ArrayList<ImmutablePair<AssetNameKey, AssetTypeKey>>( assets.size() );
+    public final Collection<ImmutablePair<AssetNameKey, AssetId>> getAssetKeys() {
+        Collection<ImmutablePair<AssetNameKey, AssetId>> result = new ArrayList<ImmutablePair<AssetNameKey, AssetId>>( assets.size() );
         for ( AssetNameKey assetNameKey : assets ) {
-            AssetTypeKey assetTypeKey = assetSystem.getAssetTypeKey( assetNameKey );
-            result.add( new ImmutablePair<AssetNameKey, AssetTypeKey>( assetNameKey, assetTypeKey ) );
+            AssetId assetTypeKey = assetSystem.getAssetTypeKey( assetNameKey );
+            result.add( new ImmutablePair<AssetNameKey, AssetId>( assetNameKey, assetTypeKey ) );
         }
         return result;
     }
@@ -50,7 +50,7 @@ public class SpriteAssetBatch extends AssetBatch {
     ) {
         checkBounds( startClip, hNum, vNum );
         AssetBuilder spriteAssetBuilder = assetSystem.getAssetBuilder();
-        spriteAssetBuilder.set( SpriteAsset.TEXTURE_ID, textureAsset.typeKey.id );
+        spriteAssetBuilder.set( SpriteAsset.TEXTURE_ID, textureAsset.assetId.id );
         
         for ( int y = 0; ( vNum < 0 )? y > vNum: y < vNum;  y = ( vNum < 0 )? --y : ++y ) {
             for ( int x = 0; ( hNum < 0 )? x > hNum: x < hNum;  x = ( hNum < 0 )? --x : ++x ) {

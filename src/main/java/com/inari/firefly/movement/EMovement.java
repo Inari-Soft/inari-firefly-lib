@@ -27,7 +27,7 @@ import com.inari.firefly.entity.EntityComponent;
 
 public final class EMovement extends EntityComponent {
     
-    public static final EntityComponentTypeKey TYPE_KEY = createTypeKey( EMovement.class );
+    public static final EntityComponentTypeKey<EMovement> TYPE_KEY = EntityComponentTypeKey.create( EMovement.class );
     
     public static final AttributeKey<Float> VELOCITY_X = new AttributeKey<Float>( "dx", Float.class, EMovement.class );
     public static final AttributeKey<Float> VELOCITY_Y = new AttributeKey<Float>( "dy", Float.class, EMovement.class );

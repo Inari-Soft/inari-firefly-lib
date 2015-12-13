@@ -17,7 +17,7 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> implements
     
     public static final FFSystemTypeKey<ActionSystem> SYSTEM_KEY = FFSystemTypeKey.create( ActionSystem.class );
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Action.TYPE_KEY
     };
 
@@ -34,10 +34,40 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> implements
         
         context.registerListener( ActionEvent.class, this );
     }
-
     @Override
     public final void dispose( FFContext context ) {
         context.disposeListener( ActionEvent.class, this );
+    }
+    
+    public final Action getAction( int actionId ) {
+        if ( !actions.contains( actionId ) ) {
+            return null;
+        }
+        
+        return actions.get( actionId );
+    }
+    
+    public final <A extends Action> A getActionAs( int actionId, Class<A> subType ) {
+        Action action = getAction( actionId );
+        if ( action == null ) {
+            return null;
+        }
+        
+        return subType.cast( action );
+    }
+    
+    public final int getActionId( String actionName ) {
+        if ( actionName == null ) {
+            return -1;
+        }
+        
+        for ( Action action : actions ) {
+            if ( actionName.equals( action.getName() ) ) {
+                return action.getId();
+            }
+        }
+        
+        return -1;
     }
     
     public final void deleteAction( int actionId ) {
@@ -78,7 +108,7 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> implements
     }
 
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
@@ -94,7 +124,7 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> implements
         protected ActionBuilder() {}
         
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<Action> systemComponentKey() {
             return Action.TYPE_KEY;
         }
 
@@ -119,7 +149,7 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> implements
         }
         
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<Action> componentTypeKey() {
             return Action.TYPE_KEY;
         }
         @Override
@@ -127,12 +157,21 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> implements
             return actions.get( id );
         }
         @Override
-        public void delete( int id, Class<? extends Action> subtype ) {
+        public void deleteComponent( int id, Class<? extends Action> subtype ) {
             deleteAction( id );
         }
         @Override
         public final Iterator<Action> getAll() {
             return actions.iterator();
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+            deleteAction( getActionId( name ) );
+            
+        }
+        @Override
+        public final Action get( String name, Class<? extends Action> subType ) {
+            return getAction( getActionId( name ) );
         }
     }
 

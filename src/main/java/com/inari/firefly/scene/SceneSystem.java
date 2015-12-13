@@ -25,7 +25,7 @@ public class SceneSystem
     
     public final static FFSystemTypeKey<SceneSystem> SYSTEM_KEY = FFSystemTypeKey.create( SceneSystem.class );
     
-    private static final SystemComponentKey[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
+    private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Scene.TYPE_KEY
     };
     private FFContext context;
@@ -85,6 +85,23 @@ public class SceneSystem
         }
     }
     
+    public final Scene getScene( int sceneId ) {
+        if ( !scenes.contains( sceneId ) ) {
+            return null;
+        }
+        
+        return scenes.get( sceneId );
+    }
+    
+    public final <S extends Scene> S getSceneAs( int sceneId, Class<S> subType ) {
+        Scene scene = getScene( sceneId ); 
+        if ( scene == null ) {
+            return null;
+        }
+        
+        return subType.cast( scene );
+    }
+    
     public final int getSceneId( String sceneName ) {
         for ( Scene scene : scenes ) {
             if ( sceneName.equals( scene.getName() ) ) {
@@ -139,7 +156,7 @@ public class SceneSystem
     }
 
     @Override
-    public final SystemComponentKey[] supportedComponentTypes() {
+    public final SystemComponentKey<?>[] supportedComponentTypes() {
         return SUPPORTED_COMPONENT_TYPES;
     }
 
@@ -153,7 +170,7 @@ public class SceneSystem
     public final class SceneBuilder extends SystemComponentBuilder {
 
         @Override
-        public final SystemComponentKey systemComponentKey() {
+        public final SystemComponentKey<Scene> systemComponentKey() {
             return Scene.TYPE_KEY;
         }
         
@@ -172,7 +189,7 @@ public class SceneSystem
             super( system, new SceneBuilder() );
         }
         @Override
-        public final SystemComponentKey componentTypeKey() {
+        public final SystemComponentKey<Scene> componentTypeKey() {
             return Scene.TYPE_KEY;
         }
         @Override
@@ -180,12 +197,22 @@ public class SceneSystem
             return scenes.get( id );
         }
         @Override
-        public final void delete( int id, Class<? extends Scene> subtype ) {
+        public final void deleteComponent( int id, Class<? extends Scene> subtype ) {
             deleteScene( id );
         }
         @Override
         public final Iterator<Scene> getAll() {
             return scenes.iterator();
+        }
+        @Override
+        public final void deleteComponent( String name ) {
+           deleteScene( getSceneId( name ) );
+            
+        }
+        @Override
+        public final Scene get( String name, Class<? extends Scene> subType ) {
+            // TODO Auto-generated method stub
+            return getScene( getSceneId( name ) );
         }
     }
 

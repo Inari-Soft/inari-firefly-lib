@@ -13,7 +13,7 @@ import com.inari.firefly.system.component.SystemComponent;
 
 public abstract class Scene extends SystemComponent implements Disposable {
     
-    public static final SystemComponentKey TYPE_KEY = SystemComponentKey.create( Scene.class );
+    public static final SystemComponentKey<Scene> TYPE_KEY = SystemComponentKey.create( Scene.class );
     
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, Scene.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, Scene.class );

@@ -11,7 +11,7 @@ import com.inari.firefly.Loadable;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.asset.AssetTypeKey;
+import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
@@ -150,7 +150,7 @@ public final class SpriteAnimationBuilder {
     
     public final class SpriteAnimationHandler implements Loadable, Disposable {
         
-        private final AssetTypeKey textureKey;
+        private final AssetId textureKey;
         private final String assetGroup;
         private final String assetNamePrefix;
         private final boolean isLooping;
@@ -252,9 +252,9 @@ public final class SpriteAnimationBuilder {
                     .set( SpriteAsset.TEXTURE_REGION, value.textureRegion )
                     .set( SpriteAsset.TEXTURE_ID, textureKey.id )
                 .build( SpriteAsset.class );
-                SpriteAsset spriteAsset = assetSystem.getAsset( new AssetTypeKey( spriteId, SpriteAsset.class ), SpriteAsset.class );
+                SpriteAsset spriteAsset = assetSystem.getAsset( new AssetId( spriteId, SpriteAsset.class ), SpriteAsset.class );
                 
-                value.assetTypeKey = spriteAsset.getTypeKey();
+                value.assetTypeKey = spriteAsset.getAssetId();
                 animTimeline.add( spriteAsset.getId(), value.time );
                 count++;
             }
@@ -272,8 +272,8 @@ public final class SpriteAnimationBuilder {
                 .getSpriteAnimationTimeline().setFrameTime( timeInMillis );
         }
         
-        public final Collection<AssetTypeKey> getAllSpriteAssetKeys() {
-            ArrayList<AssetTypeKey> result = new ArrayList<AssetTypeKey>();
+        public final Collection<AssetId> getAllSpriteAssetKeys() {
+            ArrayList<AssetId> result = new ArrayList<AssetId>();
             for ( AnimationData animData : data ) {
                 for ( AnimationValue value : animData.values ) {
                     result.add( value.assetTypeKey );
@@ -284,7 +284,7 @@ public final class SpriteAnimationBuilder {
         
         @Override
         public Disposable load( FFContext context ) {
-            for ( AssetTypeKey key : getAllSpriteAssetKeys() ) {
+            for ( AssetId key : getAllSpriteAssetKeys() ) {
                 assetSystem.loadAsset( key );
             }
             return this;
@@ -322,7 +322,7 @@ public final class SpriteAnimationBuilder {
         final long time;
         final Rectangle textureRegion;
         
-        AssetTypeKey assetTypeKey;
+        AssetId assetTypeKey;
         
         private AnimationValue( long time, Rectangle textureRegion ) {
             super();
