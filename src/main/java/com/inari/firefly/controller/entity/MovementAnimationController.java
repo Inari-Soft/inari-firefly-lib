@@ -25,7 +25,7 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.movement.EMovement;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 
 public class MovementAnimationController extends EntityController {
     

@@ -3,9 +3,9 @@ package com.inari.firefly.scene;
 import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
 import com.inari.firefly.system.UpdateEvent;

@@ -3,11 +3,11 @@ package com.inari.firefly.action;
 import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.action.event.ActionEvent;
 import com.inari.firefly.action.event.ActionEventListener;
 import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;

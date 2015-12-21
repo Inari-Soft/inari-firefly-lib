@@ -24,7 +24,7 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.renderer.sprite.ESprite;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 
 public class SpriteIdAnimationController extends EntityController {
     

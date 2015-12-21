@@ -9,7 +9,7 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFTimer;
+import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewController;
 

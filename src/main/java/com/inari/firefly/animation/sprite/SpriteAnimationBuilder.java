@@ -7,6 +7,7 @@ import java.util.List;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.Loadable;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.asset.AssetNameKey;
@@ -17,7 +18,6 @@ import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
 import com.inari.firefly.renderer.sprite.SpriteAsset;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.FFInitException;
 
 public final class SpriteAnimationBuilder {
     
