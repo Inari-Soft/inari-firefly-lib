@@ -16,11 +16,6 @@ public abstract class Action extends SystemComponent implements FFContextInitiab
     public final IndexedTypeKey indexedTypeKey() {
         return TYPE_KEY;
     }
-
-    @Override
-    public final Class<Action> indexedObjectType() {
-        return Action.class;
-    }
     
     public abstract void performAction( int entityId );
 }
