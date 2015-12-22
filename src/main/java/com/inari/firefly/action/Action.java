@@ -18,11 +18,6 @@ public abstract class Action extends SystemComponent implements FFContextInitiab
     }
 
     @Override
-    public final Class<Action> componentType() {
-        return Action.class;
-    }
-
-    @Override
     public final Class<Action> indexedObjectType() {
         return Action.class;
     }

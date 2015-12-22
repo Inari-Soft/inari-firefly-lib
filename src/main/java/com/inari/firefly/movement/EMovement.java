@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Vector2f;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -71,11 +70,6 @@ public final class EMovement extends EntityComponent {
 
     public final boolean isMoving() {
         return ( velocityVector.dx != 0 || velocityVector.dy != 0 );
-    }
-    
-    @Override
-    public final Class<? extends Component> componentType() {
-        return EMovement.class;
     }
 
     @Override
