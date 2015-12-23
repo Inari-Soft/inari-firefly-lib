@@ -1,18 +1,16 @@
 package com.inari.firefly.animation.sprite;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.Loadable;
 import com.inari.firefly.animation.AnimationSystem;
-import com.inari.firefly.asset.AssetNameKey;
 import com.inari.firefly.asset.AssetSystem;
-import com.inari.firefly.asset.AssetId;
 import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
@@ -25,9 +23,8 @@ public final class SpriteAnimationBuilder {
     private final ControllerSystem controllerSystem;
     private final AnimationSystem animationSystem;
     
-    private AssetNameKey textureAssetKey;
+    private String textureAssetName;
     private String namePrefix;
-    private String group;
     private AnimationData singleData;
     private DynArray<AnimationData> statedData;
     private Class<? extends StatedSpriteAnimation> statedAnimationType;
@@ -50,24 +47,18 @@ public final class SpriteAnimationBuilder {
         singleData = new AnimationData( -1 );
         currentData = singleData;
         namePrefix = null;
-        group = null;
         statedData = null;
         looping  = false;
         return this;
     }
 
-    public final SpriteAnimationBuilder setTextureAssetKey( AssetNameKey textureAssetKey ) {
-        this.textureAssetKey = textureAssetKey;
+    public final SpriteAnimationBuilder setTextureAssetName( String textureAssetName ) {
+        this.textureAssetName = textureAssetName;
         return this;
     }
     
     public final SpriteAnimationBuilder setNamePrefix( String namePrefix ) {
         this.namePrefix = namePrefix;
-        return this;
-    }
-
-    public final SpriteAnimationBuilder setGroup( String group ) {
-        this.group = group;
         return this;
     }
 
@@ -111,7 +102,7 @@ public final class SpriteAnimationBuilder {
     }
     
     public final SpriteAnimationBuilder addSpriteToAnimation( long time, Rectangle textureRegion ) {
-        if ( textureAssetKey == null ) {
+        if ( textureAssetName == null ) {
             throw new FFInitException( "The textureAssetKey has to be set first" );
         }
         
@@ -120,7 +111,7 @@ public final class SpriteAnimationBuilder {
     }
     
     public final SpriteAnimationBuilder addSpritesToAnimation( long time, Rectangle textureRegion, int number, boolean horizontal ) {
-        if ( textureAssetKey == null ) {
+        if ( textureAssetName == null ) {
             throw new FFInitException( "The textureAssetKey has to be set first" );
         }
 
@@ -150,8 +141,7 @@ public final class SpriteAnimationBuilder {
     
     public final class SpriteAnimationHandler implements Loadable, Disposable {
         
-        private final AssetId textureKey;
-        private final String assetGroup;
+        private final int textureId;
         private final String assetNamePrefix;
         private final boolean isLooping;
         private final float resolution; 
@@ -163,13 +153,12 @@ public final class SpriteAnimationBuilder {
         private int animationId;
         
         SpriteAnimationHandler() {
-            textureKey = assetSystem.getAssetTypeKey( textureAssetKey );
-            if ( textureKey == null ) {
-                throw new FFInitException( "No AssetTypeKey found" );
+            textureId = assetSystem.getAssetId( textureAssetName );
+            if ( textureId < 0 ) {
+                throw new FFInitException( "No loaded Texture found for name: " + textureAssetName );
             }
             
-            assetGroup = ( group == null )? textureAssetKey.group : group;
-            assetNamePrefix = ( namePrefix == null )? textureAssetKey.name : namePrefix;
+            assetNamePrefix = ( namePrefix == null )? textureAssetName : namePrefix;
             isLooping = looping;
             resolution = updateResolution;
             startTime = animationStartTime;
@@ -183,7 +172,7 @@ public final class SpriteAnimationBuilder {
                 statedType = null;
                 data.add( new AnimationData( singleData ) );
             }
-
+            
             create();
         }
         
@@ -246,16 +235,16 @@ public final class SpriteAnimationBuilder {
 
         private int createTimeline( int count, AnimationData animData, SpriteAnimationTimeline animTimeline ) {
             for ( AnimationValue value : animData.values ) {
-                int spriteId = assetSystem.getAssetBuilder()
+                int spriteAssetId = assetSystem.getAssetBuilder()
                     .set( SpriteAsset.NAME, assetNamePrefix + "_" + count )
-                    .set( SpriteAsset.ASSET_GROUP, assetGroup )
                     .set( SpriteAsset.TEXTURE_REGION, value.textureRegion )
-                    .set( SpriteAsset.TEXTURE_ID, textureKey.id )
-                .build( SpriteAsset.class );
-                SpriteAsset spriteAsset = assetSystem.getAsset( new AssetId( spriteId, SpriteAsset.class ), SpriteAsset.class );
+                    .set( SpriteAsset.TEXTURE_ASSET_ID, textureId )
+                .activate( SpriteAsset.class );
+                SpriteAsset spriteAsset = assetSystem.getAssetAs( spriteAssetId, SpriteAsset.class );
                 
-                value.assetTypeKey = spriteAsset.getAssetId();
-                animTimeline.add( spriteAsset.getId(), value.time );
+                value.assetId = spriteAsset.getId();
+                value.spriteId = spriteAsset.getSpriteId();
+                animTimeline.add( spriteAsset.getSpriteId(), value.time );
                 count++;
             }
             
@@ -272,21 +261,8 @@ public final class SpriteAnimationBuilder {
                 .getSpriteAnimationTimeline().setFrameTime( timeInMillis );
         }
         
-        public final Collection<AssetId> getAllSpriteAssetKeys() {
-            ArrayList<AssetId> result = new ArrayList<AssetId>();
-            for ( AnimationData animData : data ) {
-                for ( AnimationValue value : animData.values ) {
-                    result.add( value.assetTypeKey );
-                }
-            }
-            return result;
-        }
-        
         @Override
         public Disposable load( FFContext context ) {
-            for ( AssetId key : getAllSpriteAssetKeys() ) {
-                assetSystem.loadAsset( key );
-            }
             return this;
         }
 
@@ -294,7 +270,26 @@ public final class SpriteAnimationBuilder {
         public final void dispose( FFContext context ) {
             animationSystem.deleteAnimation( animationId );
             controllerSystem.deleteController( controllerId );
-            assetSystem.deleteAssets( assetGroup );
+            
+            for ( AnimationData animData : data ) {
+                for ( AnimationValue value : animData.values ) {
+                    assetSystem.disposeAsset( value.assetId );
+                }
+            }
+        }
+
+        public final IntBag getAllSpriteAssetKeys() {
+            IntBag result = new IntBag( data.size(), -1 );
+            for ( AnimationData animData : data ) {
+                for ( AnimationValue value : animData.values ) {
+                    result.add( value.assetId );
+                }
+            }
+            return result;
+        }
+
+        public Integer getStartSpriteId() {
+            return data.iterator().next().values.iterator().next().spriteId;
         }
 
     }
@@ -322,7 +317,8 @@ public final class SpriteAnimationBuilder {
         final long time;
         final Rectangle textureRegion;
         
-        AssetId assetTypeKey;
+        int assetId;
+        int spriteId;
         
         private AnimationValue( long time, Rectangle textureRegion ) {
             super();

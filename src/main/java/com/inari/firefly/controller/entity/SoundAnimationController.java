@@ -136,9 +136,9 @@ public final class SoundAnimationController extends SoundController {
         
         if ( volumeAnimationId >= 0 || pitchAnimationId >= 0 || panAnimationId >= 0 ) {
             if ( sound.isStreaming() ) {
-                audio.changeMusic( sound.getAssetId(), sound.getVolume(), sound.getPan() );
+                audio.changeMusic( sound.getSoundId(), sound.getVolume(), sound.getPan() );
             } else {
-                audio.changeSound( sound.getAssetId(), sound.getInstanceId(), sound.getVolume(), sound.getPitch(), sound.getPan() );
+                audio.changeSound( sound.getSoundId(), sound.getInstanceId(), sound.getVolume(), sound.getPitch(), sound.getPan() );
             }
         }
     }

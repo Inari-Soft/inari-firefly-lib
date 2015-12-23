@@ -193,11 +193,11 @@ public class SceneSystem
             return Scene.TYPE_KEY;
         }
         @Override
-        public final Scene get( int id, Class<? extends Scene> subtype ) {
+        public final Scene getComponent( int id ) {
             return scenes.get( id );
         }
         @Override
-        public final void deleteComponent( int id, Class<? extends Scene> subtype ) {
+        public final void deleteComponent( int id ) {
             deleteScene( id );
         }
         @Override
@@ -210,8 +210,7 @@ public class SceneSystem
             
         }
         @Override
-        public final Scene get( String name, Class<? extends Scene> subType ) {
-            // TODO Auto-generated method stub
+        public final Scene getComponent( String name ) {
             return getScene( getSceneId( name ) );
         }
     }

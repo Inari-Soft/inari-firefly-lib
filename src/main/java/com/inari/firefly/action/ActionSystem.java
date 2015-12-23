@@ -153,11 +153,11 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> implements
             return Action.TYPE_KEY;
         }
         @Override
-        public Action get( int id, Class<? extends Action> subtype ) {
+        public final Action getComponent( int id ) {
             return actions.get( id );
         }
         @Override
-        public void deleteComponent( int id, Class<? extends Action> subtype ) {
+        public void deleteComponent( int id ) {
             deleteAction( id );
         }
         @Override
@@ -170,7 +170,7 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> implements
             
         }
         @Override
-        public final Action get( String name, Class<? extends Action> subType ) {
+        public final Action getComponent( String name ) {
             return getAction( getActionId( name ) );
         }
     }
