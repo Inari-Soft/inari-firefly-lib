@@ -22,7 +22,7 @@ import java.util.Set;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
-import com.inari.firefly.renderer.sprite.ESprite;
+import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
