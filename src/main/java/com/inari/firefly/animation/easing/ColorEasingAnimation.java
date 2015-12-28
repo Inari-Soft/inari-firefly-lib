@@ -1,9 +1,10 @@
-package com.inari.firefly.animation;
+package com.inari.firefly.animation.easing;
 
 import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.graphics.RGBColor;
+import com.inari.firefly.animation.ValueAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.external.FFTimer;

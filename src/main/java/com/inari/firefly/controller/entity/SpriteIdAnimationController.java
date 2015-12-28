@@ -15,77 +15,27 @@
  ******************************************************************************/ 
 package com.inari.firefly.controller.entity;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.entity.EntityController;
+import com.inari.firefly.entity.EntityAttributeController;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
-public class SpriteIdAnimationController extends EntityController {
-    
-    public static final AttributeKey<?>[] CONTROLLED_ATTRIBUTES = new AttributeKey[] {
-        ESprite.SPRITE_ID
-    };
-    
-    public static final AttributeKey<Integer> SPRITE_ID_ANIMATION_ID = new AttributeKey<Integer>( "spriteAnimationId", Integer.class, SpriteIdAnimationController.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
-        SPRITE_ID_ANIMATION_ID,
-    };
-    
-    private int spriteAnimationId;
-    
+public final class SpriteIdAnimationController extends EntityAttributeController {
+
     SpriteIdAnimationController( int id, FFContext context ) {
         super( id, context );
-        
-        spriteAnimationId = -1;
-    }
-
-    public final int getSpriteAnimationId() {
-        return spriteAnimationId;
-    }
-
-    public final void setSpriteAnimationId( int spriteAnimationId ) {
-        this.spriteAnimationId = spriteAnimationId;
-    }
-    
-    @Override
-    public final AttributeKey<?>[] getControlledAttribute() {
-        return CONTROLLED_ATTRIBUTES;
-    }
-    
-    @Override
-    public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( new HashSet<AttributeKey<?>>( Arrays.asList( ATTRIBUTE_KEYS ) ) );
-        return attributeKeys;
     }
 
     @Override
-    public final void fromAttributes( AttributeMap attributes ) {
-        super.fromAttributes( attributes );
-        
-        spriteAnimationId = attributes.getValue( SPRITE_ID_ANIMATION_ID, spriteAnimationId );
+    public final AttributeKey<?> getControlledAttribute() {
+        return ESprite.SPRITE_ID;
     }
-
-    @Override
-    public final void toAttributes( AttributeMap attributes ) {
-        super.toAttributes( attributes );
-        
-        attributes.put( SPRITE_ID_ANIMATION_ID, spriteAnimationId );
-    } 
 
     @Override
     protected final void update( final FFTimer timer, int entityId ) {
         ESprite sprite = context.getEntityComponent( entityId, ESprite.TYPE_KEY );
-
-        if ( spriteAnimationId >= 0 ) {
-            sprite.setSpriteId( animationSystem.getValue( spriteAnimationId, entityId, sprite.getSpriteId() ) );
-        }
+        sprite.setSpriteId( animationSystem.getValue( animationId, entityId, sprite.getSpriteId() ) );
     }
 
 }

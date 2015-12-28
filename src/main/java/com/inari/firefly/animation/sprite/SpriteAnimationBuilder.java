@@ -201,7 +201,7 @@ public final class SpriteAnimationBuilder {
                 
                 controllerId = controllerSystem.getControllerBuilder()
                     .set( SpriteIdAnimationController.NAME, assetNamePrefix )
-                    .set( SpriteIdAnimationController.SPRITE_ID_ANIMATION_ID, animationId )
+                    .set( SpriteIdAnimationController.ANIMATION_ID, animationId )
                     .set( SpriteIdAnimationController.UPDATE_RESOLUTION, resolution )
                 .build( SpriteIdAnimationController.class );
                 
@@ -227,7 +227,7 @@ public final class SpriteAnimationBuilder {
                 
                 controllerId = controllerSystem.getControllerBuilder()
                     .set( SpriteIdAnimationController.NAME, assetNamePrefix )
-                    .set( SpriteIdAnimationController.SPRITE_ID_ANIMATION_ID, animationId )
+                    .set( SpriteIdAnimationController.ANIMATION_ID, animationId )
                     .set( SpriteIdAnimationController.UPDATE_RESOLUTION, resolution )
                 .build( SpriteIdAnimationController.class );
             }

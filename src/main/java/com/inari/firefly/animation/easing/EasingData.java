@@ -1,4 +1,4 @@
-package com.inari.firefly.animation;
+package com.inari.firefly.animation.easing;
 
 import com.inari.commons.geom.Easing;
 import com.inari.commons.geom.Easing.Type;

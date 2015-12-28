@@ -3,7 +3,7 @@ package com.inari.firefly.animation.sprite;
 import com.inari.commons.StringUtils;
 import com.inari.commons.config.StringConfigurable;
 
-public final class SpriteIdTimePair implements StringConfigurable{
+public final class SpriteIdTimePair implements StringConfigurable {
     
     int spriteId;
     long time;
