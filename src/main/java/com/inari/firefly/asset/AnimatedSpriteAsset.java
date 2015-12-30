@@ -112,24 +112,25 @@ public class AnimatedSpriteAsset extends Asset {
         
         checkConsistency();
         int textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstaceId( textureAssetId );
-        Map<Integer, List<IntTimelineData>> spriteMapping = createSpriteMapping( textureId );
+        Map<String, List<IntTimelineData>> spriteMapping = createSpriteMapping( textureId );
         
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         AnimationBuilder animationBuilder = animationSystem.getAnimationBuilder();
         
-        int[][] stateAnimationMapping = new int[ spriteMapping.size() ][ 2 ];
+        String[][] stateAnimationNameMapping = new String[ spriteMapping.size() ][ 2 ];
         int index = 0;
-        for ( Integer stateId : spriteMapping.keySet() ) {
-            List<IntTimelineData> timeLineDataList = spriteMapping.get( stateId );
-            int animationId = animationBuilder
-                .set( IntTimelineAnimation.NAME, getName() + ANIMATION_NAME_PREFIX + ( ( stateId.intValue() >= 0 )? stateId.intValue() : "" ) )
+        for ( String stateName : spriteMapping.keySet() ) {
+            List<IntTimelineData> timeLineDataList = spriteMapping.get( stateName );
+            String animationName = getName() + ANIMATION_NAME_PREFIX + stateName;
+            animationBuilder
+                .set( IntTimelineAnimation.NAME, animationName )
                 .set( IntTimelineAnimation.LOOPING, looping )
                 .set( IntTimelineAnimation.TIMELINE, timeLineDataList.toArray( new IntTimelineData[ timeLineDataList.size() ] ) )
             .activate( IntTimelineAnimation.class );
             
-            stateAnimationMapping[ index ][ 0 ] = stateId;
-            stateAnimationMapping[ index ][ 1 ] = animationId;
+            stateAnimationNameMapping[ index ][ 0 ] = stateName;
+            stateAnimationNameMapping[ index ][ 1 ] = animationName;
             index++;
         }
         
@@ -138,13 +139,13 @@ public class AnimatedSpriteAsset extends Asset {
             animationResolverId = animationSystem.getAnimationResolverBuilder()
                 .set( WorkflowAnimationResolver.NAME, getName() + ANIMATION_RESOLVER_NAME )
                 .set( WorkflowAnimationResolver.WORKFLOW_ID, workflowId )
-                .set( WorkflowAnimationResolver.STATE_ANIMATION_MAPPING, stateAnimationMapping )
+                .set( WorkflowAnimationResolver.STATE_ANIMATION_NAME_MAPPING, stateAnimationNameMapping )
             .build( WorkflowAnimationResolver.class );
         }
         
         controllerId = controllerSystem.getControllerBuilder()
             .set( SpriteIdAnimationController.NAME, getName() + ANIMATION_CONTROLLER_NAME )
-            .set( SpriteIdAnimationController.ANIMATION_ID, stateAnimationMapping[ 0 ][ 1 ] )
+            .set( SpriteIdAnimationController.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping[ 0 ][ 1 ] ) )
             .set( SpriteIdAnimationController.ANIMATION_RESOLVER_ID, animationResolverId )
             .set( SpriteIdAnimationController.UPDATE_RESOLUTION, updateResolution )
         .build( SpriteIdAnimationController.class );
@@ -168,25 +169,24 @@ public class AnimatedSpriteAsset extends Asset {
                 WorkflowAnimationResolver.class
             );
 
-            int[][] stateAnimationMapping = resolver.getStateAnimationMapping();
+            String[][] stateAnimationMapping = resolver.getStateAnimationNameMapping();
             animationSystem.deleteAnimationResolver( resolver.getId() );
             
             for ( int i = 0; i < stateAnimationMapping.length; i++ ) {
                 deleteAnimation( stateAnimationMapping[ index ][ 1 ] );
             }
         } else {
-            int animationId = animationSystem.getAnimationId( getName() + ANIMATION_NAME_PREFIX );
-            deleteAnimation( animationId );
+            deleteAnimation( getName() + ANIMATION_NAME_PREFIX );
         }
         
         controllerId = -1;
     }
 
-    private void deleteAnimation( int animationId ) {
+    private void deleteAnimation( String animationName ) {
         FFGraphics graphics = context.getGraphics();
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         
-        IntTimelineAnimation animation = animationSystem.getAnimationAs( animationId, IntTimelineAnimation.class );
+        IntTimelineAnimation animation = animationSystem.getAnimationAs( animationName, IntTimelineAnimation.class );
         IntTimelineData[] timeline = animation.getTimeline();
         animationSystem.deleteAnimation( animation.getId() );
         
@@ -204,16 +204,19 @@ public class AnimatedSpriteAsset extends Asset {
         }
     }
     
-    private Map<Integer, List<IntTimelineData>> createSpriteMapping( int textureId ) {
-        Map<Integer, List<IntTimelineData>> mapping = new HashMap<Integer, List<IntTimelineData>>();
+    private Map<String, List<IntTimelineData>> createSpriteMapping( int textureId ) {
+        Map<String, List<IntTimelineData>> mapping = new HashMap<String, List<IntTimelineData>>();
         
         FFGraphics graphics = context.getGraphics();
         for ( int i = 0; i < animatedSpriteData.length; i++ ) {
-            Integer stateId = animatedSpriteData[ i ].stateId;
-            List<IntTimelineData> timelineData = mapping.get( stateId );
+            String stateName = animatedSpriteData[ i ].stateName;
+            if ( stateName == null ) {
+                stateName = "";
+            }
+            List<IntTimelineData> timelineData = mapping.get( stateName );
             if ( timelineData == null ) {
                 timelineData = new ArrayList<IntTimelineData>();
-                mapping.put( stateId, timelineData );
+                mapping.put( stateName, timelineData );
             }
             
             int spriteId = graphics.createSprite( textureId, animatedSpriteData[ i ].textureRegion );
@@ -226,8 +229,7 @@ public class AnimatedSpriteAsset extends Asset {
         if ( workflowId < 0 && mapping.size() > 1 ) {
             throw new FFInitException( "AnimatedSpriteData mapping missmatch. Not workflow based but states defined within AnimatedSpriteData" );
         }
-   
-        
+
         return mapping;
     }
 

@@ -15,17 +15,16 @@ import com.inari.firefly.system.FFContext;
 public final class WorkflowAnimationResolver extends AnimationResolver implements WorkflowEventListener {
     
     public static final AttributeKey<Integer> WORKFLOW_ID = new AttributeKey<Integer>( "workflowId", Integer.class, WorkflowAnimationResolver.class );
-    public static final AttributeKey<int[][]> STATE_ANIMATION_MAPPING = new AttributeKey<int[][]>( "stateAnimationMapping", int[][].class, WorkflowAnimationResolver.class );
     public static final AttributeKey<String[][]> STATE_ANIMATION_NAME_MAPPING = new AttributeKey<String[][]>( "stateAnimationNameMapping", String[][].class, WorkflowAnimationResolver.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         WORKFLOW_ID,
-        STATE_ANIMATION_MAPPING,
+        STATE_ANIMATION_NAME_MAPPING,
     };
     
     private FFContext context;
     
     private int workflowId;
-    private int[][] stateAnimationMapping;
+    private String[][] stateAnimationNameMapping;
     
     private int animationId;
 
@@ -45,31 +44,36 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
         this.workflowId = workflowId;
     }
 
-    public final int[][] getStateAnimationMapping() {
-        return stateAnimationMapping;
+    public final String[][] getStateAnimationNameMapping() {
+        return stateAnimationNameMapping;
     }
 
-    public final void setStateAnimationMapping( int[][] stateAnimationMapping ) {
-        this.stateAnimationMapping = stateAnimationMapping;
+    public final void setStateAnimationNameMapping( String[][] stateAnimationNameMapping ) {
+        this.stateAnimationNameMapping = stateAnimationNameMapping;
     }
 
-    public final int getMappedAnimationId( int stateId ) {
-        int stateIdIndex = getStateIdIndex( stateId );
-        if ( stateIdIndex < 0 ) {
+    public final int getMappedAnimationId( String stateName ) {
+        if ( stateName == null ) {
             return -1;
         }
         
-        return stateAnimationMapping[ stateIdIndex ][ 1 ];
+        for ( int i = 0; i < stateAnimationNameMapping.length; i++ ) {
+            if ( stateName.equals( stateAnimationNameMapping[ i ][ 0 ] ) ) {
+                return context.getSystem( AnimationSystem.SYSTEM_KEY ).getAnimationId( stateAnimationNameMapping[ i ][ 1 ] );
+            }
+        }
+        
+        return -1;
     }
     
     @Override
     public final void onEvent( WorkflowEvent event ) {
-        if ( workflowId != event.workflowId ) {
+        if ( workflowId != event.workflowId || event.type != WorkflowEvent.Type.STATE_CHANGED  ) {
             return;
         }
         
         int oldAnimationId = animationId;
-        animationId = getMappedAnimationId( event.targetStateId );
+        animationId = getMappedAnimationId( event.targetStateName );
         if ( oldAnimationId == animationId ) {
             return;
         } 
@@ -81,7 +85,7 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
     @Override
     public final int getAnimationId() {
         if ( animationId < 0 ) {
-            animationId = getMappedAnimationId( context.getSystem( StateSystem.SYSTEM_KEY ).getCurrentStateId( workflowId ) );
+            animationId = getMappedAnimationId( context.getSystem( StateSystem.SYSTEM_KEY ).getCurrentState( workflowId ) );
             context.notify( new AnimationEvent( Type.START_ANIMATION, animationId ) );
         }
         return animationId;
@@ -99,18 +103,7 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
         super.fromAttributes( attributes );
         
         workflowId = attributes.getValue( WORKFLOW_ID, workflowId );
-        if ( attributes.contains( STATE_ANIMATION_MAPPING ) ) {
-            stateAnimationMapping = attributes.getValue( STATE_ANIMATION_MAPPING, stateAnimationMapping );
-        } else {
-            StateSystem stateSystem = context.getSystem( StateSystem.SYSTEM_KEY );
-            AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
-            String[][] nameMapping = attributes.getValue( STATE_ANIMATION_NAME_MAPPING );
-            stateAnimationMapping = new int[ nameMapping.length ][ 2 ];
-            for ( int i = 0; i < nameMapping.length; i++ ) {
-                stateAnimationMapping[ i ][ 0 ] = stateSystem.getStateId( nameMapping[ i ][ 0 ] );
-                stateAnimationMapping[ i ][ 1 ] = animationSystem.getAnimationId( nameMapping[ i ][ 1 ] );
-            }
-        }
+        stateAnimationNameMapping = attributes.getValue( STATE_ANIMATION_NAME_MAPPING, stateAnimationNameMapping );
     }
 
     @Override
@@ -118,23 +111,13 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
         super.toAttributes( attributes );
         
         attributes.put( WORKFLOW_ID, workflowId );
-        attributes.put( STATE_ANIMATION_MAPPING, stateAnimationMapping );
+        attributes.put( STATE_ANIMATION_NAME_MAPPING, stateAnimationNameMapping );
     }
 
     @Override
     public final void dispose() {
         context.disposeListener( WorkflowEvent.class, this );
         super.dispose();
-    }
-    
-    private int getStateIdIndex( int stateId ) {
-        for ( int i = 0; i < stateAnimationMapping.length; i++ ) {
-            if ( stateId == stateAnimationMapping[ i ][ 0 ] ) {
-                return i;
-            }
-        }
-        
-        return -1;
     }
 
 }
