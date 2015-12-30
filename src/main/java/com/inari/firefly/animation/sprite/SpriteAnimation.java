@@ -63,6 +63,11 @@ public class SpriteAnimation extends IntAnimation {
             active = false;
         }
     }
+    
+    @Override
+    public final int getInitValue() {
+        return getValue( -1, -1 );
+    }
 
     @Override
     public int getValue( int component, int currentValue ) {

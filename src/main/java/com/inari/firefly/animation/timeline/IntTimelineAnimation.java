@@ -59,6 +59,15 @@ public final class IntTimelineAnimation extends IntAnimation {
             } 
         } 
     }
+    
+    @Override
+    public final int getInitValue() {
+        if ( timeline == null || timeline.length < 1 ) {
+            return -1;
+        }
+        
+        return getValue( -1, -1 );
+    }
 
     @Override
     public final int getValue( int component, int currentValue ) {

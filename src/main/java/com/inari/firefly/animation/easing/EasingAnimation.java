@@ -76,6 +76,11 @@ public final class EasingAnimation extends FloatAnimation {
             }
         }
     }
+    
+    @Override
+    public final float getInitValue() {
+        return easingData.getStartValue();
+    }
 
     @Override
     public final float getValue( int componentId, float currentValue ) {

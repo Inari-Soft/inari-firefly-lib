@@ -66,6 +66,11 @@ public class ColorEasingAnimation extends ValueAnimation<RGBColor> {
     }
     
     @Override
+    public final RGBColor getInitValue() {
+        return getValue( -1, new RGBColor() );
+    }
+    
+    @Override
     public RGBColor getValue( int componentId, RGBColor currentValue ) {
         currentValue.r = calc( easingDataRed, currentValue.r );
         currentValue.g = calc( easingDataGreen, currentValue.g );

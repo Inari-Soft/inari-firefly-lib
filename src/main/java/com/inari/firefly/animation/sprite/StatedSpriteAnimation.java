@@ -91,6 +91,15 @@ public abstract class StatedSpriteAnimation extends IntAnimation {
             active = false;
         }
     }
+    
+    @Override
+    public final int getInitValue() {
+        if ( spriteAnimationTimelines == null || spriteAnimationTimelines.size() < 1 ) {
+            return -1;
+        }
+        
+        return spriteAnimationTimelines.get( 0 ).getSpriteId();
+    }
 
     @Override
     public final int getValue( int entityId, int currentValue ) {

@@ -15,8 +15,10 @@
  ******************************************************************************/ 
 package com.inari.firefly.controller.entity;
 
+import com.inari.firefly.animation.IntAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.entity.EntityAttributeController;
+import com.inari.firefly.entity.EntityAttributeMap;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
@@ -30,6 +32,14 @@ public final class SpriteIdAnimationController extends EntityAttributeController
     @Override
     public final AttributeKey<?> getControlledAttribute() {
         return ESprite.SPRITE_ID;
+    }
+
+    @Override
+    public final void initEntity( EntityAttributeMap attributes ) {
+        animationId = animationSystem.getAnimationId( animationResolverId, animationId );
+        IntAnimation animation = animationSystem.getAnimationAs( animationId, IntAnimation.class );
+        int value = animation.getInitValue();
+        attributes.put( ESprite.SPRITE_ID, value );
     }
 
     @Override
