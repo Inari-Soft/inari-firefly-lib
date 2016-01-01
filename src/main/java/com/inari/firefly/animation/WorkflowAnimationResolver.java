@@ -85,7 +85,8 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
     @Override
     public final int getAnimationId() {
         if ( animationId < 0 ) {
-            animationId = getMappedAnimationId( context.getSystem( StateSystem.SYSTEM_KEY ).getCurrentState( workflowId ) );
+            String currentState = context.getSystem( StateSystem.SYSTEM_KEY ).getCurrentState( workflowId );
+            animationId = getMappedAnimationId( currentState );
             context.notify( new AnimationEvent( Type.START_ANIMATION, animationId ) );
         }
         return animationId;
