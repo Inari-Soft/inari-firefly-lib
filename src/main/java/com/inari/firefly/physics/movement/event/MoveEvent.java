@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.movement.event;
+package com.inari.firefly.physics.movement.event;
 
 import com.inari.commons.event.Event;
 import com.inari.commons.lang.list.IntBag;

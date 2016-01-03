@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.movement;
+package com.inari.firefly.physics.movement;
 
 import java.util.Arrays;
 import java.util.HashSet;

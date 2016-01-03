@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.movement;
+package com.inari.firefly.physics.movement;
 
 import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.aspect.AspectBitSet;
@@ -22,8 +22,8 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
+import com.inari.firefly.physics.movement.event.MoveEvent;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.movement.event.MoveEvent;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
 import com.inari.firefly.system.UpdateEvent;
