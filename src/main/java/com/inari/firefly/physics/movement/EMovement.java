@@ -30,7 +30,7 @@ public final class EMovement extends EntityComponent {
     
     public static final AttributeKey<Float> VELOCITY_X = new AttributeKey<Float>( "dx", Float.class, EMovement.class );
     public static final AttributeKey<Float> VELOCITY_Y = new AttributeKey<Float>( "dy", Float.class, EMovement.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         VELOCITY_X,
         VELOCITY_Y
     };

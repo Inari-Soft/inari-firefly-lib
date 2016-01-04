@@ -1,5 +1,8 @@
 package com.inari.firefly.animation.timeline;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import com.inari.firefly.animation.IntAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -7,9 +10,10 @@ import com.inari.firefly.system.external.FFTimer;
 
 public final class IntTimelineAnimation extends IntAnimation {
     
-    public static final AttributeKey<IntTimelineData[]> TIMELINE = new AttributeKey<IntTimelineData[]>( 
-        "timeline", IntTimelineData[].class, IntTimelineAnimation.class 
-    );
+    public static final AttributeKey<IntTimelineData[]> TIMELINE = new AttributeKey<IntTimelineData[]>( "timeline", IntTimelineData[].class, IntTimelineAnimation.class );
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+        TIMELINE
+    };
     
     private IntTimelineData[] timeline;
     
@@ -72,6 +76,13 @@ public final class IntTimelineAnimation extends IntAnimation {
     @Override
     public final int getValue( int component, int currentValue ) {
         return timeline[ currentIndex ].value;
+    }
+    
+    @Override
+    public final Set<AttributeKey<?>> attributeKeys() {
+        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
+        attributeKeys.addAll( Arrays.asList( ATTRIBUTE_KEYS ) );
+        return attributeKeys;
     }
     
     @Override

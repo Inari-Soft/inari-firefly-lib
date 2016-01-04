@@ -12,7 +12,7 @@ import com.inari.firefly.system.external.FFTimer;
 public final class EasingAnimation extends FloatAnimation {
     
     public static final AttributeKey<EasingData> EASING_DATA = new AttributeKey<EasingData>( "easingData", EasingData.class, EasingAnimation.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         EASING_DATA
     };
     

@@ -18,7 +18,8 @@ public final class ECollision extends EntityComponent {
     public static final AttributeKey<Integer> PIXEL_PERFECT_ID = new AttributeKey<Integer>( "pixelPerfectBody", Integer.class, ECollision.class );
     public static final AttributeKey<Rectangle> RECTANGLE_BODY = new AttributeKey<Rectangle>( "rectangleBody", Rectangle.class, ECollision.class );
     public static final AttributeKey<Position[]> CHECK_POINTS = new AttributeKey<Position[]>( "checkPoints", Position[].class, ECollision.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+    
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         TILE_REGION_BODY,
         PIXEL_PERFECT_ID,
         RECTANGLE_BODY,

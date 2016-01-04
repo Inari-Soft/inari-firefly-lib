@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/ 
-package com.inari.firefly.controller.entity;
+package com.inari.firefly.controller.audio;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,7 +34,7 @@ public final class SoundAnimationController extends SoundController {
     public static final AttributeKey<Integer> VOLUME_ANIMATION_ID = new AttributeKey<Integer>( "volumeAnimationId", Integer.class, SoundAnimationController.class );
     public static final AttributeKey<Integer> PITCH_ANIMATION_ID = new AttributeKey<Integer>( "pitchAnimationId", Integer.class, SoundAnimationController.class );
     public static final AttributeKey<Integer> PAN_ANIMATION_ID = new AttributeKey<Integer>( "panAnimationId", Integer.class, SoundAnimationController.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         VOLUME_ANIMATION_ID,
         PITCH_ANIMATION_ID,
         PAN_ANIMATION_ID

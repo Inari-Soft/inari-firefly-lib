@@ -15,8 +15,11 @@ public class ColorEasingAnimation extends ValueAnimation<RGBColor> {
     public static final AttributeKey<EasingData> EASING_DATA_GREEN = new AttributeKey<EasingData>( "easingDataGreen", EasingData.class, EasingAnimation.class );
     public static final AttributeKey<EasingData> EASING_DATA_BLUE = new AttributeKey<EasingData>( "easingDataBlue", EasingData.class, EasingAnimation.class );
     public static final AttributeKey<EasingData> EASING_DATA_ALPHA = new AttributeKey<EasingData>( "easingDataAlpha", EasingData.class, EasingAnimation.class );
-    public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
-        EASING_DATA_RED
+    private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
+        EASING_DATA_RED,
+        EASING_DATA_GREEN,
+        EASING_DATA_BLUE,
+        EASING_DATA_ALPHA
     };
     
     private EasingData easingDataRed;
