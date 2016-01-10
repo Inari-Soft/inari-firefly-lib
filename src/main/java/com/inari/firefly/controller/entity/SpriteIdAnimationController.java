@@ -30,7 +30,7 @@ public final class SpriteIdAnimationController extends EntityAttributeController
     }
 
     @Override
-    public final AttributeKey<?> getControlledAttribute() {
+    public final AttributeKey<Integer> getControlledAttribute() {
         return ESprite.SPRITE_ID;
     }
 
@@ -39,7 +39,7 @@ public final class SpriteIdAnimationController extends EntityAttributeController
         animationId = animationSystem.getAnimationId( animationResolverId, animationId );
         IntAnimation animation = animationSystem.getAnimationAs( animationId, IntAnimation.class );
         int value = animation.getInitValue();
-        attributes.put( ESprite.SPRITE_ID, value );
+        attributes.put( getControlledAttribute(), value );
     }
 
     @Override

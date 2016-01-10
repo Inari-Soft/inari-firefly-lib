@@ -19,6 +19,7 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
+import com.inari.firefly.entity.EntityAttributeController;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFGraphics;
@@ -64,7 +65,7 @@ public class AnimatedSpriteAsset extends Asset {
         controllerId = -1;
         controllerId = -1;
     }
-    
+
     public final int getAnimationControllerId() {
         return controllerId;
     }
@@ -144,15 +145,19 @@ public class AnimatedSpriteAsset extends Asset {
         }
         
         controllerId = controllerSystem.getControllerBuilder()
-            .set( SpriteIdAnimationController.NAME, getName() + ANIMATION_CONTROLLER_NAME )
-            .set( SpriteIdAnimationController.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping[ 0 ][ 1 ] ) )
-            .set( SpriteIdAnimationController.ANIMATION_RESOLVER_ID, animationResolverId )
-            .set( SpriteIdAnimationController.UPDATE_RESOLUTION, updateResolution )
-        .build( SpriteIdAnimationController.class );
+            .set( EntityAttributeController.NAME, getName() + ANIMATION_CONTROLLER_NAME )
+            .set( EntityAttributeController.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping[ 0 ][ 1 ] ) )
+            .set( EntityAttributeController.ANIMATION_RESOLVER_ID, animationResolverId )
+            .set( EntityAttributeController.UPDATE_RESOLUTION, updateResolution )
+        .build( getControllerType() );
         
         return this;
     }
-
+    
+    protected Class<? extends EntityAttributeController> getControllerType() {
+        return SpriteIdAnimationController.class;
+    }
+    
     @Override
     public final void dispose( FFContext context ) {
         if ( !loaded ) {
@@ -173,7 +178,7 @@ public class AnimatedSpriteAsset extends Asset {
             animationSystem.deleteAnimationResolver( resolver.getId() );
             
             for ( int i = 0; i < stateAnimationMapping.length; i++ ) {
-                deleteAnimation( stateAnimationMapping[ index ][ 1 ] );
+                deleteAnimation( stateAnimationMapping[ i ][ 1 ] );
             }
         } else {
             deleteAnimation( getName() + ANIMATION_NAME_PREFIX );

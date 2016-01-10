@@ -34,10 +34,17 @@
     </plugins>
   </build>
   <dependencies>
-  	<dependency>
-  		<groupId>com.inari</groupId>
-  		<artifactId>firefly</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
+      <dependency>
+          <groupId>com.inari</groupId>
+          <artifactId>firefly</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+          <groupId>com.inari</groupId>
+          <artifactId>firefly</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
