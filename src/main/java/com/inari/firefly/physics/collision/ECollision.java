@@ -14,16 +14,16 @@ public final class ECollision extends EntityComponent {
     public static final EntityComponentTypeKey<ECollision> TYPE_KEY = EntityComponentTypeKey.create( ECollision.class );
     
     public static final AttributeKey<Rectangle> BOUNDING = new AttributeKey<Rectangle>( "bounding", Rectangle.class, ECollision.class );
-    public static final AttributeKey<Integer> PIXEL_PERFECT_ID = new AttributeKey<Integer>( "pixelPerfectBody", Integer.class, ECollision.class );
+    public static final AttributeKey<Integer> BIT_MASK_ID = new AttributeKey<Integer>( "bitmaskId", Integer.class, ECollision.class );
     public static final AttributeKey<int[]> COLLISION_LAYERS = new AttributeKey<int[]>( "collisionLayers", int[].class, ECollision.class );
     
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
-        PIXEL_PERFECT_ID,
+        BIT_MASK_ID,
         BOUNDING,
         COLLISION_LAYERS
     };
     
-    int pixelPerfectId;
+    int bitmaskId;
     Rectangle bounding;
     int[] collisionLayers;
 
@@ -34,18 +34,18 @@ public final class ECollision extends EntityComponent {
     
     @Override
     public final void resetAttributes() {
-        pixelPerfectId = -1;
+        bitmaskId = -1;
         bounding = null;
     }
 
-    public final int getPixelPerfectId() {
-        return pixelPerfectId;
+    public final int getBitmaskId() {
+        return bitmaskId;
     }
 
-    public final void setPixelPerfectId( int pixelPerfectId ) {
-        this.pixelPerfectId = pixelPerfectId;
+    public final void setBitmaskId( int bitmaskId ) {
+        this.bitmaskId = bitmaskId;
     }
-    
+
     public final Rectangle getBounding() {
         return bounding;
     }
@@ -69,14 +69,14 @@ public final class ECollision extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        pixelPerfectId = attributes.getValue( PIXEL_PERFECT_ID, pixelPerfectId );
+        bitmaskId = attributes.getValue( BIT_MASK_ID, bitmaskId );
         bounding = attributes.getValue( BOUNDING, bounding );
         collisionLayers = attributes.getValue( COLLISION_LAYERS, collisionLayers );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
-        attributes.put( PIXEL_PERFECT_ID, pixelPerfectId );
+        attributes.put( BIT_MASK_ID, bitmaskId );
         attributes.put( BOUNDING, bounding );
         attributes.put( COLLISION_LAYERS, collisionLayers );
     }

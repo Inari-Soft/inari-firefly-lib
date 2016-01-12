@@ -399,7 +399,7 @@ public class BitMaskTest {
         
         Rectangle otherRegion = new Rectangle( -10, -10, 17, 17 );
         
-        assertFalse( pp1.intersects( otherRegion, true ) );
+        assertFalse( pp1.intersects( 0, 0, otherRegion, true ) );
         assertTrue( pp1.intersects( otherRegion ) );
     }
     
@@ -469,7 +469,7 @@ public class BitMaskTest {
         BitMask pp2 = new BitMask( 3 );
         pp2.fromAttributes( attrs );
         
-        // 10000 * 10 = 100000 checks seems to are no problem for performance
+        // 10000 * 10 = 100000 checks seems to be no problem for performance
         for ( int f = 0; f < 10000; f++ ) {
             for ( int i = 0; i < 10; i++ ) {
                 pp2.intersects( -1, -1, pp1 );
