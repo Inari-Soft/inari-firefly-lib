@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.indexed.Indexer;
 import com.inari.firefly.FireFlyMock;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
@@ -14,6 +15,7 @@ public class CollisionQuadTreeTest {
     
     @Test
     public void testCreateAndAdd() {
+        Indexer.clear();
         FireFlyMock firefly = new FireFlyMock();
         EntitySystem entitySystem = firefly.getContext().getSystem( EntitySystem.SYSTEM_KEY );
         

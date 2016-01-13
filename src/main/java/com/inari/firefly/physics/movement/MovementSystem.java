@@ -22,7 +22,6 @@ import com.inari.commons.lang.indexed.IndexedTypeKey;
 import com.inari.commons.lang.indexed.IndexedTypeSet;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityComponent.EntityComponentTypeKey;
-import com.inari.firefly.physics.movement.event.MoveEvent;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.FFSystem;
@@ -37,6 +36,8 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
 
     private FFContext context;
     private EntitySystem entitySystem;
+    
+    private final MoveEvent moveEvent = new MoveEvent();
 
     MovementSystem() {
     }
@@ -67,7 +68,7 @@ public final class MovementSystem implements FFSystem, UpdateEventListener {
 
     @Override
     public final void update( UpdateEvent event ) {
-        MoveEvent moveEvent = new MoveEvent();
+        moveEvent.entityIds.clear();
         IntIterator entities = entitySystem.entities( MOVEMENT_ASPECT );
         while ( entities.hasNext() ) {
             int entityId = entities.next();

@@ -15,9 +15,9 @@ import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
+import com.inari.firefly.physics.movement.MoveEvent;
+import com.inari.firefly.physics.movement.MoveEventListener;
 import com.inari.firefly.graphics.tile.TileGridSystem;
-import com.inari.firefly.physics.movement.event.MoveEvent;
-import com.inari.firefly.physics.movement.event.MoveEventListener;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
@@ -120,8 +120,7 @@ public final class CollisionSystem
     
     @Override
     public final void onMoveEvent( final MoveEvent event ) {
-        IntIterator movedEntiyIterator = event.entityIds.iterator();
-        
+        IntIterator movedEntiyIterator = event.movedEntityIds();
         while ( movedEntiyIterator.hasNext() ) {
             final int entityId = movedEntiyIterator.next();
             final AspectBitSet aspect = entitySystem.getAspect( entityId );
@@ -161,6 +160,10 @@ public final class CollisionSystem
         
         while ( entityIterator.hasNext() ) {
             final int entity2Id = entityIterator.next();
+            if ( entityId == entity2Id ) {
+                continue;
+            }
+            
             final ETransform transform2 = entitySystem.getComponent( entity2Id, ETransform.TYPE_KEY );
             final ECollision collision2 = entitySystem.getComponent( entity2Id, ECollision.TYPE_KEY );
             
@@ -236,7 +239,7 @@ public final class CollisionSystem
     private void notify( final int entityId1, final int entityId2, final BitMask intersection ) {
         collisionEvent.movedEntityId = entityId1;
         collisionEvent.collidingEntityId = entityId2;
-        collisionEvent.collisionIntersectionMask = intersection.intersectionMask;
+        collisionEvent.collisionIntersectionMask = ( intersection != null )? intersection.intersectionMask: null;
         context.notify( collisionEvent );
     }
     
@@ -331,6 +334,14 @@ public final class CollisionSystem
             new BitMaskBuilderAdapter( this ),
             new CollisionQuadTreeBuilderAdapter( this )
         };
+    }
+    
+    public final BitMaskBuilder getBitMaskBuilder() {
+        return new BitMaskBuilder();
+    }
+    
+    public final CollisionQuadTreeBuilder getCollisionQuadTreeBuilder() {
+        return new CollisionQuadTreeBuilder();
     }
 
     @Override

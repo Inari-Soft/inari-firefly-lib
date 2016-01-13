@@ -27,7 +27,7 @@ public final class CollisionEvent extends Event<CollisionEventListener> {
     int movedEntityId;
     int collidingEntityId;
     
-    Rectangle collisionIntersectionBounds;
+    Rectangle collisionIntersectionBounds = new Rectangle();
     BitSet collisionIntersectionMask;
 
     CollisionEvent() {
@@ -53,6 +53,21 @@ public final class CollisionEvent extends Event<CollisionEventListener> {
     @Override
     public final void notify( final CollisionEventListener listener ) {
         listener.onCollisionEvent( this );
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "CollisionEvent [movedEntityId=" );
+        builder.append( movedEntityId );
+        builder.append( ", collidingEntityId=" );
+        builder.append( collidingEntityId );
+        builder.append( ", collisionIntersectionBounds=" );
+        builder.append( collisionIntersectionBounds );
+        builder.append( ", collisionIntersectionMask=" );
+        builder.append( collisionIntersectionMask );
+        builder.append( "]" );
+        return builder.toString();
     }
 
 }

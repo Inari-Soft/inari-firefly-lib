@@ -318,7 +318,7 @@ public final class CollisionQuadTree extends SystemComponent {
 
         @Override
         public final boolean hasNext() {
-            return ( currentIterator.hasNext() || matchingIndex >= 0 );
+            return currentIterator != null && ( currentIterator.hasNext() || matchingIndex >= 0 );
         }
         @Override
         public final int next() {
