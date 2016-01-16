@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Vector2f;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -28,14 +29,21 @@ public final class EMovement extends EntityComponent {
     
     public static final EntityComponentTypeKey<EMovement> TYPE_KEY = EntityComponentTypeKey.create( EMovement.class );
     
+    public static final AttributeKey<Boolean> ACTIVE = new AttributeKey<Boolean>( "active", Boolean.class, EMovement.class );
     public static final AttributeKey<Float> VELOCITY_X = new AttributeKey<Float>( "dx", Float.class, EMovement.class );
     public static final AttributeKey<Float> VELOCITY_Y = new AttributeKey<Float>( "dy", Float.class, EMovement.class );
+    public static final AttributeKey<IntBag> VECTOR_IDS = new AttributeKey<IntBag>( "vectorIds", IntBag.class, EMovement.class );
+    
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
+        ACTIVE,
         VELOCITY_X,
-        VELOCITY_Y
+        VELOCITY_Y,
+        VECTOR_IDS
     };
     
-    private final Vector2f velocityVector = new Vector2f( 0, 0 );
+    private boolean active;
+    private final Vector2f velocity = new Vector2f( 0, 0 );
+    private IntBag vectorIds;
 
     public EMovement() {
         super( TYPE_KEY );
@@ -44,32 +52,59 @@ public final class EMovement extends EntityComponent {
 
     @Override
     public final void resetAttributes() {
+        active = false;
         setVelocityX( 0f );
         setVelocityY( 0f );
+        vectorIds = null;
+    }
+
+    public final boolean isActive() {
+        return active;
+    }
+
+    public final void setActive( boolean active ) {
+        this.active = active;
     }
     
     public final void setVelocityX( float velocityX ) {
-        velocityVector.dx = velocityVector.dx;
+        velocity.dx = velocity.dx;
     }
-    
+
     public final float getVelocityX() {
-        return velocityVector.dx;
+        return velocity.dx;
     }
     
     public final void setVelocityY( float velocityY ) {
-        velocityVector.dy = velocityVector.dy;
+        velocity.dy = velocity.dy;
     }
     
     public final float getVelocityY() {
-        return velocityVector.dy;
+        return velocity.dy;
     }
 
     public final Vector2f getVelocityVector() {
-        return velocityVector;
+        return velocity;
+    }
+    
+    public final IntBag getVectorIds() {
+        return vectorIds;
     }
 
+    public final void setVectorIds( IntBag vectorIds ) {
+        this.vectorIds = vectorIds;
+    }
+    
+    public final void addVectorId( int vectorId ) {
+        if ( vectorIds == null ) {
+            vectorIds = new IntBag( 5, -1 );
+        }
+        vectorIds.add( vectorId );
+    }
+
+    
+
     public final boolean isMoving() {
-        return ( velocityVector.dx != 0 || velocityVector.dy != 0 );
+        return active && ( velocity.dx != 0 || velocity.dy != 0 );
     }
 
     @Override
@@ -79,14 +114,18 @@ public final class EMovement extends EntityComponent {
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        velocityVector.dx = attributes.getValue( VELOCITY_X, velocityVector.dx );
-        velocityVector.dy = attributes.getValue( VELOCITY_Y, velocityVector.dy );
+        active = attributes.getValue( ACTIVE, active );
+        velocity.dx = attributes.getValue( VELOCITY_X, velocity.dx );
+        velocity.dy = attributes.getValue( VELOCITY_Y, velocity.dy );
+        vectorIds = attributes.getValue( VECTOR_IDS, vectorIds );
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
-        attributes.put( VELOCITY_X, velocityVector.dx );
-        attributes.put( VELOCITY_Y, velocityVector.dy );
+        attributes.put( ACTIVE, active );
+        attributes.put( VELOCITY_X, velocity.dx );
+        attributes.put( VELOCITY_Y, velocity.dy );
+        attributes.put( VECTOR_IDS, vectorIds );
     }
 
 }

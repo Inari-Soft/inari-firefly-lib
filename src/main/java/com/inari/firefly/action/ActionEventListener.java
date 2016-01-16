@@ -1,4 +1,4 @@
-package com.inari.firefly.action.event;
+package com.inari.firefly.action;
 
 public interface ActionEventListener {
     

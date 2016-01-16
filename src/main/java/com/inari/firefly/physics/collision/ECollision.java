@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
@@ -15,7 +16,7 @@ public final class ECollision extends EntityComponent {
     
     public static final AttributeKey<Rectangle> BOUNDING = new AttributeKey<Rectangle>( "bounding", Rectangle.class, ECollision.class );
     public static final AttributeKey<Integer> BIT_MASK_ID = new AttributeKey<Integer>( "bitmaskId", Integer.class, ECollision.class );
-    public static final AttributeKey<int[]> COLLISION_LAYERS = new AttributeKey<int[]>( "collisionLayers", int[].class, ECollision.class );
+    public static final AttributeKey<IntBag> COLLISION_LAYERS = new AttributeKey<IntBag>( "collisionLayers", IntBag.class, ECollision.class );
     
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         BIT_MASK_ID,
@@ -25,7 +26,7 @@ public final class ECollision extends EntityComponent {
     
     int bitmaskId;
     Rectangle bounding;
-    int[] collisionLayers;
+    IntBag collisionLayers;
 
     ECollision(  ) {
         super( TYPE_KEY );
@@ -54,11 +55,11 @@ public final class ECollision extends EntityComponent {
         this.bounding = bounding;
     }
 
-    public final int[] getCollisionLayers() {
+    public final IntBag getCollisionLayers() {
         return collisionLayers;
     }
 
-    public final void setCollisionLayers( int[] collisionLayers ) {
+    public final void setCollisionLayers( IntBag collisionLayers ) {
         this.collisionLayers = collisionLayers;
     }
 

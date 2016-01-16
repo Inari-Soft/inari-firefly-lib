@@ -3,19 +3,20 @@ package com.inari.firefly.animation;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.animation.event.AnimationEvent;
-import com.inari.firefly.animation.event.AnimationEvent.Type;
+import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.animation.AnimationEvent.Type;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.state.event.WorkflowEvent;
-import com.inari.firefly.state.event.WorkflowEventListener;
+import com.inari.firefly.state.WorkflowEvent;
+import com.inari.firefly.state.WorkflowEventListener;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.NameMapping;
 
 public final class WorkflowAnimationResolver extends AnimationResolver implements WorkflowEventListener {
     
     public static final AttributeKey<Integer> WORKFLOW_ID = new AttributeKey<Integer>( "workflowId", Integer.class, WorkflowAnimationResolver.class );
-    public static final AttributeKey<String[][]> STATE_ANIMATION_NAME_MAPPING = new AttributeKey<String[][]>( "stateAnimationNameMapping", String[][].class, WorkflowAnimationResolver.class );
+    public static final AttributeKey<DynArray<NameMapping>> STATE_ANIMATION_NAME_MAPPING = AttributeKey.createForDynArray( "stateAnimationNameMapping", WorkflowAnimationResolver.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         WORKFLOW_ID,
         STATE_ANIMATION_NAME_MAPPING,
@@ -24,7 +25,7 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
     private FFContext context;
     
     private int workflowId;
-    private String[][] stateAnimationNameMapping;
+    private DynArray<NameMapping> stateAnimationNameMapping;
     
     private int animationId;
 
@@ -44,11 +45,11 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
         this.workflowId = workflowId;
     }
 
-    public final String[][] getStateAnimationNameMapping() {
+    public final DynArray<NameMapping> getStateAnimationNameMapping() {
         return stateAnimationNameMapping;
     }
 
-    public final void setStateAnimationNameMapping( String[][] stateAnimationNameMapping ) {
+    public final void setStateAnimationNameMapping( DynArray<NameMapping> stateAnimationNameMapping ) {
         this.stateAnimationNameMapping = stateAnimationNameMapping;
     }
 
@@ -57,9 +58,9 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
             return -1;
         }
         
-        for ( int i = 0; i < stateAnimationNameMapping.length; i++ ) {
-            if ( stateName.equals( stateAnimationNameMapping[ i ][ 0 ] ) ) {
-                return context.getSystem( AnimationSystem.SYSTEM_KEY ).getAnimationId( stateAnimationNameMapping[ i ][ 1 ] );
+        for ( NameMapping nameMapping : stateAnimationNameMapping ) {
+            if ( stateName.equals( nameMapping.name1 ) ) {
+                return context.getSystem( AnimationSystem.SYSTEM_KEY ).getAnimationId( nameMapping.name2 );
             }
         }
         

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.AnimationSystem;
@@ -22,6 +23,7 @@ import com.inari.firefly.controller.entity.SpriteIdAnimationController;
 import com.inari.firefly.entity.EntityAttributeController;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.system.FFContext;
+import com.inari.firefly.system.NameMapping;
 import com.inari.firefly.system.external.FFGraphics;
 
 public class AnimatedSpriteAsset extends Asset {
@@ -30,7 +32,7 @@ public class AnimatedSpriteAsset extends Asset {
     public static final AttributeKey<Float> UPDATE_RESOLUTION  = new AttributeKey<Float>( "updateResolution", Float.class, AnimatedSpriteAsset.class );
     public static final AttributeKey<Boolean> LOOPING  = new AttributeKey<Boolean>( "looping", Boolean.class, AnimatedSpriteAsset.class );
     public static final AttributeKey<Integer> WORKFLOW_ID  = new AttributeKey<Integer>( "workflowId", Integer.class, AnimatedSpriteAsset.class );
-    public static final AttributeKey<AnimatedSpriteData[]> ANIMATED_SPRITE_DATA  = new AttributeKey<AnimatedSpriteData[]>( "animatedSpriteData", AnimatedSpriteData[].class, AnimatedSpriteAsset.class );
+    public static final AttributeKey<DynArray<AnimatedSpriteData>> ANIMATED_SPRITE_DATA  = AttributeKey.createForDynArray( "animatedSpriteData", AnimatedSpriteAsset.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
         TEXTURE_ASSET_ID,
         UPDATE_RESOLUTION,
@@ -49,7 +51,7 @@ public class AnimatedSpriteAsset extends Asset {
     private float updateResolution;
     public boolean looping;
     private int workflowId;
-    private AnimatedSpriteData[] animatedSpriteData;
+    private DynArray<AnimatedSpriteData> animatedSpriteData;
     
     private int controllerId;
 
@@ -119,8 +121,7 @@ public class AnimatedSpriteAsset extends Asset {
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         AnimationBuilder animationBuilder = animationSystem.getAnimationBuilder();
         
-        String[][] stateAnimationNameMapping = new String[ spriteMapping.size() ][ 2 ];
-        int index = 0;
+        DynArray<NameMapping> stateAnimationNameMapping = new DynArray<NameMapping>( spriteMapping.size(), 2 );
         for ( String stateName : spriteMapping.keySet() ) {
             List<IntTimelineData> timeLineDataList = spriteMapping.get( stateName );
             String animationName = getName() + ANIMATION_NAME_PREFIX + stateName;
@@ -130,9 +131,7 @@ public class AnimatedSpriteAsset extends Asset {
                 .set( IntTimelineAnimation.TIMELINE, timeLineDataList.toArray( new IntTimelineData[ timeLineDataList.size() ] ) )
             .activate( IntTimelineAnimation.class );
             
-            stateAnimationNameMapping[ index ][ 0 ] = stateName;
-            stateAnimationNameMapping[ index ][ 1 ] = animationName;
-            index++;
+            stateAnimationNameMapping.add( new NameMapping( stateName, animationName ) );
         }
         
         int animationResolverId = -1;
@@ -146,7 +145,7 @@ public class AnimatedSpriteAsset extends Asset {
         
         controllerId = controllerSystem.getControllerBuilder()
             .set( EntityAttributeController.NAME, getName() + ANIMATION_CONTROLLER_NAME )
-            .set( EntityAttributeController.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping[ 0 ][ 1 ] ) )
+            .set( EntityAttributeController.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping.iterator().next().name2 ) )
             .set( EntityAttributeController.ANIMATION_RESOLVER_ID, animationResolverId )
             .set( EntityAttributeController.UPDATE_RESOLUTION, updateResolution )
         .build( getControllerType() );
@@ -174,11 +173,11 @@ public class AnimatedSpriteAsset extends Asset {
                 WorkflowAnimationResolver.class
             );
 
-            String[][] stateAnimationMapping = resolver.getStateAnimationNameMapping();
+            DynArray<NameMapping> stateAnimationMapping = resolver.getStateAnimationNameMapping();
             animationSystem.deleteAnimationResolver( resolver.getId() );
             
-            for ( int i = 0; i < stateAnimationMapping.length; i++ ) {
-                deleteAnimation( stateAnimationMapping[ i ][ 1 ] );
+            for ( NameMapping nameMapping : stateAnimationMapping ) {
+                deleteAnimation( nameMapping.name2 );
             }
         } else {
             deleteAnimation( getName() + ANIMATION_NAME_PREFIX );
@@ -213,8 +212,13 @@ public class AnimatedSpriteAsset extends Asset {
         Map<String, List<IntTimelineData>> mapping = new HashMap<String, List<IntTimelineData>>();
         
         FFGraphics graphics = context.getGraphics();
-        for ( int i = 0; i < animatedSpriteData.length; i++ ) {
-            String stateName = animatedSpriteData[ i ].stateName;
+        for ( int i = 0; i < animatedSpriteData.capacity(); i++ ) {
+            if ( !animatedSpriteData.contains( i ) ) {
+                continue;
+            }
+            
+            AnimatedSpriteData asd = animatedSpriteData.get( i );
+            String stateName = asd.stateName;
             if ( stateName == null ) {
                 stateName = "";
             }
@@ -224,8 +228,8 @@ public class AnimatedSpriteAsset extends Asset {
                 mapping.put( stateName, timelineData );
             }
             
-            int spriteId = graphics.createSprite( textureId, animatedSpriteData[ i ].textureRegion );
-            timelineData.add( new IntTimelineData( spriteId, animatedSpriteData[ i ].frameTime )  );
+            int spriteId = graphics.createSprite( textureId, asd.textureRegion );
+            timelineData.add( new IntTimelineData( spriteId, asd.frameTime )  );
         }
         
         if ( mapping.size() <= 0 ) {

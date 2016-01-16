@@ -9,9 +9,9 @@ import com.inari.commons.lang.aspect.AspectBitSet;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.entity.EntityActivationEvent;
+import com.inari.firefly.entity.EntityActivationListener;
 import com.inari.firefly.entity.EntitySystem;
-import com.inari.firefly.entity.event.EntityActivationEvent;
-import com.inari.firefly.entity.event.EntityActivationListener;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
@@ -22,10 +22,10 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.ComponentSystem;
 import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
+import com.inari.firefly.system.view.ViewEvent;
+import com.inari.firefly.system.view.ViewEventListener;
+import com.inari.firefly.system.view.ViewEvent.Type;
 import com.inari.firefly.system.component.SystemComponentBuilder;
-import com.inari.firefly.system.view.event.ViewEvent;
-import com.inari.firefly.system.view.event.ViewEvent.Type;
-import com.inari.firefly.system.view.event.ViewEventListener;
 
 public final class CollisionSystem 
     extends 
@@ -139,6 +139,18 @@ public final class CollisionSystem
             setTmpBounds( tmpCollisionBounds1, 0, 0, collision1.bounding.width, collision1.bounding.height );
             checkTileCollision( entityId, bitmaskId1, x1, y1, viewId, layerId );
             checkSpriteCollision( entityId, bitmaskId1, x1, y1, viewId, layerId );
+            
+            if ( collision1.collisionLayers != null ) {
+                final IntIterator iterator = collision1.collisionLayers.iterator();
+                while ( iterator.hasNext() ) {
+                    final int layerId2 = iterator.next();
+                    if ( layerId2 == layerId ) {
+                        continue;
+                    }
+                    checkTileCollision( entityId, bitmaskId1, x1, y1, viewId, layerId2 );
+                    checkSpriteCollision( entityId, bitmaskId1, x1, y1, viewId, layerId2 );
+                }
+             }
         }
     }
 

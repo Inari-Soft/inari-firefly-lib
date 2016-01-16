@@ -1,4 +1,4 @@
-package com.inari.firefly.action.event;
+package com.inari.firefly.action;
 
 import com.inari.commons.event.Event;
 
