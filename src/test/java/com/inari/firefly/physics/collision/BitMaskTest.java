@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.BitSet;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -62,8 +64,7 @@ public class BitMaskTest {
         pp3.fromAttributes( attrs );
         
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -77,8 +78,7 @@ public class BitMaskTest {
             pp1.toString() 
         );
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -92,8 +92,7 @@ public class BitMaskTest {
             pp2.toString() 
         );
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000001\n" + 
             "0000000011\n" + 
             "0000000111\n" + 
@@ -117,8 +116,7 @@ public class BitMaskTest {
         pp.fromAttributes( attrs );
         
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -134,8 +132,7 @@ public class BitMaskTest {
         
         pp.setBit( 3, 4 );
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -150,8 +147,7 @@ public class BitMaskTest {
         );
         pp.setBits( new Position( 0,0 ), new Position( 1,0 ), new Position( 2,0 ) );
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "1110000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -166,8 +162,7 @@ public class BitMaskTest {
         );
         pp.setPixelRegion( new Rectangle( 5, 5, 4, 4 ) );
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "1110000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -182,8 +177,7 @@ public class BitMaskTest {
         );
         pp.setPixelRegion( new Rectangle( 5, 0, 40, 2 ) );
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "1110011111\n" + 
             "0000011111\n" + 
             "0000000000\n" + 
@@ -199,8 +193,7 @@ public class BitMaskTest {
         
         pp.clearBits();
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -233,8 +226,7 @@ public class BitMaskTest {
         pp3.fromAttributes( attrs );
         
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -255,8 +247,7 @@ public class BitMaskTest {
         assertFalse( pp1.intersects( 1, 50 ) );
         
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -277,8 +268,7 @@ public class BitMaskTest {
         assertFalse( pp2.intersects( 1, 50 ) );
         
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000001\n" + 
             "0000000011\n" + 
             "0000000111\n" + 
@@ -317,8 +307,7 @@ public class BitMaskTest {
         pp3.fromAttributes( attrs );
         
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -338,8 +327,7 @@ public class BitMaskTest {
         assertFalse( pp1.intersects( new Rectangle( -3, 0, 50, 4 ) ) );
             
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -359,8 +347,7 @@ public class BitMaskTest {
         assertFalse( pp2.intersects( new Rectangle( -3, 0, 50, 4 ) ) );
         
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000001\n" + 
             "0000000011\n" + 
             "0000000111\n" + 
@@ -382,8 +369,7 @@ public class BitMaskTest {
         // difference between with or without cornerCheck
         pp1.setPixelRegion( new Rectangle( 5, 5, 5, 2 ) );
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -417,8 +403,7 @@ public class BitMaskTest {
         pp2.fromAttributes( attrs );
         
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
             "0000000000\n" + 
@@ -432,8 +417,7 @@ public class BitMaskTest {
             pp1.toString() 
         );
         assertEquals( 
-            "PixelPerfect [region=[x=0,y=0,width=10,height=10]\n" + 
-            "pixelMap=\n" + 
+            "BitMask [region=[x=0,y=0,width=10,height=10] bits=\n" + 
             "0000000001\n" + 
             "0000000011\n" + 
             "0000000111\n" + 
@@ -475,6 +459,443 @@ public class BitMaskTest {
                 pp2.intersects( -1, -1, pp1 );
             }
         }
+    }
+    
+    
+    @Test
+    public void testCreateSlashedBitsetNorthEast() {
+        
+        BitSet bitMask = BitMask.createSlashedBitset( 16, 0, 1, 0, 1 );
+        assertEquals( 
+            "1111111111111111\n" + 
+            "0111111111111111\n" + 
+            "0011111111111111\n" + 
+            "0001111111111111\n" + 
+            "0000111111111111\n" + 
+            "0000011111111111\n" + 
+            "0000001111111111\n" + 
+            "0000000111111111\n" + 
+            "0000000011111111\n" + 
+            "0000000001111111\n" + 
+            "0000000000111111\n" + 
+            "0000000000011111\n" + 
+            "0000000000001111\n" + 
+            "0000000000000111\n" + 
+            "0000000000000011\n" + 
+            "0000000000000001", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, 1, 2, 0, 1 );
+        assertEquals( 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "0111111111111111\n" + 
+            "0111111111111111\n" + 
+            "0011111111111111\n" + 
+            "0011111111111111\n" + 
+            "0001111111111111\n" + 
+            "0001111111111111\n" + 
+            "0000111111111111\n" + 
+            "0000111111111111\n" + 
+            "0000011111111111\n" + 
+            "0000011111111111\n" + 
+            "0000001111111111\n" + 
+            "0000001111111111\n" + 
+            "0000000111111111\n" + 
+            "0000000111111111", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, -15, 2, 0, 1 );
+        assertEquals( 
+            "0000000011111111\n" + 
+            "0000000011111111\n" + 
+            "0000000001111111\n" + 
+            "0000000001111111\n" + 
+            "0000000000111111\n" + 
+            "0000000000111111\n" + 
+            "0000000000011111\n" + 
+            "0000000000011111\n" + 
+            "0000000000001111\n" + 
+            "0000000000001111\n" + 
+            "0000000000000111\n" + 
+            "0000000000000111\n" + 
+            "0000000000000011\n" + 
+            "0000000000000011\n" + 
+            "0000000000000001\n" + 
+            "0000000000000001", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, 0, 1, 0, 2 );
+        assertEquals( 
+            "1111111111111111\n" + 
+            "0011111111111111\n" + 
+            "0000111111111111\n" + 
+            "0000001111111111\n" + 
+            "0000000011111111\n" + 
+            "0000000000111111\n" + 
+            "0000000000001111\n" + 
+            "0000000000000011\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, 16, 1, 0, 2 );
+        assertEquals( 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "0011111111111111\n" + 
+            "0000111111111111\n" + 
+            "0000001111111111\n" + 
+            "0000000011111111\n" + 
+            "0000000000111111\n" + 
+            "0000000000001111\n" + 
+            "0000000000000011", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+    }
+    
+    @Test
+    public void testCreateSlashSouthWest() {
+        
+        BitSet bitMask = BitMask.createSlashedBitset( 16, 0, -1, 0, -1 );
+        assertEquals( 
+            "1000000000000000\n" + 
+            "1100000000000000\n" + 
+            "1110000000000000\n" + 
+            "1111000000000000\n" + 
+            "1111100000000000\n" + 
+            "1111110000000000\n" + 
+            "1111111000000000\n" + 
+            "1111111100000000\n" + 
+            "1111111110000000\n" + 
+            "1111111111000000\n" + 
+            "1111111111100000\n" + 
+            "1111111111110000\n" + 
+            "1111111111111000\n" + 
+            "1111111111111100\n" + 
+            "1111111111111110\n" + 
+            "1111111111111111", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, 0, -2, 0, -1 );
+        assertEquals( 
+            "1000000000000000\n" + 
+            "1000000000000000\n" + 
+            "1100000000000000\n" + 
+            "1100000000000000\n" + 
+            "1110000000000000\n" + 
+            "1110000000000000\n" + 
+            "1111000000000000\n" + 
+            "1111000000000000\n" + 
+            "1111100000000000\n" + 
+            "1111100000000000\n" + 
+            "1111110000000000\n" + 
+            "1111110000000000\n" + 
+            "1111111000000000\n" + 
+            "1111111000000000\n" + 
+            "1111111100000000\n" + 
+            "1111111100000000", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, 16, -2, 0, -1 );
+        assertEquals( 
+            "1111111110000000\n" + 
+            "1111111110000000\n" + 
+            "1111111111000000\n" + 
+            "1111111111000000\n" + 
+            "1111111111100000\n" + 
+            "1111111111100000\n" + 
+            "1111111111110000\n" + 
+            "1111111111110000\n" + 
+            "1111111111111000\n" + 
+            "1111111111111000\n" + 
+            "1111111111111100\n" + 
+            "1111111111111100\n" + 
+            "1111111111111110\n" + 
+            "1111111111111110\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, 1, -1, 0, -2 );
+        assertEquals( 
+            "1100000000000000\n" + 
+            "1111000000000000\n" + 
+            "1111110000000000\n" + 
+            "1111111100000000\n" + 
+            "1111111111000000\n" + 
+            "1111111111110000\n" + 
+            "1111111111111100\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, -15, -1, 0, -2 );
+        assertEquals( 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "1100000000000000\n" + 
+            "1111000000000000\n" + 
+            "1111110000000000\n" + 
+            "1111111100000000\n" + 
+            "1111111111000000\n" + 
+            "1111111111110000\n" + 
+            "1111111111111100\n" + 
+            "1111111111111111", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+    }
+    
+    @Test
+    public void testCreateSlashSouthEast() {
+        
+        BitSet bitMask = BitMask.createSlashedBitset( 16, -15, 1, 0, -1 );
+        assertEquals( 
+            "0000000000000001\n" + 
+            "0000000000000011\n" + 
+            "0000000000000111\n" + 
+            "0000000000001111\n" + 
+            "0000000000011111\n" + 
+            "0000000000111111\n" + 
+            "0000000001111111\n" + 
+            "0000000011111111\n" + 
+            "0000000111111111\n" + 
+            "0000001111111111\n" + 
+            "0000011111111111\n" + 
+            "0000111111111111\n" + 
+            "0001111111111111\n" + 
+            "0011111111111111\n" + 
+            "0111111111111111\n" + 
+            "1111111111111111", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, -14, 2, 0, -1 );
+        assertEquals( 
+            "0000000111111111\n" + 
+            "0000000111111111\n" + 
+            "0000001111111111\n" + 
+            "0000001111111111\n" + 
+            "0000011111111111\n" + 
+            "0000011111111111\n" + 
+            "0000111111111111\n" + 
+            "0000111111111111\n" + 
+            "0001111111111111\n" + 
+            "0001111111111111\n" + 
+            "0011111111111111\n" + 
+            "0011111111111111\n" + 
+            "0111111111111111\n" + 
+            "0111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, -30, 2, 0, -1 );
+        assertEquals( 
+            "0000000000000001\n" + 
+            "0000000000000001\n" + 
+            "0000000000000011\n" + 
+            "0000000000000011\n" + 
+            "0000000000000111\n" + 
+            "0000000000000111\n" + 
+            "0000000000001111\n" + 
+            "0000000000001111\n" + 
+            "0000000000011111\n" + 
+            "0000000000011111\n" + 
+            "0000000000111111\n" + 
+            "0000000000111111\n" + 
+            "0000000001111111\n" + 
+            "0000000001111111\n" + 
+            "0000000011111111\n" + 
+            "0000000011111111", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, -14, 1, 0, -2 );
+        assertEquals( 
+            "0000000000000011\n" + 
+            "0000000000001111\n" + 
+            "0000000000111111\n" + 
+            "0000000011111111\n" + 
+            "0000001111111111\n" + 
+            "0000111111111111\n" + 
+            "0011111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, -30, 1, 0, -2 );
+        assertEquals( 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000011\n" + 
+            "0000000000001111\n" + 
+            "0000000000111111\n" + 
+            "0000000011111111\n" + 
+            "0000001111111111\n" + 
+            "0000111111111111\n" + 
+            "0011111111111111\n" + 
+            "1111111111111111", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+    }
+    
+    @Test
+    public void testCreateSlashNorthWest() {
+        
+        BitSet bitMask = BitMask.createSlashedBitset( 16, 15, -1, 0, 1 );
+        assertEquals( 
+            "1111111111111111\n" + 
+            "1111111111111110\n" + 
+            "1111111111111100\n" + 
+            "1111111111111000\n" + 
+            "1111111111110000\n" + 
+            "1111111111100000\n" + 
+            "1111111111000000\n" + 
+            "1111111110000000\n" + 
+            "1111111100000000\n" + 
+            "1111111000000000\n" + 
+            "1111110000000000\n" + 
+            "1111100000000000\n" + 
+            "1111000000000000\n" + 
+            "1110000000000000\n" + 
+            "1100000000000000\n" + 
+            "1000000000000000", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, 15, -2, 0, 1 );
+        assertEquals( 
+            "1111111100000000\n" + 
+            "1111111100000000\n" + 
+            "1111111000000000\n" + 
+            "1111111000000000\n" + 
+            "1111110000000000\n" + 
+            "1111110000000000\n" + 
+            "1111100000000000\n" + 
+            "1111100000000000\n" + 
+            "1111000000000000\n" + 
+            "1111000000000000\n" + 
+            "1110000000000000\n" + 
+            "1110000000000000\n" + 
+            "1100000000000000\n" + 
+            "1100000000000000\n" + 
+            "1000000000000000\n" + 
+            "1000000000000000", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, 31, -2, 0, 1 );
+        assertEquals( 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111110\n" + 
+            "1111111111111110\n" + 
+            "1111111111111100\n" + 
+            "1111111111111100\n" + 
+            "1111111111111000\n" + 
+            "1111111111111000\n" + 
+            "1111111111110000\n" + 
+            "1111111111110000\n" + 
+            "1111111111100000\n" + 
+            "1111111111100000\n" + 
+            "1111111111000000\n" + 
+            "1111111111000000\n" + 
+            "1111111110000000\n" + 
+            "1111111110000000", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, 15, -1, 0, 2 );
+        assertEquals( 
+            "1111111111111111\n" + 
+            "1111111111111100\n" + 
+            "1111111111110000\n" + 
+            "1111111111000000\n" + 
+            "1111111100000000\n" + 
+            "1111110000000000\n" + 
+            "1111000000000000\n" + 
+            "1100000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000\n" + 
+            "0000000000000000", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
+        
+        bitMask = BitMask.createSlashedBitset( 16, 31, -1, 0, 2 );
+        assertEquals( 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111111\n" + 
+            "1111111111111100\n" + 
+            "1111111111110000\n" + 
+            "1111111111000000\n" + 
+            "1111111100000000\n" + 
+            "1111110000000000\n" + 
+            "1111000000000000\n" + 
+            "1100000000000000", 
+            StringUtils.bitsetToString( bitMask, 16, 16 ) 
+        );
     }
 
 }

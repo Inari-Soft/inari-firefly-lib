@@ -167,8 +167,6 @@ public final class BitMask extends SystemComponent {
         return bits.intersects( intersectionMask );
     }
 
-    
-    
     public final void setPixelRegion( Rectangle region ) {
         Rectangle intersectionRegion = new Rectangle();
         GeomUtils.intersection( region, this.region, intersectionRegion );
@@ -203,8 +201,8 @@ public final class BitMask extends SystemComponent {
     @Override
     public final String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append( "PixelPerfect [region=" ).append( region );
-        builder.append( "\npixelMap=" ).append( StringUtils.bitsetToString( bits, region.width, region.height ) );
+        builder.append( "BitMask [region=" ).append( region );
+        builder.append( " bits=\n" ).append( StringUtils.bitsetToString( bits, region.width, region.height ) );
         return builder.toString();
     }
     
@@ -214,12 +212,23 @@ public final class BitMask extends SystemComponent {
         }
     }
 
-    private final void setRegion( Rectangle targetRegion, BitSet bitset, Rectangle subRegion ) {
+    static final void setRegion( Rectangle targetRegion, BitSet bitset, Rectangle subRegion ) {
         for ( int y = subRegion.y; y < subRegion.y + subRegion.height; y++ ) {
             int formIndex =  y * targetRegion.width + subRegion.x;
             int toX = subRegion.x + subRegion.width;
             bitset.set( formIndex, y * targetRegion.width + toX );
         }
+    }
+    
+    public static final BitSet createSlashedBitset( final int squareWidth, final int xoffset, final int xfactor, final int yoffset, final int yfactor ) {
+        BitSet result = new BitSet( squareWidth * squareWidth );
+        for ( int y = 0; y < squareWidth; y++ ) {
+            for ( int x = 0; x < squareWidth; x++ ) {
+                result.set( y * squareWidth + x, x * xfactor + xoffset >= y * yfactor + yoffset );
+            }
+        }
+        
+        return result;
     }
 
 }
