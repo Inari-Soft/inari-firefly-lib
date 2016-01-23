@@ -114,7 +114,7 @@ public class AnimatedSpriteAsset extends Asset {
         }
         
         checkConsistency();
-        int textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstaceId( textureAssetId );
+        int textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstanceId( textureAssetId );
         Map<String, List<IntTimelineData>> spriteMapping = createSpriteMapping( textureId );
         
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );

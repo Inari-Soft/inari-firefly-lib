@@ -11,7 +11,7 @@ import com.inari.firefly.system.component.SystemBuilderAdapter;
 import com.inari.firefly.system.component.SystemComponent.SystemComponentKey;
 import com.inari.firefly.system.component.SystemComponentBuilder;
 
-public final class ActionSystem extends ComponentSystem<ActionSystem> implements ActionEventListener {
+public final class ActionSystem extends ComponentSystem<ActionSystem> {
     
     public static final FFSystemTypeKey<ActionSystem> SYSTEM_KEY = FFSystemTypeKey.create( ActionSystem.class );
     
@@ -30,11 +30,11 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> implements
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
         
-        context.registerListener( ActionEvent.class, this );
+        context.registerListener( ActionSystemEvent.class, this );
     }
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( ActionEvent.class, this );
+        context.disposeListener( ActionSystemEvent.class, this );
     }
     
     public final Action getAction( int actionId ) {
@@ -89,8 +89,7 @@ public final class ActionSystem extends ComponentSystem<ActionSystem> implements
         actions.clear();
     }
 
-    @Override
-    public final void notifyActionEvent( ActionEvent event ) {
+    final void notifyActionEvent( ActionSystemEvent event ) {
         performAction( event.actionId, event.entityId );
     }
     

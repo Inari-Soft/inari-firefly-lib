@@ -20,8 +20,7 @@ public class SceneSystem
         ComponentSystem<SceneSystem>
     implements
         UpdateEventListener,
-        RenderEventListener,
-        SceneEventListener {
+        RenderEventListener {
     
     public final static FFSystemTypeKey<SceneSystem> SYSTEM_KEY = FFSystemTypeKey.create( SceneSystem.class );
     
@@ -43,18 +42,17 @@ public class SceneSystem
 
         context.registerListener( UpdateEvent.class, this );
         context.registerListener( RenderEvent.class, this );
-        context.registerListener( SceneEvent.class, this );
+        context.registerListener( SceneSystemEvent.class, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
         context.disposeListener( UpdateEvent.class, this );
         context.disposeListener( RenderEvent.class, this );
-        context.disposeListener( SceneEvent.class, this );
+        context.disposeListener( SceneSystemEvent.class, this );
     }
     
-    @Override
-    public void notifySceneEvent( SceneEvent event ) {
+    final void notifySceneEvent( SceneSystemEvent event ) {
         Scene scene = ( event.sceneName != null )? scenes.get( getSceneId( event.sceneName ) ) : scenes.get( event.sceneId );
         switch ( event.type ) {
             case RUN : {
@@ -119,9 +117,9 @@ public class SceneSystem
         Scene scene = scenes.remove( sceneId );
         if ( scene.isActive() ) {
             scene.stop( context );
-            scene.dispose( context );
         }
-        scene.dispose();
+        
+        disposeSystemComponent( scene );
     }
     
     public final void clear() {

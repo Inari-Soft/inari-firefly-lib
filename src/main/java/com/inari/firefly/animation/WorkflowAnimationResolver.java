@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.animation.AnimationEvent.Type;
+import com.inari.firefly.animation.AnimationSystemEvent.Type;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.state.StateSystem;
@@ -79,8 +79,8 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
             return;
         } 
         
-        context.notify( new AnimationEvent( Type.STOP_ANIMATION, oldAnimationId ) );
-        context.notify( new AnimationEvent( Type.START_ANIMATION, animationId ) );
+        context.notify( new AnimationSystemEvent( Type.STOP_ANIMATION, oldAnimationId ) );
+        context.notify( new AnimationSystemEvent( Type.START_ANIMATION, animationId ) );
     }
 
     @Override
@@ -88,7 +88,7 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
         if ( animationId < 0 ) {
             String currentState = context.getSystem( StateSystem.SYSTEM_KEY ).getCurrentState( workflowId );
             animationId = getMappedAnimationId( currentState );
-            context.notify( new AnimationEvent( Type.START_ANIMATION, animationId ) );
+            context.notify( new AnimationSystemEvent( Type.START_ANIMATION, animationId ) );
         }
         return animationId;
     }
