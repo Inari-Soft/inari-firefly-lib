@@ -136,7 +136,7 @@ public final class CollisionSystem
             final int viewId = transform1.getViewId();
             final int layerId = transform1.getLayerId();
             
-            setTmpBounds( tmpCollisionBounds1, 0, 0, collision1.bounding.width, collision1.bounding.height );
+            setTmpBounds( tmpCollisionBounds1, x1, y1, collision1.bounding.width, collision1.bounding.height );
             checkTileCollision( entityId, bitmaskId1, x1, y1, viewId, layerId );
             checkSpriteCollision( entityId, bitmaskId1, x1, y1, viewId, layerId );
             

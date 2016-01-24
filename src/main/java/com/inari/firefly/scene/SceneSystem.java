@@ -27,7 +27,6 @@ public class SceneSystem
     private static final SystemComponentKey<?>[] SUPPORTED_COMPONENT_TYPES = new SystemComponentKey[] {
         Scene.TYPE_KEY
     };
-    private FFContext context;
 
     private final DynArray<Scene> scenes;
     
@@ -38,7 +37,7 @@ public class SceneSystem
     
     @Override
     public final void init( FFContext context ) throws FFInitException {
-        this.context = context;
+        super.init( context );
 
         context.registerListener( UpdateEvent.class, this );
         context.registerListener( RenderEvent.class, this );

@@ -89,7 +89,7 @@ public final class MovementSystem extends ComponentSystem<MovementSystem> implem
             }
             
             ETransform transform = components.get( ETransform.TYPE_KEY );
-            transform.move( tmpVector.dx, tmpVector.dy, true );
+            transform.move( tmpVector.dx, tmpVector.dy );
 
             moveEvent.add( entityId );
         }
