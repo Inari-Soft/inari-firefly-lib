@@ -137,8 +137,8 @@ public final class CollisionSystem
             final int layerId = transform1.getLayerId();
             
             setTmpBounds( tmpCollisionBounds1, x1, y1, collision1.bounding.width, collision1.bounding.height );
-            checkTileCollision( entityId, bitmaskId1, x1, y1, viewId, layerId );
-            checkSpriteCollision( entityId, bitmaskId1, x1, y1, viewId, layerId );
+            checkTileCollision( entityId, bitmaskId1, viewId, layerId );
+            checkSpriteCollision( entityId, bitmaskId1, viewId, layerId );
             
             if ( collision1.collisionLayers != null ) {
                 final IntIterator iterator = collision1.collisionLayers.iterator();
@@ -147,14 +147,14 @@ public final class CollisionSystem
                     if ( layerId2 == layerId ) {
                         continue;
                     }
-                    checkTileCollision( entityId, bitmaskId1, x1, y1, viewId, layerId2 );
-                    checkSpriteCollision( entityId, bitmaskId1, x1, y1, viewId, layerId2 );
+                    checkTileCollision( entityId, bitmaskId1, viewId, layerId2 );
+                    checkSpriteCollision( entityId, bitmaskId1, viewId, layerId2 );
                 }
              }
         }
     }
 
-    private void checkSpriteCollision( final int entityId, final int bitmaskId1, final int x1, final int y1, final int viewId, final int layerId ) {
+    private void checkSpriteCollision( final int entityId, final int bitmaskId1, final int viewId, final int layerId ) {
         if ( !quadTreesPerViewAndLayer.contains( viewId ) ) {
             return;
         }
@@ -179,16 +179,23 @@ public final class CollisionSystem
             final ETransform transform2 = entitySystem.getComponent( entity2Id, ETransform.TYPE_KEY );
             final ECollision collision2 = entitySystem.getComponent( entity2Id, ECollision.TYPE_KEY );
             
+            tmpCollisionBounds2.x = (int) transform2.getXpos();
+            tmpCollisionBounds2.y = (int) transform2.getYpos();
+            tmpCollisionBounds2.width = collision2.bounding.width;
+            tmpCollisionBounds2.height = collision2.bounding.height;
+            
+            if ( !GeomUtils.intersect( tmpCollisionBounds1, tmpCollisionBounds2 ) ) {
+                return;
+            }
+            
             checkCollision( 
-                (int) transform2.getXpos() - x1, (int) transform2.getYpos() - y1,
-                collision2.bounding.width, collision2.bounding.height,
                 bitmaskId1, collision2.getBitmaskId(),
                 entityId, entity2Id
             );
         }
     }
 
-    private final void checkTileCollision( final int entityId, final int bitmaskId1, final int x1, final int y1, final int viewId, final int layerId ) {
+    private final void checkTileCollision( final int entityId, final int bitmaskId1, final int viewId, final int layerId ) {
         TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
         if ( tileGrid == null ) {
             return;
@@ -205,23 +212,24 @@ public final class CollisionSystem
                 continue;
             }
             
-            final ECollision collision2 = entitySystem.getComponent( entityId, ECollision.TYPE_KEY );
+            final ECollision collision2 = entitySystem.getComponent( tileId, ECollision.TYPE_KEY );
+            tmpCollisionBounds2.x = (int) tileIterator.getWorldXPos() + collision2.bounding.x;
+            tmpCollisionBounds2.y = (int) tileIterator.getWorldYPos() + collision2.bounding.y;
+            tmpCollisionBounds2.width = collision2.bounding.width;
+            tmpCollisionBounds2.height = collision2.bounding.height;
+            
+            if ( !GeomUtils.intersect( tmpCollisionBounds1, tmpCollisionBounds2 ) ) {
+                return;
+            }
             
             checkCollision( 
-                (int) tileIterator.getWorldXPos() - x1, (int) tileIterator.getWorldYPos() - y1,
-                collision2.bounding.width, collision2.bounding.height,
                 bitmaskId1, collision2.getBitmaskId(),
                 entityId, tileId
             );
         }
     }
     
-    private final void checkCollision( final int x2, final int y2, final int width2, final int heigh2, final int bitmaskId1, final int bitmaskId2, final int entityId1, final int entityId2 ) {
-        setTmpBounds( tmpCollisionBounds2, x2, y2, width2, heigh2 );
-        if ( !GeomUtils.intersect( tmpCollisionBounds1, tmpCollisionBounds2 ) ) {
-            return;
-        }
-        
+    private final void checkCollision( final int bitmaskId1, final int bitmaskId2, final int entityId1, final int entityId2 ) {
         GeomUtils.intersection( tmpCollisionBounds1, tmpCollisionBounds2, collisionEvent.collisionIntersectionBounds );
 
         if ( bitmaskId1 < 0 && bitmaskId2 < 0 ) {
@@ -232,7 +240,7 @@ public final class CollisionSystem
         BitMask bitmask1 = ( bitmaskId1 < 0 )? null : bitmasks.get( bitmaskId1 );
         BitMask bitmask2 = ( bitmaskId2 < 0 )? null : bitmasks.get( bitmaskId2 );
         
-        if ( bitmask1 != null && bitmask2 != null && bitmask2.intersects( x2, y2, bitmask1 ) ) {
+        if ( bitmask1 != null && bitmask2 != null && bitmask2.intersects( tmpCollisionBounds2.x, tmpCollisionBounds2.y, bitmask1 ) ) {
             notify( entityId1, entityId2, bitmask2 );
             return;
         }
@@ -242,7 +250,7 @@ public final class CollisionSystem
             return;
         }
         
-        if ( bitmask1 != null && bitmask2 == null && bitmask1.intersects( -x2, -y2, tmpCollisionBounds1 ) ) {
+        if ( bitmask1 != null && bitmask2 == null && bitmask1.intersects( -tmpCollisionBounds2.x, -tmpCollisionBounds2.y, tmpCollisionBounds1 ) ) {
             notify( entityId1, entityId2, bitmask2 );
             return;
         }

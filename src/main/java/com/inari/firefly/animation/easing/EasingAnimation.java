@@ -17,9 +17,6 @@ public final class EasingAnimation extends FloatAnimation {
     };
     
     private EasingData easingData;
-    
-    private boolean startValueSet = false;
-    private long time;
 
     EasingAnimation( int id ) {
         super( id );
@@ -29,50 +26,23 @@ public final class EasingAnimation extends FloatAnimation {
         return easingData.easingType;
     }
 
-    public final void setEasingType( Easing.Type easingType ) {
-        easingData.easingType = easingType;
+    public final EasingData getEasingData() {
+        return easingData;
     }
 
-    public final float getStartValue() {
-        return easingData.startValue;
-    }
-
-    public final void setStartValue( float startValue ) {
-        easingData.startValue = startValue;
-    }
-
-    public final float getChangeInValue() {
-        return easingData.changeInValue;
-    }
-
-    public final void setChangeInValue( float changeInValue ) {
-        easingData.changeInValue = changeInValue;
-    }
-
-    public final long getDuration() {
-        return easingData.duration;
-    }
-
-    public final void setDuration( long duration ) {
-        easingData.duration = duration;
+    public final void setEasingData( EasingData easingData ) {
+        this.easingData = easingData;
     }
 
     @Override
     public final void update( FFTimer timer ) {
-        super.update( timer );
-        if ( active ) {
-            time = timer.getTime() - startTime;
-            
-            if ( time > startTime + easingData.duration ) {
-                if ( looping ) {
-                    float temp = easingData.changeInValue;
-                    easingData.changeInValue = easingData.startValue;
-                    easingData.startValue = temp;
-                    startTime = time;
-                } else {
-                    active = false;
-                    finished = true;
-                }
+        if ( runningTime > easingData.duration ) {
+            if ( looping ) {
+                reset();
+                startTime = timer.getTime();
+                activate();
+            } else {
+                finish();
             }
         }
     }
@@ -84,12 +54,11 @@ public final class EasingAnimation extends FloatAnimation {
 
     @Override
     public final float getValue( int componentId, float currentValue ) {
-        if ( !startValueSet ) {
-            easingData.startValue = currentValue;
-            startValueSet = true;
+        if ( !isActive() ) {
+            return currentValue;
         }
-
-        return easingData.easingType.calc( time , easingData.startValue, easingData.changeInValue, easingData.duration );
+        
+        return easingData.easingType.calc( runningTime , easingData.startValue, easingData.changeInValue, easingData.duration );
     }
     
     @Override

@@ -26,6 +26,8 @@ import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityComponent;
+import com.inari.firefly.system.external.FFTimer;
+import com.inari.firefly.system.external.FFTimer.UpdateScheduler;
 
 public final class EMovement extends EntityComponent {
     
@@ -34,20 +36,20 @@ public final class EMovement extends EntityComponent {
     public static final AttributeKey<Boolean> ACTIVE = new AttributeKey<Boolean>( "active", Boolean.class, EMovement.class );
     public static final AttributeKey<Float> VELOCITY_X = new AttributeKey<Float>( "dx", Float.class, EMovement.class );
     public static final AttributeKey<Float> VELOCITY_Y = new AttributeKey<Float>( "dy", Float.class, EMovement.class );
-    public static final AttributeKey<IntBag> VELOCITY_VECTOR_IDS = new AttributeKey<IntBag>( "velocityVectorIds", IntBag.class, EMovement.class );
-    
+    public static final AttributeKey<Float> UPDATE_RESOLUTION = new AttributeKey<Float>( "updateResolution", Float.class, EMovement.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] { 
         ACTIVE,
         VELOCITY_X,
         VELOCITY_Y,
-        VELOCITY_VECTOR_IDS
+        UPDATE_RESOLUTION
     };
     
     boolean active;
     final Vector2f velocity = new Vector2f( 0, 0 );
-    IntBag velocityVectorIds;
-    
+    float updateResolution;
+
     final BitSet contact;
+    private UpdateScheduler updateScheduler = null;
 
     public EMovement() {
         super( TYPE_KEY );
@@ -60,8 +62,9 @@ public final class EMovement extends EntityComponent {
         active = false;
         setVelocityX( 0f );
         setVelocityY( 0f );
-        velocityVectorIds = null;
         contact.clear();
+        updateResolution = -1;
+        updateScheduler = null;
     }
 
     public final boolean isActive() {
@@ -88,23 +91,28 @@ public final class EMovement extends EntityComponent {
         return velocity.dy;
     }
     
-    public final boolean hasVelocityVectorIds() {
-        return velocityVectorIds != null && !velocityVectorIds.isEmpty();
+    public final Vector2f getVelocityVector() {
+        return velocity;
     }
 
-    public final IntBag getVelocityVectorIds() {
-        return velocityVectorIds;
+    public final float getUpdateResolution() {
+        return updateResolution;
     }
 
-    public final void setVelocityVectorIds( IntBag velocityVectorIds ) {
-        this.velocityVectorIds = velocityVectorIds;
+    public final void setUpdateResolution( float updateResolution ) {
+        this.updateResolution = updateResolution;
     }
-
-    public final void addVelocityVectorIds( int vectorId ) {
-        if ( velocityVectorIds == null ) {
-            velocityVectorIds = new IntBag( 5, -1 );
+    
+    public final boolean needsUpdate( final FFTimer timer ) {
+        if ( updateResolution <= 0 ) {
+            return true;
         }
-        velocityVectorIds.add( vectorId );
+        
+        if ( updateScheduler == null ) {
+            updateScheduler = timer.createUpdateScheduler( updateResolution );
+        }
+        
+        return updateScheduler.needsUpdate();
     }
 
     public final void setContact( Orientation orientation ) {
@@ -149,7 +157,7 @@ public final class EMovement extends EntityComponent {
         active = attributes.getValue( ACTIVE, active );
         velocity.dx = attributes.getValue( VELOCITY_X, velocity.dx );
         velocity.dy = attributes.getValue( VELOCITY_Y, velocity.dy );
-        velocityVectorIds = attributes.getValue( VELOCITY_VECTOR_IDS, velocityVectorIds );
+        updateResolution = attributes.getValue( UPDATE_RESOLUTION, updateResolution );
     }
 
     @Override
@@ -157,7 +165,7 @@ public final class EMovement extends EntityComponent {
         attributes.put( ACTIVE, active );
         attributes.put( VELOCITY_X, velocity.dx );
         attributes.put( VELOCITY_Y, velocity.dy );
-        attributes.put( VELOCITY_VECTOR_IDS, velocityVectorIds );
+        attributes.put( UPDATE_RESOLUTION, updateResolution );
     }
 
 }

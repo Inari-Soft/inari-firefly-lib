@@ -9,7 +9,7 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.external.FFTimer;
 
-public class ColorEasingAnimation extends ValueAnimation<RGBColor> {
+public final class ColorEasingAnimation extends ValueAnimation<RGBColor> {
 
     public static final AttributeKey<EasingData> EASING_DATA_RED = new AttributeKey<EasingData>( "easingDataRed", EasingData.class, EasingAnimation.class );
     public static final AttributeKey<EasingData> EASING_DATA_GREEN = new AttributeKey<EasingData>( "easingDataGreen", EasingData.class, EasingAnimation.class );
@@ -38,28 +38,25 @@ public class ColorEasingAnimation extends ValueAnimation<RGBColor> {
     }
     
     @Override
-    public final void update( FFTimer timer ) {
-        super.update( timer );
-        if ( active ) {
-            time = timer.getTime() - startTime;
-            active = update( easingDataRed ) || 
-                     update( easingDataGreen ) || 
-                     update( easingDataBlue ) || 
-                     update( easingDataAlpha );
-            finished = !active;
+    public final void update( final FFTimer timer ) {
+        time = timer.getTime() - startTime;
+        boolean active = update( easingDataRed ) || 
+                         update( easingDataGreen ) || 
+                         update( easingDataBlue ) || 
+                         update( easingDataAlpha );
+        if ( !active ) {
+            finish();
         }
     }
     
-    private boolean update( EasingData easingData ) {
+    private final boolean update( final EasingData easingData ) {
         if ( easingData == null ) {
             return false;
         }
         
         if ( time > startTime + easingData.duration ) {
             if ( looping ) {
-                float temp = easingData.changeInValue;
-                easingData.changeInValue = easingData.startValue;
-                easingData.startValue = temp;
+                reset();
                 startTime = time;
             } else {
                 return false;

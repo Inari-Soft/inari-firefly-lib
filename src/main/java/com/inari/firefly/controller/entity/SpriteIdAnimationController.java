@@ -15,6 +15,7 @@
  ******************************************************************************/ 
 package com.inari.firefly.controller.entity;
 
+import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.IntAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.entity.EntityAttributeController;
@@ -24,9 +25,12 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class SpriteIdAnimationController extends EntityAttributeController {
+    
+    private final AnimationSystem animationSystem;
 
     SpriteIdAnimationController( int id, FFContext context ) {
         super( id, context );
+        animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
     }
 
     @Override

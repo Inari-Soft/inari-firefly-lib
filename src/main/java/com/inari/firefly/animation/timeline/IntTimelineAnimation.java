@@ -22,6 +22,12 @@ public final class IntTimelineAnimation extends IntAnimation {
 
     protected IntTimelineAnimation( int id ) {
         super( id );
+        reset();
+    }
+
+    @Override
+    public final void reset() {
+        super.reset();
         lastUpdate = -1;
         currentIndex = 0;
     }
@@ -36,12 +42,6 @@ public final class IntTimelineAnimation extends IntAnimation {
     
     @Override
     public final void update( FFTimer timer ) {
-        super.update( timer );
-        if ( !active ) {
-            return;
-        }
-        
-        super.update( timer );
         long updateTime = timer.getTime();
         
         if ( lastUpdate < 0 ) {
@@ -59,7 +59,7 @@ public final class IntTimelineAnimation extends IntAnimation {
         if ( currentIndex >= timeline.length ) {
             currentIndex = 0;
             if ( !looping ) {
-                active = false;
+                finish();
             } 
         } 
     }

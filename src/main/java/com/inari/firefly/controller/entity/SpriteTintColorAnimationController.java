@@ -1,5 +1,6 @@
 package com.inari.firefly.controller.entity;
 
+import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.entity.EntityAttributeController;
 import com.inari.firefly.graphics.sprite.ESprite;
@@ -8,8 +9,11 @@ import com.inari.firefly.system.external.FFTimer;
 
 public final class SpriteTintColorAnimationController extends EntityAttributeController {
     
+    private final AnimationSystem animationSystem;
+    
     SpriteTintColorAnimationController( int id, FFContext context ) {
         super( id, context );
+        animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
     }
     
     @Override
