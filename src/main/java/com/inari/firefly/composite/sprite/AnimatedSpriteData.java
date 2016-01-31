@@ -1,4 +1,4 @@
-package com.inari.firefly.asset;
+package com.inari.firefly.composite.sprite;
 
 import com.inari.commons.geom.Direction;
 import com.inari.commons.geom.Rectangle;

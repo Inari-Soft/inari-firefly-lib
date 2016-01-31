@@ -1,4 +1,4 @@
-package com.inari.firefly.asset;
+package com.inari.firefly.composite.sprite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,15 +9,16 @@ import java.util.Map;
 import java.util.Set;
 
 import com.inari.commons.lang.list.DynArray;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.AnimationSystem.AnimationBuilder;
 import com.inari.firefly.animation.WorkflowAnimationResolver;
 import com.inari.firefly.animation.timeline.IntTimelineAnimation;
 import com.inari.firefly.animation.timeline.IntTimelineData;
+import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.composite.Composite;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
 import com.inari.firefly.entity.EntityAttributeController;
@@ -26,13 +27,13 @@ import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.NameMapping;
 import com.inari.firefly.system.external.FFGraphics;
 
-public class AnimatedSpriteAsset extends Asset {
+public class AnimatedSprite extends Composite {
     
-    public static final AttributeKey<Integer> TEXTURE_ASSET_ID = new AttributeKey<Integer>( "textureAssetId", Integer.class, AnimatedSpriteAsset.class );
-    public static final AttributeKey<Float> UPDATE_RESOLUTION  = new AttributeKey<Float>( "updateResolution", Float.class, AnimatedSpriteAsset.class );
-    public static final AttributeKey<Boolean> LOOPING  = new AttributeKey<Boolean>( "looping", Boolean.class, AnimatedSpriteAsset.class );
-    public static final AttributeKey<Integer> WORKFLOW_ID  = new AttributeKey<Integer>( "workflowId", Integer.class, AnimatedSpriteAsset.class );
-    public static final AttributeKey<DynArray<AnimatedSpriteData>> ANIMATED_SPRITE_DATA  = AttributeKey.createForDynArray( "animatedSpriteData", AnimatedSpriteAsset.class );
+    public static final AttributeKey<Integer> TEXTURE_ASSET_ID = new AttributeKey<Integer>( "textureAssetId", Integer.class, AnimatedSprite.class );
+    public static final AttributeKey<Float> UPDATE_RESOLUTION  = new AttributeKey<Float>( "updateResolution", Float.class, AnimatedSprite.class );
+    public static final AttributeKey<Boolean> LOOPING  = new AttributeKey<Boolean>( "looping", Boolean.class, AnimatedSprite.class );
+    public static final AttributeKey<Integer> WORKFLOW_ID  = new AttributeKey<Integer>( "workflowId", Integer.class, AnimatedSprite.class );
+    public static final AttributeKey<DynArray<AnimatedSpriteData>> ANIMATED_SPRITE_DATA  = AttributeKey.createForDynArray( "animatedSpriteData", AnimatedSprite.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
         TEXTURE_ASSET_ID,
         UPDATE_RESOLUTION,
@@ -54,8 +55,9 @@ public class AnimatedSpriteAsset extends Asset {
     private DynArray<AnimatedSpriteData> animatedSpriteData;
     
     private int controllerId;
+    private boolean loaded = false;
 
-    protected AnimatedSpriteAsset( int assetIntId, FFContext context ) {
+    protected AnimatedSprite( int assetIntId, FFContext context ) {
         super( assetIntId );
         this.context = context;
         
@@ -72,21 +74,25 @@ public class AnimatedSpriteAsset extends Asset {
         return controllerId;
     }
     
-    @Override
-    public final int getInstanceId( int index ) {
-        return getAnimationControllerId();
-    }
+//    @Override
+//    public final int getInstanceId( int index ) {
+//        return getAnimationControllerId();
+//    }
     
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
         attributeKeys.addAll( ATTRIBUTE_KEYS );
-        return super.attributeKeys( attributeKeys );
+        attributeKeys.addAll( super.attributeKeys() );
+        return attributeKeys;
     }
 
     @Override
     public final void fromAttributes( AttributeMap attributes ) {
-        checkNotAlreadyLoaded();
+        if ( loaded ) {
+            throw new IllegalStateException( "The AnimatedSprite is already loaded" );
+        }
+        
         super.fromAttributes( attributes );
         
         textureAssetId = attributes.getValue( TEXTURE_ASSET_ID, textureAssetId );
@@ -108,9 +114,9 @@ public class AnimatedSpriteAsset extends Asset {
     }
     
     @Override
-    public final Disposable load( FFContext context ) {
+    public final void load( FFContext context ) {
         if ( loaded ) {
-            return this;
+            return;
         }
         
         checkConsistency();
@@ -150,7 +156,8 @@ public class AnimatedSpriteAsset extends Asset {
             .set( EntityAttributeController.UPDATE_RESOLUTION, updateResolution )
         .build( getControllerType() );
         
-        return this;
+        loaded = true;
+        return;
     }
     
     protected Class<? extends EntityAttributeController> getControllerType() {

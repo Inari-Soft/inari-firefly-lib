@@ -1,12 +1,12 @@
-package com.inari.firefly.asset;
+package com.inari.firefly.composite.sprite;
 
 import com.inari.firefly.controller.entity.TileSpriteAnimationController;
 import com.inari.firefly.entity.EntityAttributeController;
 import com.inari.firefly.system.FFContext;
 
-public final class AnimatedTileAsset extends AnimatedSpriteAsset {
+public final class AnimatedTile extends AnimatedSprite {
 
-    protected AnimatedTileAsset( int assetIntId, FFContext context ) {
+    protected AnimatedTile( int assetIntId, FFContext context ) {
         super( assetIntId, context );
     }
     
