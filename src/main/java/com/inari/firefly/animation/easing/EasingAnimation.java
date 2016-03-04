@@ -33,16 +33,17 @@ public final class EasingAnimation extends FloatAnimation {
     public final void setEasingData( EasingData easingData ) {
         this.easingData = easingData;
     }
+    
+    
 
     @Override
-    public final void update( FFTimer timer ) {
+    public final void update( final FFTimer timer ) {
         if ( runningTime > easingData.duration ) {
             if ( looping ) {
                 reset();
-                startTime = timer.getTime();
-                activate();
+                activate( timer );
             } else {
-                finish();
+                stop();
             }
         }
     }
