@@ -17,6 +17,10 @@ public final class EasingAnimation extends FloatAnimation {
     };
     
     private EasingData easingData;
+    private boolean inverse;
+    private float startValue;
+    private float endValue;
+    private float offset;
 
     EasingAnimation( int id ) {
         super( id );
@@ -33,8 +37,18 @@ public final class EasingAnimation extends FloatAnimation {
     public final void setEasingData( EasingData easingData ) {
         this.easingData = easingData;
     }
-    
-    
+
+    @Override
+    public final void activate( final FFTimer timer ) {
+        super.activate( timer );
+        
+        inverse = easingData.changeInValue - easingData.startValue < 0f;
+        if ( easingData.startValue < 0f ) {
+            offset = 0f - easingData.startValue;
+        } 
+        startValue = easingData.startValue + offset;
+        endValue = easingData.changeInValue + offset;
+    }
 
     @Override
     public final void update( final FFTimer timer ) {
@@ -59,7 +73,11 @@ public final class EasingAnimation extends FloatAnimation {
             return currentValue;
         }
         
-        return easingData.easingType.calc( runningTime , easingData.startValue, easingData.changeInValue, easingData.duration );
+        if ( inverse ) {
+            return ( startValue - easingData.easingType.calc( runningTime , endValue, startValue, easingData.duration ) ) - offset;
+        } else {
+            return easingData.easingType.calc( runningTime , startValue, endValue, easingData.duration ) - offset;
+        }
     }
     
     @Override
