@@ -21,7 +21,7 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.composite.Composite;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
-import com.inari.firefly.entity.EntityAttributeController;
+import com.inari.firefly.entity.EntityAttributeAnimationController;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.NameMapping;
@@ -46,8 +46,6 @@ public class AnimatedSprite extends Composite {
     private static final String ANIMATION_RESOLVER_NAME = ANIMATION_NAME_PREFIX + "RESOLVER";
     private static final String ANIMATION_CONTROLLER_NAME = ANIMATION_NAME_PREFIX + "CONTROLLER";
     
-    private FFContext context;
-    
     private int textureAssetId;
     private float updateResolution;
     public boolean looping;
@@ -57,9 +55,8 @@ public class AnimatedSprite extends Composite {
     private int controllerId;
     private boolean loaded = false;
 
-    protected AnimatedSprite( int assetIntId, FFContext context ) {
+    protected AnimatedSprite( int assetIntId ) {
         super( assetIntId );
-        this.context = context;
         
         textureAssetId = -1;
         updateResolution = -1;
@@ -73,11 +70,6 @@ public class AnimatedSprite extends Composite {
     public final int getAnimationControllerId() {
         return controllerId;
     }
-    
-//    @Override
-//    public final int getInstanceId( int index ) {
-//        return getAnimationControllerId();
-//    }
     
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
@@ -150,17 +142,17 @@ public class AnimatedSprite extends Composite {
         }
         
         controllerId = controllerSystem.getControllerBuilder()
-            .set( EntityAttributeController.NAME, getName() + ANIMATION_CONTROLLER_NAME )
-            .set( EntityAttributeController.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping.iterator().next().name2 ) )
-            .set( EntityAttributeController.ANIMATION_RESOLVER_ID, animationResolverId )
-            .set( EntityAttributeController.UPDATE_RESOLUTION, updateResolution )
+            .set( EntityAttributeAnimationController.NAME, getName() + ANIMATION_CONTROLLER_NAME )
+            .set( EntityAttributeAnimationController.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping.iterator().next().name2 ) )
+            .set( EntityAttributeAnimationController.ANIMATION_RESOLVER_ID, animationResolverId )
+            .set( EntityAttributeAnimationController.UPDATE_RESOLUTION, updateResolution )
         .build( getControllerType() );
         
         loaded = true;
         return;
     }
     
-    protected Class<? extends EntityAttributeController> getControllerType() {
+    protected Class<? extends EntityAttributeAnimationController> getControllerType() {
         return SpriteIdAnimationController.class;
     }
     

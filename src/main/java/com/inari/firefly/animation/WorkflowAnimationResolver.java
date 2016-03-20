@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.lang.list.DynArray;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.AnimationSystemEvent.Type;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.state.WorkflowEvent;
 import com.inari.firefly.state.WorkflowEventListener;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.NameMapping;
 
 public final class WorkflowAnimationResolver extends AnimationResolver implements WorkflowEventListener {
@@ -21,20 +21,30 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
         WORKFLOW_ID,
         STATE_ANIMATION_NAME_MAPPING,
     };
-    
-    private FFContext context;
-    
+
     private int workflowId;
     private DynArray<NameMapping> stateAnimationNameMapping;
     
     private int animationId;
 
-    protected WorkflowAnimationResolver( int id, FFContext context ) {
+    protected WorkflowAnimationResolver( int id ) {
         super( id );
         
-        this.context = context;
-        context.registerListener( WorkflowEvent.class, this );
         animationId = -1;
+    }
+
+    @Override
+    public final void init() throws FFInitException {
+        super.init();
+        
+        context.registerListener( WorkflowEvent.class, this );
+    }
+
+    @Override
+    public final void dispose() {
+        context.disposeListener( WorkflowEvent.class, this );
+        
+        super.dispose();
     }
 
     public final int getWorkflowId() {
@@ -114,12 +124,6 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
         
         attributes.put( WORKFLOW_ID, workflowId );
         attributes.put( STATE_ANIMATION_NAME_MAPPING, stateAnimationNameMapping );
-    }
-
-    @Override
-    public final void dispose() {
-        context.disposeListener( WorkflowEvent.class, this );
-        super.dispose();
     }
 
 }

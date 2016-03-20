@@ -1,16 +1,15 @@
 package com.inari.firefly.composite.sprite;
 
 import com.inari.firefly.controller.entity.TileSpriteAnimationController;
-import com.inari.firefly.entity.EntityAttributeController;
-import com.inari.firefly.system.FFContext;
+import com.inari.firefly.entity.EntityAttributeAnimationController;
 
 public final class AnimatedTile extends AnimatedSprite {
 
-    protected AnimatedTile( int assetIntId, FFContext context ) {
-        super( assetIntId, context );
+    protected AnimatedTile( int assetIntId ) {
+        super( assetIntId );
     }
     
-    protected Class<? extends EntityAttributeController> getControllerType() {
+    protected Class<? extends EntityAttributeAnimationController> getControllerType() {
         return TileSpriteAnimationController.class;
     }
 

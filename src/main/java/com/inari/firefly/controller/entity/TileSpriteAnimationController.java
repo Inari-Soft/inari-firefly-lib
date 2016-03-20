@@ -3,18 +3,22 @@ package com.inari.firefly.controller.entity;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.IntAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.entity.EntityAttributeController;
+import com.inari.firefly.entity.EntityAttributeAnimationController;
 import com.inari.firefly.entity.EntityAttributeMap;
 import com.inari.firefly.graphics.tile.ETile;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
-public final class TileSpriteAnimationController extends EntityAttributeController {
+public final class TileSpriteAnimationController extends EntityAttributeAnimationController {
     
-    private final AnimationSystem animationSystem;
+    private AnimationSystem animationSystem;
 
-    protected TileSpriteAnimationController( int id, FFContext context ) {
-        super( id, context );
+    protected TileSpriteAnimationController( int id ) {
+        super( id );
+    }
+    
+    @Override
+    public final void init() {
+        super.init();
         animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
     }
     

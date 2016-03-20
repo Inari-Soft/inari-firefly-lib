@@ -24,7 +24,6 @@ import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundController;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFAudio;
 import com.inari.firefly.system.external.FFTimer;
 
@@ -47,8 +46,15 @@ public final class SoundAnimationController extends SoundController {
     private int pitchAnimationId = -1;
     private int panAnimationId = -1;
 
-    SoundAnimationController( int id, FFContext context ) {
-        super( id, context );
+    SoundAnimationController( int id ) {
+        super( id );
+        
+    }
+
+    @Override
+    public final void init() {
+        super.init();
+        
         animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         audio = context.getAudio();
     }

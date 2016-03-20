@@ -174,8 +174,11 @@ public class SceneSystem
         @Override
         public final int doBuild( int componentId, Class<?> sceneType, boolean activate ) {
             attributes.put( Component.INSTANCE_TYPE_NAME, sceneType.getName() );
-            Scene result = getInstance( context, componentId );
+            Scene result = getInstance( componentId );
             result.fromAttributes( attributes );
+            
+            postInit( result, context );
+            
             scenes.set( result.index(), result );
             return result.getId();
         }

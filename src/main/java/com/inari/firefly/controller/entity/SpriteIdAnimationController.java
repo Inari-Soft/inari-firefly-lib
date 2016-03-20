@@ -18,18 +18,23 @@ package com.inari.firefly.controller.entity;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.IntAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
-import com.inari.firefly.entity.EntityAttributeController;
+import com.inari.firefly.entity.EntityAttributeAnimationController;
 import com.inari.firefly.entity.EntityAttributeMap;
 import com.inari.firefly.graphics.sprite.ESprite;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 
-public final class SpriteIdAnimationController extends EntityAttributeController {
+public final class SpriteIdAnimationController extends EntityAttributeAnimationController {
     
-    private final AnimationSystem animationSystem;
+    private AnimationSystem animationSystem;
 
-    SpriteIdAnimationController( int id, FFContext context ) {
-        super( id, context );
+    SpriteIdAnimationController( int id ) {
+        super( id );
+    }
+
+    @Override
+    public final void init() {
+        super.init();
+        
         animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
     }
 

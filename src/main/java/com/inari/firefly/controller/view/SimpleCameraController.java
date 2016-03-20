@@ -8,7 +8,6 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.external.FFTimer;
 import com.inari.firefly.system.view.View;
 import com.inari.firefly.system.view.ViewController;
@@ -47,8 +46,8 @@ public final class SimpleCameraController extends ViewController {
     private Direction vMove = Direction.NONE;
     private final Rectangle virtualViewBounds = new Rectangle();
 
-    protected SimpleCameraController( int id, FFContext context ) {
-        super( id, context );
+    protected SimpleCameraController( int id ) {
+        super( id );
     }
 
     public final CameraPivot getPivot() {
