@@ -48,7 +48,6 @@ public final class SoundAnimationController extends SoundController {
 
     SoundAnimationController( int id ) {
         super( id );
-        
     }
 
     @Override
