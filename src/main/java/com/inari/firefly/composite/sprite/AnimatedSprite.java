@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.AnimationSystem;
@@ -26,6 +27,7 @@ import com.inari.firefly.state.StateSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.NameMapping;
 import com.inari.firefly.system.external.FFGraphics;
+import com.inari.firefly.system.external.SpriteData;
 
 public class AnimatedSprite extends Composite {
     
@@ -54,6 +56,8 @@ public class AnimatedSprite extends Composite {
     
     private int controllerId;
     private boolean loaded = false;
+    
+    private final InternalSpriteData spriteData = new InternalSpriteData();
 
     protected AnimatedSprite( int assetIntId ) {
         super( assetIntId );
@@ -208,6 +212,7 @@ public class AnimatedSprite extends Composite {
     }
     
     private Map<String, List<IntTimelineData>> createSpriteMapping( int textureId ) {
+        spriteData.textureId = textureId;
         Map<String, List<IntTimelineData>> mapping = new HashMap<String, List<IntTimelineData>>();
         
         FFGraphics graphics = context.getGraphics();
@@ -227,7 +232,8 @@ public class AnimatedSprite extends Composite {
                 mapping.put( stateName, timelineData );
             }
             
-            int spriteId = graphics.createSprite( textureId, asd.textureRegion );
+            spriteData.region = asd.textureRegion;
+            int spriteId = graphics.createSprite( spriteData );
             timelineData.add( new IntTimelineData( spriteId, asd.frameTime )  );
         }
         
@@ -239,6 +245,27 @@ public class AnimatedSprite extends Composite {
         }
 
         return mapping;
+    }
+    
+    private final class InternalSpriteData implements SpriteData {
+        
+        int textureId;
+        Rectangle region;
+
+        @Override
+        public final int getTextureId() {
+            return textureId;
+        }
+
+        @Override
+        public final Rectangle getTextureRegion() {
+            return region;
+        }
+
+        @Override
+        public final <A> A getDynamicAttribute( AttributeKey<A> key ) {
+            throw new UnsupportedOperationException();
+        }
     }
 
 }
