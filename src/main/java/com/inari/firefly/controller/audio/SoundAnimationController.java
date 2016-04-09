@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.inari.firefly.animation.Animation;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundController;
@@ -30,8 +31,11 @@ import com.inari.firefly.system.external.FFTimer;
 
 public final class SoundAnimationController extends SoundController {
     
+    public static final AttributeKey<String> VOLUME_ANIMATION_NAME = new AttributeKey<String>( "volumeAnimationName", String.class, SoundAnimationController.class );
     public static final AttributeKey<Integer> VOLUME_ANIMATION_ID = new AttributeKey<Integer>( "volumeAnimationId", Integer.class, SoundAnimationController.class );
+    public static final AttributeKey<String> PITCH_ANIMATION_NAME = new AttributeKey<String>( "pitchAnimationNamed", String.class, SoundAnimationController.class );
     public static final AttributeKey<Integer> PITCH_ANIMATION_ID = new AttributeKey<Integer>( "pitchAnimationId", Integer.class, SoundAnimationController.class );
+    public static final AttributeKey<String> PAN_ANIMATION_NAME = new AttributeKey<String>( "panAnimationName", String.class, SoundAnimationController.class );
     public static final AttributeKey<Integer> PAN_ANIMATION_ID = new AttributeKey<Integer>( "panAnimationId", Integer.class, SoundAnimationController.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         VOLUME_ANIMATION_ID,
@@ -93,9 +97,9 @@ public final class SoundAnimationController extends SoundController {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        volumeAnimationId = attributes.getValue( VOLUME_ANIMATION_ID, volumeAnimationId );
-        pitchAnimationId = attributes.getValue( PITCH_ANIMATION_ID, pitchAnimationId );
-        panAnimationId = attributes.getValue( PAN_ANIMATION_ID, panAnimationId );
+        volumeAnimationId = attributes.getIdForName( VOLUME_ANIMATION_NAME, VOLUME_ANIMATION_ID, Animation.TYPE_KEY, volumeAnimationId );
+        pitchAnimationId = attributes.getIdForName( PITCH_ANIMATION_NAME, PITCH_ANIMATION_ID, Animation.TYPE_KEY, pitchAnimationId );
+        panAnimationId = attributes.getIdForName( PAN_ANIMATION_NAME, PAN_ANIMATION_ID, Animation.TYPE_KEY, panAnimationId );
     }
 
     @Override

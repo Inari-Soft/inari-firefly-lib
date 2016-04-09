@@ -33,7 +33,7 @@ public class SceneSystemEvent extends Event<SceneSystem> {
     }
 
     @Override
-    public void notify( SceneSystem listener ) {
+    protected void notify( SceneSystem listener ) {
         listener.notifySceneEvent( this );
     }
 

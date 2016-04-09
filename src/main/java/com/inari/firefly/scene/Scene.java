@@ -10,12 +10,16 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFTimer;
+import com.inari.firefly.system.view.Layer;
+import com.inari.firefly.system.view.View;
 
 public abstract class Scene extends SystemComponent implements Disposable {
     
     public static final SystemComponentKey<Scene> TYPE_KEY = SystemComponentKey.create( Scene.class );
     
+    public static final AttributeKey<String> VIEW_NAME = new AttributeKey<String>( "viewName", String.class, Scene.class );
     public static final AttributeKey<Integer> VIEW_ID = new AttributeKey<Integer>( "viewId", Integer.class, Scene.class );
+    public static final AttributeKey<String> LAYER_NAME = new AttributeKey<String>( "layerName", String.class, Scene.class );
     public static final AttributeKey<Integer> LAYER_ID = new AttributeKey<Integer>( "layerId", Integer.class, Scene.class );
     public static final AttributeKey<Integer> UPDATE_RESOLUTION = new AttributeKey<Integer>( "updateResolution", Integer.class, Scene.class );
     public static final AttributeKey<Boolean> RUN_ONCE = new AttributeKey<Boolean>( "runOnce", Boolean.class, Scene.class );
@@ -151,8 +155,8 @@ public abstract class Scene extends SystemComponent implements Disposable {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        viewId = attributes.getValue( VIEW_ID, viewId );
-        layerId = attributes.getValue( LAYER_ID, layerId );
+        viewId = attributes.getIdForName( VIEW_NAME, VIEW_ID, View.TYPE_KEY, viewId );
+        layerId = attributes.getIdForName( LAYER_NAME, LAYER_ID, Layer.TYPE_KEY, layerId );
         updateResolution = attributes.getValue( UPDATE_RESOLUTION, updateResolution );
         runOnce = attributes.getValue( RUN_ONCE, runOnce );
     }

@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.component.Component;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.RenderEvent;
 import com.inari.firefly.system.RenderEventListener;
@@ -165,6 +164,10 @@ public class SceneSystem
     }
 
     public final class SceneBuilder extends SystemComponentBuilder {
+        
+        public SceneBuilder() {
+            super( context );
+        }
 
         @Override
         public final SystemComponentKey<Scene> systemComponentKey() {
@@ -173,12 +176,7 @@ public class SceneSystem
         
         @Override
         public final int doBuild( int componentId, Class<?> sceneType, boolean activate ) {
-            attributes.put( Component.INSTANCE_TYPE_NAME, sceneType.getName() );
-            Scene result = getInstance( componentId );
-            result.fromAttributes( attributes );
-            
-            postInit( result, context );
-            
+            Scene result = createSystemComponent( componentId, sceneType, context );
             scenes.set( result.index(), result );
             return result.getId();
         }

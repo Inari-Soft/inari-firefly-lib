@@ -10,16 +10,18 @@ import java.util.Set;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
+import com.inari.commons.lang.list.IntBag;
+import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.AnimationSystem.AnimationBuilder;
 import com.inari.firefly.animation.WorkflowAnimationResolver;
 import com.inari.firefly.animation.timeline.IntTimelineAnimation;
 import com.inari.firefly.animation.timeline.IntTimelineData;
+import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.composite.Composite;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
 import com.inari.firefly.entity.EntityAttributeAnimationController;
@@ -29,8 +31,9 @@ import com.inari.firefly.system.NameMapping;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.SpriteData;
 
-public class AnimatedSprite extends Composite {
+public class AnimatedSprite extends Asset {
     
+    public static final AttributeKey<String> TEXTURE_ASSET_NAME = new AttributeKey<String>( "textureAssetName", String.class, AnimatedSprite.class );
     public static final AttributeKey<Integer> TEXTURE_ASSET_ID = new AttributeKey<Integer>( "textureAssetId", Integer.class, AnimatedSprite.class );
     public static final AttributeKey<Float> UPDATE_RESOLUTION  = new AttributeKey<Float>( "updateResolution", Float.class, AnimatedSprite.class );
     public static final AttributeKey<Boolean> LOOPING  = new AttributeKey<Boolean>( "looping", Boolean.class, AnimatedSprite.class );
@@ -55,8 +58,7 @@ public class AnimatedSprite extends Composite {
     private DynArray<AnimatedSpriteData> animatedSpriteData;
     
     private int controllerId;
-    private boolean loaded = false;
-    
+    private final IntBag dependsOn;
     private final InternalSpriteData spriteData = new InternalSpriteData();
 
     protected AnimatedSprite( int assetIntId ) {
@@ -69,50 +71,26 @@ public class AnimatedSprite extends Composite {
         animatedSpriteData = null;
         controllerId = -1;
         controllerId = -1;
+        dependsOn = new IntBag( 1 );
+    }
+    
+    @Override
+    public int getInstanceId( int index ) {
+        return controllerId;
     }
 
     public final int getAnimationControllerId() {
         return controllerId;
     }
     
-    @Override
-    public final Set<AttributeKey<?>> attributeKeys() {
-        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
-        attributeKeys.addAll( ATTRIBUTE_KEYS );
-        attributeKeys.addAll( super.attributeKeys() );
-        return attributeKeys;
-    }
-
-    @Override
-    public final void fromAttributes( AttributeMap attributes ) {
-        if ( loaded ) {
-            throw new IllegalStateException( "The AnimatedSprite is already loaded" );
-        }
-        
-        super.fromAttributes( attributes );
-        
-        textureAssetId = attributes.getValue( TEXTURE_ASSET_ID, textureAssetId );
-        updateResolution = attributes.getValue( UPDATE_RESOLUTION, updateResolution );
-        looping = attributes.getValue( LOOPING, looping );
-        workflowId = attributes.getValue( WORKFLOW_ID, workflowId );
-        animatedSpriteData = attributes.getValue( ANIMATED_SPRITE_DATA, animatedSpriteData );
-    }
-
-    @Override
-    public final void toAttributes( AttributeMap attributes ) {
-        super.toAttributes( attributes );
-        
-        attributes.put( TEXTURE_ASSET_ID, textureAssetId );
-        attributes.put( UPDATE_RESOLUTION, updateResolution );
-        attributes.put( LOOPING, looping );
-        attributes.put( WORKFLOW_ID, workflowId );
-        attributes.put( ANIMATED_SPRITE_DATA, animatedSpriteData );
+    protected IntBag dependsOn() {
+        return dependsOn;
     }
     
     @Override
-    public final void load( FFContext context ) {
+    public final Disposable load( FFContext context ) {
         if ( loaded ) {
-            return;
+            return this;
         }
         
         checkConsistency();
@@ -153,11 +131,8 @@ public class AnimatedSprite extends Composite {
         .build( getControllerType() );
         
         loaded = true;
-        return;
-    }
-    
-    protected Class<? extends EntityAttributeAnimationController> getControllerType() {
-        return SpriteIdAnimationController.class;
+        
+        return this;
     }
     
     @Override
@@ -187,6 +162,41 @@ public class AnimatedSprite extends Composite {
         }
         
         controllerId = -1;
+    }
+    
+    @Override
+    public final Set<AttributeKey<?>> attributeKeys() {
+        Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
+        attributeKeys.addAll( ATTRIBUTE_KEYS );
+        attributeKeys.addAll( super.attributeKeys() );
+        return attributeKeys;
+    }
+
+    @Override
+    public final void fromAttributes( AttributeMap attributes ) {
+        if ( loaded ) {
+            throw new IllegalStateException( "The AnimatedSprite is already loaded" );
+        }
+        
+        super.fromAttributes( attributes );
+        
+        textureAssetId = attributes.getIdForName( TEXTURE_ASSET_NAME, TEXTURE_ASSET_ID, Asset.TYPE_KEY, textureAssetId );
+        dependsOn.add( textureAssetId );
+        updateResolution = attributes.getValue( UPDATE_RESOLUTION, updateResolution );
+        looping = attributes.getValue( LOOPING, looping );
+        workflowId = attributes.getValue( WORKFLOW_ID, workflowId );
+        animatedSpriteData = attributes.getValue( ANIMATED_SPRITE_DATA, animatedSpriteData );
+    }
+
+    @Override
+    public final void toAttributes( AttributeMap attributes ) {
+        super.toAttributes( attributes );
+        
+        attributes.put( TEXTURE_ASSET_ID, textureAssetId );
+        attributes.put( UPDATE_RESOLUTION, updateResolution );
+        attributes.put( LOOPING, looping );
+        attributes.put( WORKFLOW_ID, workflowId );
+        attributes.put( ANIMATED_SPRITE_DATA, animatedSpriteData );
     }
 
     private void deleteAnimation( String animationName ) {
@@ -245,6 +255,10 @@ public class AnimatedSprite extends Composite {
         }
 
         return mapping;
+    }
+    
+    protected Class<? extends EntityAttributeAnimationController> getControllerType() {
+        return SpriteIdAnimationController.class;
     }
     
     private final class InternalSpriteData implements SpriteData {

@@ -19,6 +19,7 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.physics.collision.BitMask;
@@ -36,6 +37,7 @@ public final class SimplePlatformerMoveController extends EntityController {
     public static final AttributeKey<Easing.Type> EASING_TYPE = new AttributeKey<Easing.Type>( "easingType", Easing.Type.class, PlatformerGravityController.class );
     public static final AttributeKey<Float> MAX_VELOCITY  = new AttributeKey<Float>( "maxVelocity", Float.class, PlatformerGravityController.class );
     public static final AttributeKey<Long> TIME_TO_MAX  = new AttributeKey<Long>( "timeToMax", Long.class, PlatformerGravityController.class );
+    public static final AttributeKey<String> TILE_GRID_NAME  = new AttributeKey<String>( "tileGridName", String.class, PlatformerGravityController.class );
     public static final AttributeKey<Integer> TILE_GRID_ID  = new AttributeKey<Integer>( "tileGridId", Integer.class, PlatformerGravityController.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         GO_LEFT_BUTTON_TYPE,
@@ -223,7 +225,7 @@ public final class SimplePlatformerMoveController extends EntityController {
         easingType = attributes.getValue( EASING_TYPE, easingType );
         maxVelocity = attributes.getValue( MAX_VELOCITY, maxVelocity );
         timeToMax = attributes.getValue( TIME_TO_MAX, timeToMax );
-        tileGridId = attributes.getValue( TILE_GRID_ID, tileGridId );
+        tileGridId = attributes.getIdForName( TILE_GRID_NAME, TILE_GRID_ID, TileGrid.TYPE_KEY, tileGridId );
     }
 
     @Override

@@ -9,12 +9,14 @@ import com.inari.firefly.animation.AnimationSystemEvent.Type;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.state.StateSystem;
+import com.inari.firefly.state.Workflow;
 import com.inari.firefly.state.WorkflowEvent;
 import com.inari.firefly.state.WorkflowEventListener;
 import com.inari.firefly.system.NameMapping;
 
 public final class WorkflowAnimationResolver extends AnimationResolver implements WorkflowEventListener {
     
+    public static final AttributeKey<String> WORKFLOW_NAME = new AttributeKey<String>( "workflowName", String.class, WorkflowAnimationResolver.class );
     public static final AttributeKey<Integer> WORKFLOW_ID = new AttributeKey<Integer>( "workflowId", Integer.class, WorkflowAnimationResolver.class );
     public static final AttributeKey<DynArray<NameMapping>> STATE_ANIMATION_NAME_MAPPING = AttributeKey.createForDynArray( "stateAnimationNameMapping", WorkflowAnimationResolver.class );
     public static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
@@ -114,7 +116,7 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        workflowId = attributes.getValue( WORKFLOW_ID, workflowId );
+        workflowId = attributes.getIdForName( WORKFLOW_NAME, WORKFLOW_ID, Workflow.TYPE_KEY, workflowId );
         stateAnimationNameMapping = attributes.getValue( STATE_ANIMATION_NAME_MAPPING, stateAnimationNameMapping );
     }
 
