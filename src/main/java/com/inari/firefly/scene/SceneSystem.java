@@ -75,7 +75,7 @@ public class SceneSystem
             }
             case DELETE : {
                 scene.dispose( context );
-                deleteScene( scene.getId() );
+                deleteScene( scene.index() );
                 break;
             }
         }
@@ -101,7 +101,7 @@ public class SceneSystem
     public final int getSceneId( String sceneName ) {
         for ( Scene scene : scenes ) {
             if ( sceneName.equals( scene.getName() ) ) {
-                return scene.getId();
+                return scene.index();
             }
         }
         
@@ -178,7 +178,7 @@ public class SceneSystem
         public final int doBuild( int componentId, Class<?> sceneType, boolean activate ) {
             Scene result = createSystemComponent( componentId, sceneType, context );
             scenes.set( result.index(), result );
-            return result.getId();
+            return result.index();
         }
     }
     

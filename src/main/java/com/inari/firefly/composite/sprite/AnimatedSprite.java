@@ -152,7 +152,7 @@ public class AnimatedSprite extends Asset {
             );
 
             DynArray<NameMapping> stateAnimationMapping = resolver.getStateAnimationNameMapping();
-            animationSystem.deleteAnimationResolver( resolver.getId() );
+            animationSystem.deleteAnimationResolver( resolver.index() );
             
             for ( NameMapping nameMapping : stateAnimationMapping ) {
                 deleteAnimation( nameMapping.name2 );
@@ -205,7 +205,7 @@ public class AnimatedSprite extends Asset {
         
         IntTimelineAnimation animation = animationSystem.getAnimationAs( animationName, IntTimelineAnimation.class );
         IntTimelineData[] timeline = animation.getTimeline();
-        animationSystem.deleteAnimation( animation.getId() );
+        animationSystem.deleteAnimation( animation.index() );
         
         for ( IntTimelineData timlineData : timeline ) {
             graphics.disposeSprite( timlineData.getValue() );
