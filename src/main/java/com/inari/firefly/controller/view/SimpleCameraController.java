@@ -8,9 +8,9 @@ import com.inari.commons.geom.Position;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.graphics.view.View;
+import com.inari.firefly.graphics.view.ViewController;
 import com.inari.firefly.system.external.FFTimer;
-import com.inari.firefly.system.view.View;
-import com.inari.firefly.system.view.ViewController;
 
 public final class SimpleCameraController extends ViewController {
     

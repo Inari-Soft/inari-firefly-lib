@@ -11,10 +11,7 @@ import java.util.Set;
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
-import com.inari.firefly.Disposable;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.animation.AnimationSystem;
-import com.inari.firefly.animation.AnimationSystem.AnimationBuilder;
 import com.inari.firefly.animation.WorkflowAnimationResolver;
 import com.inari.firefly.animation.timeline.IntTimelineAnimation;
 import com.inari.firefly.animation.timeline.IntTimelineData;
@@ -23,9 +20,12 @@ import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.control.ControllerSystem;
+import com.inari.firefly.control.AnimatedEntityAttribute;
+import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
-import com.inari.firefly.entity.EntityAttributeAnimationController;
-import com.inari.firefly.state.StateSystem;
+import com.inari.firefly.physics.animation.AnimationSystem;
+import com.inari.firefly.physics.animation.AnimationSystem.AnimationBuilder;
+import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.NameMapping;
 import com.inari.firefly.system.external.FFGraphics;
@@ -124,10 +124,10 @@ public class AnimatedSprite extends Asset {
         }
         
         controllerId = controllerSystem.getControllerBuilder()
-            .set( EntityAttributeAnimationController.NAME, getName() + ANIMATION_CONTROLLER_NAME )
-            .set( EntityAttributeAnimationController.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping.iterator().next().name2 ) )
-            .set( EntityAttributeAnimationController.ANIMATION_RESOLVER_ID, animationResolverId )
-            .set( EntityAttributeAnimationController.UPDATE_RESOLUTION, updateResolution )
+            .set( AnimatedEntityAttribute.NAME, getName() + ANIMATION_CONTROLLER_NAME )
+            .set( AnimatedEntityAttribute.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping.iterator().next().name2 ) )
+            .set( AnimatedEntityAttribute.ANIMATION_RESOLVER_ID, animationResolverId )
+            .set( AnimatedEntityAttribute.UPDATE_RESOLUTION, updateResolution )
         .build( getControllerType() );
         
         loaded = true;
@@ -257,7 +257,7 @@ public class AnimatedSprite extends Asset {
         return mapping;
     }
     
-    protected Class<? extends EntityAttributeAnimationController> getControllerType() {
+    protected Class<? extends AnimatedEntityAttribute> getControllerType() {
         return SpriteIdAnimationController.class;
     }
     

@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.geom.Easing;
-import com.inari.firefly.animation.FloatAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.physics.animation.FloatAnimation;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class EasingAnimation extends FloatAnimation {

@@ -1,7 +1,7 @@
 package com.inari.firefly.composite.sprite;
 
+import com.inari.firefly.control.AnimatedEntityAttribute;
 import com.inari.firefly.controller.entity.TileSpriteAnimationController;
-import com.inari.firefly.entity.EntityAttributeAnimationController;
 
 public final class AnimatedTile extends AnimatedSprite {
 
@@ -9,7 +9,7 @@ public final class AnimatedTile extends AnimatedSprite {
         super( assetIntId );
     }
     
-    protected Class<? extends EntityAttributeAnimationController> getControllerType() {
+    protected Class<? extends AnimatedEntityAttribute> getControllerType() {
         return TileSpriteAnimationController.class;
     }
 

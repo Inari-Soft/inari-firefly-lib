@@ -5,13 +5,16 @@ import java.util.Set;
 
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.animation.AnimationSystemEvent.Type;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.state.StateSystem;
-import com.inari.firefly.state.Workflow;
-import com.inari.firefly.state.WorkflowEvent;
-import com.inari.firefly.state.WorkflowEventListener;
+import com.inari.firefly.control.state.StateSystem;
+import com.inari.firefly.control.state.Workflow;
+import com.inari.firefly.control.state.WorkflowEvent;
+import com.inari.firefly.control.state.WorkflowEventListener;
+import com.inari.firefly.physics.animation.AnimationResolver;
+import com.inari.firefly.physics.animation.AnimationSystem;
+import com.inari.firefly.physics.animation.AnimationSystemEvent;
+import com.inari.firefly.physics.animation.AnimationSystemEvent.Type;
 import com.inari.firefly.system.NameMapping;
 
 public final class WorkflowAnimationResolver extends AnimationResolver implements WorkflowEventListener {

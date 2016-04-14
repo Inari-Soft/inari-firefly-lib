@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.graphics.RGBColor;
-import com.inari.firefly.animation.ValueAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.physics.animation.ValueAnimation;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class ColorEasingAnimation extends ValueAnimation<RGBColor> {

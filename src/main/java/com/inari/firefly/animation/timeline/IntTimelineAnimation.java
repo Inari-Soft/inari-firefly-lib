@@ -3,9 +3,9 @@ package com.inari.firefly.animation.timeline;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.firefly.animation.IntAnimation;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.physics.animation.IntAnimation;
 import com.inari.firefly.system.external.FFTimer;
 
 public final class IntTimelineAnimation extends IntAnimation {

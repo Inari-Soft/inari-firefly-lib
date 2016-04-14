@@ -19,12 +19,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.inari.firefly.animation.Animation;
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.audio.Sound;
 import com.inari.firefly.audio.SoundController;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.physics.animation.Animation;
+import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.system.external.FFAudio;
 import com.inari.firefly.system.external.FFTimer;
 

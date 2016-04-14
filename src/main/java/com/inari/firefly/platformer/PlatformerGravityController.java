@@ -5,14 +5,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inari.commons.geom.Easing;
-import com.inari.firefly.animation.Animation;
-import com.inari.firefly.animation.AnimationSystem;
 import com.inari.firefly.animation.easing.EasingAnimation;
 import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
+import com.inari.firefly.physics.animation.Animation;
+import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFTimer;
 
