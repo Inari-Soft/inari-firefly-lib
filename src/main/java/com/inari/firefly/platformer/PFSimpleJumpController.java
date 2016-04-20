@@ -18,12 +18,12 @@ import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
 import com.inari.firefly.system.external.FFTimer;
 
-public final class SimplePlatformerJumpController extends EntityController {
+public final class PFSimpleJumpController extends EntityController {
     
-    public static final AttributeKey<ButtonType> JUMP_BUTTON_TYPE = new AttributeKey<ButtonType>( "jumpButtonType", ButtonType.class, PlatformerGravityController.class );
-    public static final AttributeKey<Easing.Type> EASING_TYPE = new AttributeKey<Easing.Type>( "easingType", Easing.Type.class, PlatformerGravityController.class );
-    public static final AttributeKey<Float> MAX_VELOCITY  = new AttributeKey<Float>( "maxVelocity", Float.class, PlatformerGravityController.class );
-    public static final AttributeKey<Long> TIME_TO_MAX  = new AttributeKey<Long>( "timeToMax", Long.class, PlatformerGravityController.class );
+    public static final AttributeKey<ButtonType> JUMP_BUTTON_TYPE = new AttributeKey<ButtonType>( "jumpButtonType", ButtonType.class, PFGravityController.class );
+    public static final AttributeKey<Easing.Type> EASING_TYPE = new AttributeKey<Easing.Type>( "easingType", Easing.Type.class, PFGravityController.class );
+    public static final AttributeKey<Float> MAX_VELOCITY  = new AttributeKey<Float>( "maxVelocity", Float.class, PFGravityController.class );
+    public static final AttributeKey<Long> TIME_TO_MAX  = new AttributeKey<Long>( "timeToMax", Long.class, PFGravityController.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         JUMP_BUTTON_TYPE,
         EASING_TYPE,
@@ -41,7 +41,7 @@ public final class SimplePlatformerJumpController extends EntityController {
     
     private int jumpAnimId;
 
-    protected SimplePlatformerJumpController( int id ) {
+    protected PFSimpleJumpController( int id ) {
         super( id );
     }
 
@@ -105,19 +105,20 @@ public final class SimplePlatformerJumpController extends EntityController {
         float yVelocity = movement.getVelocityY();
         
         // check falling/context south/jump
-        if ( !movement.hasStateFlag( PlatformerState.CONTACT_SOUTH ) ) {
+        if ( !movement.hasStateFlag( PFState.CONTACT_SOUTH ) ) {
             if ( animationSystem.isActive( jumpAnimId ) ) {
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
             } 
         } else {
             yVelocity = 0f;
             animationSystem.resetAnimation( jumpAnimId );
-            movement.resetStateFlag( PlatformerState.JUMP );
+            movement.resetStateFlag( PFState.JUMP );
             
-            if ( !animationSystem.isActive( jumpAnimId ) && input.isPressed( jumpButtonType ) ) {
+            if ( !animationSystem.isActive( jumpAnimId ) && input.typed( jumpButtonType ) ) {
                 animationSystem.activate( jumpAnimId, timer );
-                movement.setStateFlag( PlatformerState.JUMP );
-                movement.resetStateFlag( PlatformerState.CONTACT_SOUTH );
+                yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
+                movement.setStateFlag( PFState.JUMP );
+                movement.resetStateFlag( PFState.CONTACT_SOUTH );
             } 
         }
         

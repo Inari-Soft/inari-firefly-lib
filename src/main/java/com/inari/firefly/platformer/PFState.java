@@ -2,7 +2,7 @@ package com.inari.firefly.platformer;
 
 import com.inari.commons.lang.indexed.Indexed;
 
-public enum PlatformerState implements Indexed {
+public enum PFState implements Indexed {
     CONTACT_NORTH,
     CONTACT_EAST,
     CONTACT_SOUTH,

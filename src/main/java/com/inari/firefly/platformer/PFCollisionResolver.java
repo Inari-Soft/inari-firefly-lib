@@ -5,9 +5,9 @@ import com.inari.firefly.physics.collision.CollisionResolver;
 import com.inari.firefly.physics.collision.Collisions;
 import com.inari.firefly.physics.collision.Collisions.CollisionData;
 
-public final class PlatformerCollisionResolver extends CollisionResolver {
+public final class PFCollisionResolver extends CollisionResolver {
 
-    protected PlatformerCollisionResolver( int id ) {
+    protected PFCollisionResolver( int id ) {
         super( id );
     }
 
@@ -37,10 +37,10 @@ public final class PlatformerCollisionResolver extends CollisionResolver {
     private void resolveXAxisCollision( Collisions collisions, float velocityX ) {
         
         int xCorrection = 0;
-        
+        int collisionHeight = (int) Math.floor( collisions.entityData.worldBounds.height * 0.6 );
         for ( CollisionData collision : collisions ) {
             final Rectangle bounds = collision.intersectionBounds;
-            if ( bounds.y > 10 ) {
+            if ( bounds.y > collisionHeight ) {
                 continue;
             }
             
@@ -72,7 +72,7 @@ public final class PlatformerCollisionResolver extends CollisionResolver {
         int yCorrection = 0;
         for ( CollisionData collision : collisions ) {
             final Rectangle bounds = collision.intersectionBounds;
-            if ( bounds.width > 2 && bounds.height > yCorrection ) {
+            if ( bounds.width > 1 && bounds.height > yCorrection ) {
                 yCorrection = bounds.height;
             }
         }

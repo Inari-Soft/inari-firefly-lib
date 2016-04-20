@@ -16,11 +16,11 @@ import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFTimer;
 
-public final class PlatformerGravityController extends EntityController {
+public final class PFGravityController extends EntityController {
     
-    public static final AttributeKey<Easing.Type> EASING_TYPE = new AttributeKey<Easing.Type>( "easingType", Easing.Type.class, PlatformerGravityController.class );
-    public static final AttributeKey<Float> MAX_VELOCITY  = new AttributeKey<Float>( "maxVelocity", Float.class, PlatformerGravityController.class );
-    public static final AttributeKey<Long> TIME_TO_MAX  = new AttributeKey<Long>( "timeToMax", Long.class, PlatformerGravityController.class );
+    public static final AttributeKey<Easing.Type> EASING_TYPE = new AttributeKey<Easing.Type>( "easingType", Easing.Type.class, PFGravityController.class );
+    public static final AttributeKey<Float> MAX_VELOCITY  = new AttributeKey<Float>( "maxVelocity", Float.class, PFGravityController.class );
+    public static final AttributeKey<Long> TIME_TO_MAX  = new AttributeKey<Long>( "timeToMax", Long.class, PFGravityController.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         EASING_TYPE,
         MAX_VELOCITY,
@@ -36,7 +36,7 @@ public final class PlatformerGravityController extends EntityController {
     
     private int gravityAnimId;
 
-    protected PlatformerGravityController( int id ) {
+    protected PFGravityController( int id ) {
         super( id );
     }
     
@@ -90,7 +90,7 @@ public final class PlatformerGravityController extends EntityController {
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
         float yVelocity = movement.getVelocityY();
         
-        if ( !movement.hasStateFlag( PlatformerState.CONTACT_SOUTH ) ) {
+        if ( !movement.hasStateFlag( PFState.CONTACT_SOUTH ) ) {
             if ( !animationSystem.isActive( gravityAnimId ) ) {
                 animationSystem.activate( gravityAnimId, timer );
             }
