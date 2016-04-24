@@ -96,7 +96,7 @@ public final class PFPlayerController extends EntityController {
         
         if ( slopePivot.x == 0 && slopePivot.y == 0 ) {
             slopePivot.x = bounding.x + bounding.width / 2;
-            slopePivot.y = bounding.y + bounding.height - 1 - 4;
+            slopePivot.y = bounding.y + bounding.height - 5;
             groundHScanBounds.width = bounding.width;
             groundHScanBounds.height = 1;
         }

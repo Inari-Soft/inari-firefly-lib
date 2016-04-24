@@ -146,8 +146,16 @@ public final class PFBaseMoveController extends EntityController {
                 animationSystem.resetAnimation( startWalkAnimId );
             }
         }
-        
+
         movement.setVelocityX( xVelocity );
+        
+        movement.resetStateFlag( PFState.GO_RIGHT );
+        movement.resetStateFlag( PFState.GO_LEFT );
+        if ( xVelocity > 0 ) {
+            movement.setStateFlag( PFState.GO_RIGHT );
+        } else if ( xVelocity < 0 ) {
+            movement.resetStateFlag( PFState.GO_LEFT );
+        }
     }
     
     @Override
