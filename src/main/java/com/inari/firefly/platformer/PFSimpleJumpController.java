@@ -9,6 +9,7 @@ import com.inari.firefly.animation.easing.EasingAnimation;
 import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.control.state.EState;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
@@ -102,23 +103,24 @@ public final class PFSimpleJumpController extends EntityController {
     protected final void update( FFTimer timer, int entityId ) {
         final FFInput input = context.getInput();
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
+        final EState state = entitySystem.getComponent( entityId, EState.TYPE_KEY );
         float yVelocity = movement.getVelocityY();
         
         // check falling/context south/jump
-        if ( !movement.hasStateFlag( PFState.CONTACT_SOUTH ) ) {
+        if ( !state.hasStateFlag( PFState.ON_GROUND ) ) {
             if ( animationSystem.isActive( jumpAnimId ) ) {
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
             } 
         } else {
             yVelocity = 0f;
             animationSystem.resetAnimation( jumpAnimId );
-            movement.resetStateFlag( PFState.JUMP );
+            state.resetStateFlag( PFState.JUMP );
             
             if ( !animationSystem.isActive( jumpAnimId ) && input.typed( jumpButtonType ) ) {
                 animationSystem.activate( jumpAnimId, timer );
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
-                movement.setStateFlag( PFState.JUMP );
-                movement.resetStateFlag( PFState.CONTACT_SOUTH );
+                state.setStateFlag( PFState.JUMP );
+                state.resetStateFlag( PFState.ON_GROUND );
             } 
         }
         

@@ -10,6 +10,7 @@ import com.inari.firefly.animation.easing.EasingAnimation;
 import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.control.state.EState;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
@@ -19,7 +20,7 @@ import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
 import com.inari.firefly.system.external.FFTimer;
 
-public final class PFBaseMoveController extends EntityController {
+public final class PFMoveController extends EntityController {
     
     public static final AttributeKey<ButtonType> GO_LEFT_BUTTON_TYPE = new AttributeKey<ButtonType>( "goLeftButtonType", ButtonType.class, PFGravityController.class );
     public static final AttributeKey<ButtonType> GO_RIGHT_BUTTON_TYPE = new AttributeKey<ButtonType>( "goRightButtonType", ButtonType.class, PFGravityController.class );
@@ -45,7 +46,7 @@ public final class PFBaseMoveController extends EntityController {
 
     private int startWalkAnimId;
 
-    protected PFBaseMoveController( int id ) {
+    protected PFMoveController( int id ) {
         super( id );
         
     }
@@ -115,6 +116,7 @@ public final class PFBaseMoveController extends EntityController {
     protected final void update( FFTimer timer, int entityId ) {
         final FFInput input = context.getInput();
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
+        final EState state = entitySystem.getComponent( entityId, EState.TYPE_KEY );
         float xVelocity = movement.getVelocityX();
         
         // walking right/left
@@ -149,12 +151,12 @@ public final class PFBaseMoveController extends EntityController {
 
         movement.setVelocityX( xVelocity );
         
-        movement.resetStateFlag( PFState.GO_RIGHT );
-        movement.resetStateFlag( PFState.GO_LEFT );
+        state.resetStateFlag( PFState.GO_RIGHT );
+        state.resetStateFlag( PFState.GO_LEFT );
         if ( xVelocity > 0 ) {
-            movement.setStateFlag( PFState.GO_RIGHT );
+            state.setStateFlag( PFState.GO_RIGHT );
         } else if ( xVelocity < 0 ) {
-            movement.resetStateFlag( PFState.GO_LEFT );
+            state.setStateFlag( PFState.GO_LEFT );
         }
     }
     

@@ -6,7 +6,7 @@ public enum PFState implements Indexed {
     GO_LEFT,
     GO_RIGHT,
     FALLING,
-    CONTACT_SOUTH,
+    ON_GROUND,
     WALK_LADDER_UP,
     WALK_LADDER_DOWN,
     JUMP,

@@ -11,6 +11,7 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.control.state.EState;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
@@ -89,6 +90,7 @@ public final class PFPlayerController extends EntityController {
             
         final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
         final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+        final EState state = context.getEntityComponent( entityId, EState.TYPE_KEY );
         
         float yVelocity = movement.getVelocityY();
         float xVelocity = movement.getVelocityX();
@@ -108,26 +110,26 @@ public final class PFPlayerController extends EntityController {
                 (int) Math.floor( transform.getYpos() + movement.getVelocityY() ) : 
                     (int) Math.ceil( transform.getYpos() + movement.getVelocityY() );
         
-        if ( movement.hasStateFlag( PFState.CONTACT_SOUTH ) ) {
-            checkGroundContact( movement, bounding );
+        if ( state.hasStateFlag( PFState.ON_GROUND ) ) {
+            checkGroundContact( state, bounding );
         }
                 
         if ( movement.getVelocityY() >= 0 ) {
-            adjustToGround( movement, transform );
+            adjustToGround( movement, state, transform );
         }
     }
     
-    private void checkGroundContact( final EMovement movement, final Rectangle bounding ) {
+    private void checkGroundContact( final EState state, final Rectangle bounding ) {
         groundHScanBounds.x = playerWorldPos.x + bounding.x;
         groundHScanBounds.y = playerWorldPos.y + bounding.y + bounding.height;
         
         TileIterator groundTileScan = tileGridSystem.getTiles( tileGridId, groundHScanBounds );
         if ( !groundTileScan.hasNext() ) {
-            movement.resetStateFlag( PFState.CONTACT_SOUTH );
+            state.resetStateFlag( PFState.ON_GROUND );
         } 
     }
     
-    private void adjustToGround( final EMovement movement, final ETransform transform ) {
+    private void adjustToGround( final EMovement movement, final EState state, final ETransform transform ) {
         groundVScanBounds.x = playerWorldPos.x + slopePivot.x;
         groundVScanBounds.y = playerWorldPos.y + slopePivot.y;
 
@@ -154,13 +156,13 @@ public final class PFPlayerController extends EntityController {
             }
         }
         
-        if ( correction == 0 || ( correction > 0 && !movement.hasStateFlag( PFState.CONTACT_SOUTH ) ) ) {
+        if ( correction == 0 || ( correction > 0 && !state.hasStateFlag( PFState.ON_GROUND ) ) ) {
             return;
         }
 
         transform.setYpos( playerWorldPos.y + correction );
         movement.setVelocityY( 0f );
-        movement.setStateFlag( PFState.CONTACT_SOUTH );
+        state.setStateFlag( PFState.ON_GROUND );
     }
 
     private void addTileToGroundScanBits( final TileIterator groundTileScan ) {
