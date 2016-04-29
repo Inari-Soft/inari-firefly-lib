@@ -16,14 +16,29 @@ public final class PFCollisionResolver extends CollisionResolver {
         final float velocityY = collisions.entityData.movement.getVelocityY();
         final float velocityX = collisions.entityData.movement.getVelocityX();
         
-        //System.out.println( "collisions: " + collisions );
-        
+        if ( yAxisFirst ) {
+            if ( velocityY != 0 ) {
+                if ( velocityX != 0 ) {
+                    collisions.entityData.transform.move( -velocityX, 0f );
+                    collisions.update();
+                }
+                resolveYAxisCollision( collisions, velocityY );
+                collisions.entityData.transform.move( velocityX, 0f );
+            }
+            
+            if ( velocityX != 0 ) {
+                collisions.update();
+                resolveXAxisCollision( collisions, velocityX );
+            }
+            
+            return;
+        }
+
         if ( velocityX != 0 ) {
             if ( velocityY != 0 ) {
                 collisions.entityData.transform.move( 0f, -velocityY );
                 collisions.update();
             }
-            
             resolveXAxisCollision( collisions, velocityX );
             collisions.entityData.transform.move( 0f, velocityY );
         }
@@ -61,8 +76,6 @@ public final class PFCollisionResolver extends CollisionResolver {
             );
         }
     }
-    
-    
 
     private void resolveYAxisCollision( Collisions collisions, float velocityY ) {
         if ( velocityY >= 0 ) {
