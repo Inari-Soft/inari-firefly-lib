@@ -2,9 +2,9 @@ package com.inari.firefly.converter;
 
 import java.util.Map;
 
-import com.inari.commons.lang.convert.IntValueConverter;
+import com.inari.commons.lang.functional.IntFunction;
 
-public class IntColorConverter implements IntValueConverter {
+public class IntColorConverter implements IntFunction {
     
     private final Map<Integer, Integer> colorMap;
 
@@ -13,7 +13,7 @@ public class IntColorConverter implements IntValueConverter {
     }
 
     @Override
-    public final int convert( int colorValue ) {
+    public final int f( int colorValue ) {
         Integer filteredColor = colorMap.get( colorValue );
         if ( filteredColor != null ) {
             return filteredColor;

@@ -25,11 +25,11 @@ import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
 import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.physics.animation.AnimationSystem.AnimationBuilder;
-import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.NameMapping;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.SpriteData;
+import com.inari.firefly.system.utils.Disposable;
 
 public class AnimatedSprite extends Asset {
     

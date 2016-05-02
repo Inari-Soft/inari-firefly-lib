@@ -8,10 +8,10 @@ import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.graphics.view.Layer;
 import com.inari.firefly.graphics.view.View;
-import com.inari.firefly.system.Disposable;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.component.SystemComponent;
 import com.inari.firefly.system.external.FFTimer;
+import com.inari.firefly.system.utils.Disposable;
 
 public abstract class Scene extends SystemComponent implements Disposable {
     
