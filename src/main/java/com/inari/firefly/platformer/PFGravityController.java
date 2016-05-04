@@ -92,7 +92,7 @@ public final class PFGravityController extends EntityController {
         final EState state = entitySystem.getComponent( entityId, EState.TYPE_KEY );
         float yVelocity = movement.getVelocityY();
         
-        if ( !state.hasStateFlag( PFState.ON_GROUND ) ) {
+        if ( !state.hasStateAspect( PFState.ON_GROUND ) ) {
             if ( !animationSystem.isActive( gravityAnimId ) ) {
                 animationSystem.activate( gravityAnimId, timer );
             }

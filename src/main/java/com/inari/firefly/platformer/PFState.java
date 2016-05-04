@@ -1,8 +1,8 @@
 package com.inari.firefly.platformer;
 
-import com.inari.commons.lang.indexed.Indexed;
+import com.inari.commons.lang.aspect.Aspect;
 
-public enum PFState implements Indexed {
+public enum PFState implements Aspect {
     GO_LEFT,
     GO_RIGHT,
     FALLING,
@@ -14,7 +14,7 @@ public enum PFState implements Indexed {
     ;
     
     @Override
-    public final int index() {
+    public final int aspectId() {
         return ordinal();
     }
 }

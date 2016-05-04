@@ -116,20 +116,20 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
         TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
         TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, 0 );
         if ( tileGrid != null ) {
-            if ( state.hasStateFlag( PFState.ON_GROUND ) ) {
+            if ( state.hasStateAspect( PFState.ON_GROUND ) ) {
                 TileIterator groundTileScan = tileGridSystem.getTiles( tileGrid.index(), groundHScanBounds );
                 if ( !groundTileScan.hasNext() ) {
-                    state.resetStateFlag( PFState.ON_GROUND );
+                    state.resetStateAspect( PFState.ON_GROUND );
                 } 
             }
                     
             if ( movement.getVelocityY() >= 0 ) {
                 TileIterator groundTileScanIterator = tileGridSystem.getTiles( tileGrid.index(), groundVScanBounds );
                 final int correction = adjustToGround( groundTileScanIterator );
-                if ( correction != 0 && !( correction > 0 && !state.hasStateFlag( PFState.ON_GROUND ) ) ) {
+                if ( correction != 0 && !( correction > 0 && !state.hasStateAspect( PFState.ON_GROUND ) ) ) {
                     transform.setYpos( playerYpos + correction );
                     movement.setVelocityY( 0f );
-                    state.setStateFlag( PFState.ON_GROUND );
+                    state.setStateAspect( PFState.ON_GROUND );
                 }
             }
         }

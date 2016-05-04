@@ -107,20 +107,20 @@ public final class PFSimpleJumpController extends EntityController {
         float yVelocity = movement.getVelocityY();
         
         // check falling/context south/jump
-        if ( !state.hasStateFlag( PFState.ON_GROUND ) ) {
+        if ( !state.hasStateAspect( PFState.ON_GROUND ) ) {
             if ( animationSystem.isActive( jumpAnimId ) ) {
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
             } 
         } else {
             yVelocity = 0f;
             animationSystem.resetAnimation( jumpAnimId );
-            state.resetStateFlag( PFState.JUMP );
+            state.resetStateAspect( PFState.JUMP );
             
             if ( !animationSystem.isActive( jumpAnimId ) && input.typed( jumpButtonType ) ) {
                 animationSystem.activate( jumpAnimId, timer );
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
-                state.setStateFlag( PFState.JUMP );
-                state.resetStateFlag( PFState.ON_GROUND );
+                state.setStateAspect( PFState.JUMP );
+                state.resetStateAspect( PFState.ON_GROUND );
             } 
         }
         
