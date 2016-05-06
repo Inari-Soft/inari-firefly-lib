@@ -36,8 +36,6 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
     private final Rectangle groundHScanBounds = new Rectangle( 0, 0, 8, 1 );
     private final Rectangle groundVScanBounds = new Rectangle( 0, 0, 1, 10 );
     private final BitSet groundVScanBits = new BitSet( 10 );
-    
-    private final Collisions collisions = new Collisions( this );
 
     protected PFPlayerCollisionConstraint( int id ) {
         super( id );
@@ -110,7 +108,7 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
         groundVScanBounds.y = playerYpos + bounding.y + bounding.height - groundVScanBounds.height / 2;
         
         if ( layerIds == null || layerIds.size() <= 0 ) {
-            return collisions;
+            return Collisions.EMPTY_COLLISSIONS;
         }
         
         TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
@@ -138,7 +136,7 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
             return context.getSystemComponent( CollisionConstraint.TYPE_KEY, delegateConstraintId ).checkCollisions( entityId );
         }
         
-        return collisions;
+        return Collisions.EMPTY_COLLISSIONS;
     }
     
     private int adjustToGround( final TileIterator groundTileScan ) {
