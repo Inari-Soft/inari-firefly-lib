@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.inari.commons.GeomUtils;
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -87,19 +88,23 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
 
     @Override
     public final Collisions checkCollisions( int entityId ) {
-        groundVScanBits.clear();
         
+        final TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
         final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
         final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
         final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
         final EState state = context.getEntityComponent( entityId, EState.TYPE_KEY );
         
+        groundVScanBits.clear();
+
         final int viewId = transform.getViewId();
         final IntBag layerIds = collision.getCollisionLayerIds();
         final Rectangle bounding = collision.getBounding();
         
         final int playerXpos = (int) Math.floor( transform.getXpos() );
         final int playerYpos = (int) Math.floor( transform.getYpos() );
+        
+        final boolean groundContact = collision.hasContact( PFContacts.GROUND );
         
         groundHScanBounds.x = playerXpos + bounding.x;
         groundHScanBounds.y = playerYpos + bounding.y + bounding.height;
@@ -111,23 +116,26 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
             return Collisions.EMPTY_COLLISSIONS;
         }
         
-        TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
-        TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, 0 );
-        if ( tileGrid != null ) {
-            if ( state.hasStateAspect( PFState.ON_GROUND ) ) {
-                TileIterator groundTileScan = tileGridSystem.getTiles( tileGrid.index(), groundHScanBounds );
-                if ( !groundTileScan.hasNext() ) {
-                    state.resetStateAspect( PFState.ON_GROUND );
-                } 
-            }
-                    
-            if ( movement.getVelocityY() >= 0 ) {
-                TileIterator groundTileScanIterator = tileGridSystem.getTiles( tileGrid.index(), groundVScanBounds );
-                final int correction = adjustToGround( groundTileScanIterator );
-                if ( correction != 0 && !( correction > 0 && !state.hasStateAspect( PFState.ON_GROUND ) ) ) {
-                    transform.setYpos( playerYpos + correction );
-                    movement.setVelocityY( 0f );
-                    state.setStateAspect( PFState.ON_GROUND );
+        IntIterator layerIterator = layerIds.iterator();
+
+        while ( layerIterator.hasNext() ) {
+            TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerIterator.next() );
+            if ( tileGrid != null ) {
+                if ( groundContact ) {
+                    TileIterator groundTileScan = tileGridSystem.getTiles( tileGrid.index(), groundHScanBounds );
+                    if ( !groundTileScan.hasNext() ) {
+                        collision.resetContact( PFContacts.GROUND );
+                    } 
+                }
+                        
+                if ( movement.getVelocityY() >= 0 ) {
+                    TileIterator groundTileScanIterator = tileGridSystem.getTiles( tileGrid.index(), groundVScanBounds );
+                    final int correction = adjustToGround( groundTileScanIterator );
+                    if ( correction != 0 && !( correction > 0 && !collision.hasContact( PFContacts.GROUND ) ) ) {
+                        transform.setYpos( playerYpos + correction );
+                        movement.setVelocityY( 0f );
+                        collision.setContact( PFContacts.GROUND );
+                    }
                 }
             }
         }

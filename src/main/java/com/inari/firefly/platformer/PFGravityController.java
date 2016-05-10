@@ -9,11 +9,11 @@ import com.inari.firefly.animation.easing.EasingAnimation;
 import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.state.EState;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
+import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFTimer;
 
@@ -89,10 +89,10 @@ public final class PFGravityController extends EntityController {
     @Override
     protected final void update( FFTimer timer, int entityId ) {
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
-        final EState state = entitySystem.getComponent( entityId, EState.TYPE_KEY );
+        final ECollision collision = entitySystem.getComponent( entityId, ECollision.TYPE_KEY );
         float yVelocity = movement.getVelocityY();
         
-        if ( !state.hasStateAspect( PFState.ON_GROUND ) ) {
+        if ( !collision.hasContact( PFContacts.GROUND ) ) {
             if ( !animationSystem.isActive( gravityAnimId ) ) {
                 animationSystem.activate( gravityAnimId, timer );
             }

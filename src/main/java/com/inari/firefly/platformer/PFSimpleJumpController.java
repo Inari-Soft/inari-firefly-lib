@@ -14,6 +14,7 @@ import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
+import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
@@ -104,10 +105,11 @@ public final class PFSimpleJumpController extends EntityController {
         final FFInput input = context.getInput();
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
         final EState state = entitySystem.getComponent( entityId, EState.TYPE_KEY );
+        final ECollision collision = entitySystem.getComponent( entityId, ECollision.TYPE_KEY );
         float yVelocity = movement.getVelocityY();
         
         // check falling/context south/jump
-        if ( !state.hasStateAspect( PFState.ON_GROUND ) ) {
+        if ( !collision.hasContact( PFContacts.GROUND ) ) {
             if ( animationSystem.isActive( jumpAnimId ) ) {
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
             } 
@@ -120,7 +122,7 @@ public final class PFSimpleJumpController extends EntityController {
                 animationSystem.activate( jumpAnimId, timer );
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
                 state.setStateAspect( PFState.JUMP );
-                state.resetStateAspect( PFState.ON_GROUND );
+                collision.resetContact( PFContacts.GROUND );
             } 
         }
         
