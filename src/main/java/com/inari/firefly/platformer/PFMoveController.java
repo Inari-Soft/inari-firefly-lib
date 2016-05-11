@@ -151,13 +151,13 @@ public final class PFMoveController extends EntityController {
 
         movement.setVelocityX( xVelocity );
         
-        state.resetStateAspect( PFState.GO_RIGHT );
-        state.resetStateAspect( PFState.GO_LEFT );
-        if ( xVelocity > 0 ) {
-            state.setStateAspect( PFState.GO_RIGHT );
-        } else if ( xVelocity < 0 ) {
-            state.setStateAspect( PFState.GO_LEFT );
-        }
+//        state.resetStateAspect( PFState.GO_RIGHT );
+//        state.resetStateAspect( PFState.GO_LEFT );
+//        if ( xVelocity > 0 ) {
+//            state.setStateAspect( PFState.GO_RIGHT );
+//        } else if ( xVelocity < 0 ) {
+//            state.setStateAspect( PFState.GO_LEFT );
+//        }
     }
     
     @Override

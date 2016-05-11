@@ -116,12 +116,12 @@ public final class PFSimpleJumpController extends EntityController {
         } else {
             yVelocity = 0f;
             animationSystem.resetAnimation( jumpAnimId );
-            state.resetStateAspect( PFState.JUMP );
+            //state.resetStateAspect( PFState.JUMP );
             
             if ( !animationSystem.isActive( jumpAnimId ) && input.typed( jumpButtonType ) ) {
                 animationSystem.activate( jumpAnimId, timer );
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
-                state.setStateAspect( PFState.JUMP );
+                //state.setStateAspect( PFState.JUMP );
                 collision.resetContact( PFContacts.GROUND );
             } 
         }
