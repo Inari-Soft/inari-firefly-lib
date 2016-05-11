@@ -38,16 +38,16 @@ public class SceneSystem
     public final void init( FFContext context ) throws FFInitException {
         super.init( context );
 
-        context.registerListener( UpdateEvent.class, this );
-        context.registerListener( RenderEvent.class, this );
-        context.registerListener( SceneSystemEvent.class, this );
+        context.registerListener( UpdateEvent.TYPE_KEY, this );
+        context.registerListener( RenderEvent.TYPE_KEY, this );
+        context.registerListener( SceneSystemEvent.TYPE_KEY, this );
     }
     
     @Override
     public final void dispose( FFContext context ) {
-        context.disposeListener( UpdateEvent.class, this );
-        context.disposeListener( RenderEvent.class, this );
-        context.disposeListener( SceneSystemEvent.class, this );
+        context.disposeListener( UpdateEvent.TYPE_KEY, this );
+        context.disposeListener( RenderEvent.TYPE_KEY, this );
+        context.disposeListener( SceneSystemEvent.TYPE_KEY, this );
     }
     
     final void notifySceneEvent( SceneSystemEvent event ) {

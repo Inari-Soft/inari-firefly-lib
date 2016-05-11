@@ -42,12 +42,12 @@ public final class WorkflowAnimationResolver extends AnimationResolver implement
     public final void init() throws FFInitException {
         super.init();
         
-        context.registerListener( WorkflowEvent.class, this );
+        context.registerListener( WorkflowEvent.TYPE_KEY, this );
     }
 
     @Override
     public final void dispose() {
-        context.disposeListener( WorkflowEvent.class, this );
+        context.disposeListener( WorkflowEvent.TYPE_KEY, this );
         
         super.dispose();
     }

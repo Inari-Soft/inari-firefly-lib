@@ -90,7 +90,7 @@ public final class AnimatedGifOutput implements PostRenderEventListener {
             .setTransparent( null )
             .setSize( area.width, area.height );
         
-        context.registerListener( PostRenderEvent.class, this );
+        context.registerListener( PostRenderEvent.TYPE_KEY, this );
         
         running = true;
     }
@@ -106,7 +106,7 @@ public final class AnimatedGifOutput implements PostRenderEventListener {
         started = false;
         frameNumber = 0;
         lastFrameTime = -1;
-        context.disposeListener( PostRenderEvent.class, this );
+        context.disposeListener( PostRenderEvent.TYPE_KEY, this );
     }
 
     @Override
