@@ -11,7 +11,6 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.state.EState;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
@@ -93,7 +92,7 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
         final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
         final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
         final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
-        final EState state = context.getEntityComponent( entityId, EState.TYPE_KEY );
+//        final EState state = context.getEntityComponent( entityId, EState.TYPE_KEY );
         
         groundVScanBits.clear();
 

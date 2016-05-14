@@ -10,7 +10,6 @@ import com.inari.firefly.animation.easing.EasingAnimation;
 import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.state.EState;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
@@ -116,7 +115,7 @@ public final class PFMoveController extends EntityController {
     protected final void update( FFTimer timer, int entityId ) {
         final FFInput input = context.getInput();
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
-        final EState state = entitySystem.getComponent( entityId, EState.TYPE_KEY );
+//        final EState state = entitySystem.getComponent( entityId, EState.TYPE_KEY );
         float xVelocity = movement.getVelocityX();
         
         // walking right/left
