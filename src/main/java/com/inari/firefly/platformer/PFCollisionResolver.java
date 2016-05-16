@@ -88,7 +88,7 @@ public final class PFCollisionResolver extends CollisionResolver {
             transform.setXpos(  
                 ( velocityX < 0 )? 
                     (float) Math.floor( transform.getXpos() ) + xCorrection: 
-                        (float) Math.floor( transform.getXpos() ) - xCorrection + 1
+                        (float) Math.ceil( transform.getXpos() ) - xCorrection
             );
             
             //System.out.println( "xCorrection: " + xCorrection + " xpos: " + transform.getXpos() );
@@ -117,7 +117,7 @@ public final class PFCollisionResolver extends CollisionResolver {
             transform.setYpos( 
                 ( velocityY < 0 )? 
                     (float) Math.floor( transform.getYpos() ) + yCorrection : 
-                        (float) Math.ceil( transform.getYpos() ) - yCorrection 
+                        (float) Math.floor( transform.getYpos() ) - yCorrection 
             );
             
             //System.out.println( "yCorrection: " + yCorrection + " ypos: " + transform.getYpos() );

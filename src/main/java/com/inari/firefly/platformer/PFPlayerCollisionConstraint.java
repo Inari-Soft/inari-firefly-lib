@@ -131,7 +131,6 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
                     TileIterator groundTileScan = tileGridSystem.getTiles( tileGrid.index(), groundHScanBounds );
                     if ( groundTileScan.hasNext() ) {
                         entity.setAspect( PFState.GROUND );
-                        break;
                     } 
                 }
                 
