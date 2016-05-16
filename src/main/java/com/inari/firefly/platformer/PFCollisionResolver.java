@@ -1,9 +1,12 @@
 package com.inari.firefly.platformer;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.physics.collision.CollisionResolver;
-import com.inari.firefly.physics.collision.Collisions;
+import com.inari.firefly.physics.collision.CollisionSystem;
+import com.inari.firefly.physics.collision.Contact;
+import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 
 public final class PFCollisionResolver extends CollisionResolver {
@@ -13,14 +16,15 @@ public final class PFCollisionResolver extends CollisionResolver {
     }
 
     @Override
-    public final void resolve( Collisions  collisions ) {
+    public final void resolve( int entityId ) {
         
-        //System.out.println( "collisions: "+collisions );
+        ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+        ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
+        EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
+        DynArray<Contact> contacts = collision.getContacts();
         
-        int movingEntityId = collisions.movingEntityId();
-        ETransform transform = context.getEntityComponent( movingEntityId, ETransform.TYPE_KEY );
-        EMovement movement = context.getEntityComponent( movingEntityId, EMovement.TYPE_KEY );
-        
+        //System.out.println( "contacts: "+contacts );
+
         final float velocityY = movement.getVelocityY();
         final float velocityX = movement.getVelocityX();
         
@@ -28,15 +32,19 @@ public final class PFCollisionResolver extends CollisionResolver {
             if ( velocityY != 0 ) {
                 if ( velocityX != 0 ) {
                     transform.move( -velocityX, 0f );
-                    collisions.update();
+                    // TODO notify with event
+                    context.getSystem( CollisionSystem.SYSTEM_KEY ).updateContacts( entityId );
+                    contacts = collision.getContacts();
                 }
-                resolveYAxisCollision( transform, collisions, velocityY );
+                resolveYAxisCollision( transform, contacts, velocityY );
                 transform.move( velocityX, 0f );
             }
             
             if ( velocityX != 0 ) {
-                collisions.update();
-                resolveXAxisCollision( transform, collisions, velocityX );
+                // TODO notify with event
+                context.getSystem( CollisionSystem.SYSTEM_KEY ).updateContacts( entityId );
+                contacts = collision.getContacts();
+                resolveXAxisCollision( transform, contacts, velocityX );
             }
             
             return;
@@ -45,32 +53,32 @@ public final class PFCollisionResolver extends CollisionResolver {
         if ( velocityX != 0 ) {
             if ( velocityY != 0 ) {
                 transform.move( 0f, -velocityY );
-                collisions.update();
+                // TODO notify with event
+                context.getSystem( CollisionSystem.SYSTEM_KEY ).updateContacts( entityId );
+                contacts = collision.getContacts();
             }
-            resolveXAxisCollision( transform, collisions, velocityX );
+            resolveXAxisCollision( transform, contacts, velocityX );
             transform.move( 0f, velocityY );
         }
         
         if ( velocityY != 0) {
-            collisions.update();
-            resolveYAxisCollision( transform, collisions, velocityY );
+            // TODO notify with event
+            context.getSystem( CollisionSystem.SYSTEM_KEY ).updateContacts( entityId );
+            contacts = collision.getContacts();
+            resolveYAxisCollision( transform, contacts, velocityY );
         }
     }
     
-    private void resolveXAxisCollision( ETransform transform, Collisions collisions, float velocityX ) {
+    private void resolveXAxisCollision( ETransform transform, DynArray<Contact> contacts, float velocityX ) {
         
         int xCorrection = 0;
-        int collisionHeight = (int) Math.floor( collisions.worldBounds().height * 0.6 );
-        for ( Collisions.CollisionData collision : collisions ) {
-            final Rectangle bounds = collision.intersectionBounds();
-            if ( bounds.y > collisionHeight ) {
+        for ( Contact contact : contacts ) {
+            if ( !contact.isSolid() ) {
                 continue;
             }
-            
-            if ( collision.intersectionMask() == null ) {
-                if ( bounds.width > xCorrection ) {
-                    xCorrection = bounds.width;
-                }
+            final Rectangle bounds = contact.intersectionBounds();
+            if ( contact.intersectionMask() == null && bounds.width > xCorrection && bounds.height > 3  ) {
+                xCorrection = bounds.width;
             }
             
             //System.out.println( "collision: " + collision );
@@ -79,31 +87,40 @@ public final class PFCollisionResolver extends CollisionResolver {
         if ( xCorrection != 0 ) {
             transform.setXpos(  
                 ( velocityX < 0 )? 
-                    (float) Math.ceil( transform.getXpos() ) + xCorrection - 1 : 
-                        (float) Math.ceil( transform.getXpos() ) - xCorrection 
+                    (float) Math.floor( transform.getXpos() ) + xCorrection: 
+                        (float) Math.floor( transform.getXpos() ) - xCorrection + 1
             );
+            
+            //System.out.println( "xCorrection: " + xCorrection + " xpos: " + transform.getXpos() );
         }
     }
 
-    private void resolveYAxisCollision( ETransform transform, Collisions collisions, float velocityY ) {
+    private void resolveYAxisCollision( ETransform transform, DynArray<Contact> contacts, float velocityY ) {
         if ( velocityY >= 0 ) {
             return;
         }
 
         int yCorrection = 0;
-        for ( Collisions.CollisionData collision : collisions ) {
-            final Rectangle bounds = collision.intersectionBounds();
+        for ( Contact contact : contacts ) {
+            
+            if ( !contact.isSolid() ) {
+                continue;
+            }
+            final Rectangle bounds = contact.intersectionBounds();
             if ( bounds.width > 1 && bounds.height > yCorrection ) {
                 yCorrection = bounds.height;
             }
         }
         
         if ( yCorrection != 0 ) {
+ 
             transform.setYpos( 
                 ( velocityY < 0 )? 
                     (float) Math.floor( transform.getYpos() ) + yCorrection : 
                         (float) Math.ceil( transform.getYpos() ) - yCorrection 
             );
+            
+            //System.out.println( "yCorrection: " + yCorrection + " ypos: " + transform.getYpos() );
         }
     }
  

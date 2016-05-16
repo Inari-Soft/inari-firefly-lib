@@ -11,13 +11,13 @@ import com.inari.commons.lang.IntIterator;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.physics.collision.BitMask;
 import com.inari.firefly.physics.collision.CollisionConstraint;
-import com.inari.firefly.physics.collision.Collisions;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 
@@ -86,13 +86,19 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
     }
 
     @Override
-    public final Collisions checkCollisions( int entityId ) {
+    public final void checkCollisions( int entityId, boolean update ) {
+        if ( update ) {
+            if ( delegateConstraintId >= 0 ) {
+                context.getSystemComponent( CollisionConstraint.TYPE_KEY, delegateConstraintId ).checkCollisions( entityId, false );
+            }
+            return;
+        }
         
         final TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
+        final EEntity entity = context.getEntityComponent( entityId, EEntity.TYPE_KEY );
         final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
         final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
         final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
-//        final EState state = context.getEntityComponent( entityId, EState.TYPE_KEY );
         
         groundVScanBits.clear();
 
@@ -102,8 +108,10 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
         
         final int playerXpos = (int) Math.floor( transform.getXpos() );
         final int playerYpos = (int) Math.floor( transform.getYpos() );
+        final float playerYVelocity = movement.getVelocityY();
         
-        final boolean groundContact = collision.hasContact( PFContacts.GROUND );
+        final boolean groundContact = entity.hasAspect( PFState.GROUND );
+        entity.resetAspect( PFState.GROUND );
         
         groundHScanBounds.x = playerXpos + bounding.x;
         groundHScanBounds.y = playerYpos + bounding.y + bounding.height;
@@ -112,38 +120,35 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
         groundVScanBounds.y = playerYpos + bounding.y + bounding.height - groundVScanBounds.height / 2;
         
         if ( layerIds == null || layerIds.size() <= 0 ) {
-            return Collisions.EMPTY_COLLISSIONS;
+            return;
         }
         
         IntIterator layerIterator = layerIds.iterator();
-
         while ( layerIterator.hasNext() ) {
             TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerIterator.next() );
-            if ( tileGrid != null ) {
+            if ( tileGrid != null && playerYVelocity >= 0 ) {
                 if ( groundContact ) {
                     TileIterator groundTileScan = tileGridSystem.getTiles( tileGrid.index(), groundHScanBounds );
-                    if ( !groundTileScan.hasNext() ) {
-                        collision.resetContact( PFContacts.GROUND );
+                    if ( groundTileScan.hasNext() ) {
+                        entity.setAspect( PFState.GROUND );
+                        break;
                     } 
                 }
-                        
-                if ( movement.getVelocityY() >= 0 ) {
-                    TileIterator groundTileScanIterator = tileGridSystem.getTiles( tileGrid.index(), groundVScanBounds );
-                    final int correction = adjustToGround( groundTileScanIterator );
-                    if ( correction != 0 && !( correction > 0 && !collision.hasContact( PFContacts.GROUND ) ) ) {
-                        transform.setYpos( playerYpos + correction );
-                        movement.setVelocityY( 0f );
-                        collision.setContact( PFContacts.GROUND );
-                    }
+                
+                TileIterator groundTileScanIterator = tileGridSystem.getTiles( tileGrid.index(), groundVScanBounds );
+                final int correction = adjustToGround( groundTileScanIterator );
+                if ( correction != 0 && !( correction > 0 && !groundContact ) ) {
+                    transform.setYpos( playerYpos + correction );
+                    movement.setVelocityY( 0f );
+                    entity.setAspect( PFState.GROUND );
+                    break;
                 }
             }
         }
         
         if ( delegateConstraintId >= 0 ) {
-            return context.getSystemComponent( CollisionConstraint.TYPE_KEY, delegateConstraintId ).checkCollisions( entityId );
+            context.getSystemComponent( CollisionConstraint.TYPE_KEY, delegateConstraintId ).checkCollisions( entityId, false );
         }
-        
-        return Collisions.EMPTY_COLLISSIONS;
     }
     
     private int adjustToGround( final TileIterator groundTileScan ) {

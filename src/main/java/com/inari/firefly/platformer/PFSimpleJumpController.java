@@ -9,11 +9,11 @@ import com.inari.firefly.animation.easing.EasingAnimation;
 import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
-import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
@@ -103,12 +103,11 @@ public final class PFSimpleJumpController extends EntityController {
     protected final void update( FFTimer timer, int entityId ) {
         final FFInput input = context.getInput();
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
-//        final EState state = entitySystem.getComponent( entityId, EState.TYPE_KEY );
-        final ECollision collision = entitySystem.getComponent( entityId, ECollision.TYPE_KEY );
+        final EEntity entity = entitySystem.getComponent( entityId, EEntity.TYPE_KEY );
         float yVelocity = movement.getVelocityY();
         
         // check falling/context south/jump
-        if ( !collision.hasContact( PFContacts.GROUND ) ) {
+        if ( !entity.hasAspect( PFState.GROUND ) ) {
             if ( animationSystem.isActive( jumpAnimId ) ) {
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
             } 
@@ -121,7 +120,7 @@ public final class PFSimpleJumpController extends EntityController {
                 animationSystem.activate( jumpAnimId, timer );
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
                 //state.setStateAspect( PFState.JUMP );
-                collision.resetContact( PFContacts.GROUND );
+                entity.resetAspect( PFState.GROUND );
             } 
         }
         

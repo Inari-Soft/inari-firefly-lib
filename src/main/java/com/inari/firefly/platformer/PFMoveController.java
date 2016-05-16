@@ -14,6 +14,7 @@ import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
+import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
@@ -26,22 +27,31 @@ public final class PFMoveController extends EntityController {
     public static final AttributeKey<Easing.Type> EASING_TYPE = new AttributeKey<Easing.Type>( "easingType", Easing.Type.class, PFGravityController.class );
     public static final AttributeKey<Float> MAX_VELOCITY  = new AttributeKey<Float>( "maxVelocity", Float.class, PFGravityController.class );
     public static final AttributeKey<Long> TIME_TO_MAX  = new AttributeKey<Long>( "timeToMax", Long.class, PFGravityController.class );
+    public static final AttributeKey<ButtonType> CLIMB_UP_BUTTON_TYPE = new AttributeKey<ButtonType>( "climbUpButtonType", ButtonType.class, PFGravityController.class );
+    public static final AttributeKey<ButtonType> CLIMB_DOWN_BUTTON_TYPE = new AttributeKey<ButtonType>( "climbDownButtonType", ButtonType.class, PFGravityController.class );
+    public static final AttributeKey<Float> CLIMB_VELOCITY = new AttributeKey<Float>( "climbVelocity", Float.class, PFGravityController.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         GO_LEFT_BUTTON_TYPE,
         GO_RIGHT_BUTTON_TYPE,
         EASING_TYPE,
         MAX_VELOCITY,
-        TIME_TO_MAX
+        TIME_TO_MAX,
+        CLIMB_UP_BUTTON_TYPE,
+        CLIMB_DOWN_BUTTON_TYPE,
+        CLIMB_VELOCITY
     };
     
     private AnimationSystem animationSystem;
     private EntitySystem entitySystem;
     
     private ButtonType goLeftButtonType;
-    private ButtonType goRightButtonType = ButtonType.RIGHT;
+    private ButtonType goRightButtonType;
     private Easing.Type easingType;
     private float maxVelocity;
     private long timeToMax;
+    private ButtonType climbUpButtonType;
+    private ButtonType climbDownButtonType;
+    private float climbVelocity;
 
     private int startWalkAnimId;
 
@@ -110,13 +120,45 @@ public final class PFMoveController extends EntityController {
     public final void setTimeToMax( long timeToMax ) {
         this.timeToMax = timeToMax;
     }
+    
+    public final ButtonType getClimbUpButtonType() {
+        return climbUpButtonType;
+    }
+
+    public final void setClimbUpButtonType( ButtonType climbUpButtonType ) {
+        this.climbUpButtonType = climbUpButtonType;
+    }
+
+    public final ButtonType getClimbDownButtonType() {
+        return climbDownButtonType;
+    }
+
+    public final void setClimbDownButtonType( ButtonType climbDownButtonType ) {
+        this.climbDownButtonType = climbDownButtonType;
+    }
+
+    public final float getClimbVelocity() {
+        return climbVelocity;
+    }
+
+    public final void setClimbVelocity( float climbVelocity ) {
+        this.climbVelocity = climbVelocity;
+    }
 
     @Override
     protected final void update( FFTimer timer, int entityId ) {
         final FFInput input = context.getInput();
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
-//        final EState state = entitySystem.getComponent( entityId, EState.TYPE_KEY );
+        final ECollision collision = entitySystem.getComponent( entityId, ECollision.TYPE_KEY );
         float xVelocity = movement.getVelocityX();
+        float yVelocity = movement.getVelocityY();
+        
+//        // climbing up/down
+//        if ( collision.hasContact( PFContacts.LADDER ) ) {
+//            if ( input.isPressed( climbUpButtonType ) && adjustTo ) {
+//                
+//            }
+//        }
         
         // walking right/left
         if ( input.isPressed( goRightButtonType ) && xVelocity >= 0f ) {
@@ -149,14 +191,6 @@ public final class PFMoveController extends EntityController {
         }
 
         movement.setVelocityX( xVelocity );
-        
-//        state.resetStateAspect( PFState.GO_RIGHT );
-//        state.resetStateAspect( PFState.GO_LEFT );
-//        if ( xVelocity > 0 ) {
-//            state.setStateAspect( PFState.GO_RIGHT );
-//        } else if ( xVelocity < 0 ) {
-//            state.setStateAspect( PFState.GO_LEFT );
-//        }
     }
     
     @Override
