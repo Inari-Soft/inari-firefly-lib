@@ -14,8 +14,8 @@ import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.graphics.tile.TileGrid;
 import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
-import com.inari.firefly.physics.collision.BitMask;
 import com.inari.firefly.physics.collision.CollisionConstraint;
+import com.inari.firefly.physics.collision.CollisionSystem;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.collision.RayScan;
 import com.inari.firefly.physics.movement.EMovement;
@@ -37,10 +37,7 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
     private int delegateConstraintId = -1;
     private int groundScanEdges = 1;
     private final Rectangle groundHScanBounds = new Rectangle( 0, 0, 8, 1 );
-    
     private final RayScan groundVScan = new RayScan( 10, false );
-//    private final Rectangle groundVScanBounds = new Rectangle( 0, 0, 1, 10 );
-//    private final BitSet groundVScanBits = new BitSet( 10 );
 
     protected PFPlayerCollisionConstraint( int id ) {
         super( id );
@@ -119,13 +116,12 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
             return;
         }
         
+        final CollisionSystem collisionSystem = context.getSystem( CollisionSystem.SYSTEM_KEY );
         final TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
         final EEntity entity = context.getEntityComponent( entityId, EEntity.TYPE_KEY );
         final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
         final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
         final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
-
-        groundVScan.clear();
 
         final int viewId = transform.getViewId();
         final IntBag layerIds = collision.getCollisionLayerIds();
@@ -157,16 +153,14 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
                         entity.setAspect( PFState.GROUND );
                     } 
                 }
-                
-                TileIterator groundTileScanIterator = tileGridSystem.getTiles( tileGrid.index(), groundVScan.bounds );
-                final int correction = adjustToGround( groundTileScanIterator );
-                if ( correction != 0 && !( correction > 0 && !groundContact ) ) {
-                    transform.setYpos( playerYpos + correction );
-                    movement.setVelocityY( 0f );
-                    entity.setAspect( PFState.GROUND );
-                    break;
-                }
             }
+        }
+        
+        final int correction = adjustToGround( collisionSystem.rayScan( groundVScan, viewId, layerIds ) );
+        if ( correction != 0 && !( correction > 0 && !groundContact ) ) {
+            transform.setYpos( playerYpos + correction );
+            movement.setVelocityY( 0f );
+            entity.setAspect( PFState.GROUND );
         }
         
         if ( delegateConstraintId >= 0 ) {
@@ -194,50 +188,20 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
         return ( xIntersection > groundScanEdges );
     }
     
-    private int adjustToGround( final TileIterator groundTileScan ) {
-        if ( !groundTileScan.hasNext() ) {
-            return 0;
-        }
-        
-        while ( groundTileScan.hasNext() ) {
-            addTileToGroundScanBits( groundTileScan );
-        }
-        
+    private int adjustToGround( RayScan groundVScan ) {
         if ( groundVScan.isEmpty() ) {
             return 0;
         }
         
         int correction = 0;
-        for ( int i = 0; i < 10; i++ ) {
+        for ( int i = 0; i < groundVScan.bounds.height; i++ ) {
             if ( groundVScan.scanBits.get( i ) ) {
-                correction = -( 5 - i );
+                correction = -( groundVScan.bounds.height / 2 - i );
                 break;
             }
         }
         
         return correction;
     }
-    
-    
-    private void addTileToGroundScanBits( final TileIterator groundTileScan ) {
-        final int tileId = groundTileScan.next();
-        final ECollision tileCollision = context.getEntityComponent( tileId, ECollision.TYPE_KEY );
-        if ( tileCollision == null || !tileCollision.isSolid() ) {
-            return;
-        }
-
-        final int bitmaskId = tileCollision.getBitmaskId();
-        if ( bitmaskId >= 0 ) { 
-            groundVScan.setBitMask( context.getSystemComponent( BitMask.TYPE_KEY, bitmaskId ) );
-        }
-        
-        groundVScan.addScan( 
-            (int) groundTileScan.getWorldXPos(), 
-            (int) groundTileScan.getWorldYPos() 
-        );
-    }
-
-    
-
 
 }
