@@ -10,6 +10,7 @@ import com.inari.firefly.animation.easing.EasingAnimation;
 import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
@@ -149,9 +150,12 @@ public final class PFMoveController extends EntityController {
     protected final void update( FFTimer timer, int entityId ) {
         final FFInput input = context.getInput();
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
+        final EEntity entity = entitySystem.getComponent( entityId, EEntity.TYPE_KEY );
         final ECollision collision = entitySystem.getComponent( entityId, ECollision.TYPE_KEY );
         float xVelocity = movement.getVelocityX();
         float yVelocity = movement.getVelocityY();
+        
+//        System.out.println( "ladder contact: " + collision.hasContact( PFContact.LADDER ) );
         
 //        // climbing up/down
 //        if ( collision.hasContact( PFContacts.LADDER ) ) {
@@ -162,6 +166,8 @@ public final class PFMoveController extends EntityController {
         
         // walking right/left
         if ( input.isPressed( goRightButtonType ) && xVelocity >= 0f ) {
+            entity.resetAspect( PFState.WALK_LEFT );
+            entity.setAspect( PFState.WALK_RIGHT );
             if ( xVelocity == 0f && !animationSystem.isActive( startWalkAnimId ) ) {
                 animationSystem.activate( startWalkAnimId, timer );
             }
@@ -172,6 +178,8 @@ public final class PFMoveController extends EntityController {
                xVelocity = maxVelocity;
            }
         } else if ( input.isPressed( goLeftButtonType ) && xVelocity <= 0f ) {
+            entity.setAspect( PFState.WALK_LEFT );
+            entity.resetAspect( PFState.WALK_RIGHT );
             if ( xVelocity == 0f && !animationSystem.isActive( startWalkAnimId ) ) {
                 animationSystem.activate( startWalkAnimId, timer );
             }
@@ -182,6 +190,8 @@ public final class PFMoveController extends EntityController {
                 xVelocity = -maxVelocity;
             }
         } else if ( xVelocity != 0f ) {
+            entity.resetAspect( PFState.WALK_LEFT );
+            entity.resetAspect( PFState.WALK_RIGHT );
             if ( Math.abs( xVelocity ) > 1f ) {
                 xVelocity = ( xVelocity > 0f )? xVelocity - 0.3f : xVelocity + 0.3f;
             } else {
