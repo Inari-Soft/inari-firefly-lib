@@ -11,10 +11,12 @@ import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EEntity;
+import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.entity.EntityController;
 import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
+import com.inari.firefly.physics.collision.Contact;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFInput;
@@ -149,21 +151,13 @@ public final class PFMoveController extends EntityController {
     @Override
     protected final void update( FFTimer timer, int entityId ) {
         final FFInput input = context.getInput();
+        final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
         final EEntity entity = entitySystem.getComponent( entityId, EEntity.TYPE_KEY );
         final ECollision collision = entitySystem.getComponent( entityId, ECollision.TYPE_KEY );
         float xVelocity = movement.getVelocityX();
         float yVelocity = movement.getVelocityY();
-        
-//        System.out.println( "ladder contact: " + collision.hasContact( PFContact.LADDER ) );
-        
-//        // climbing up/down
-//        if ( collision.hasContact( PFContacts.LADDER ) ) {
-//            if ( input.isPressed( climbUpButtonType ) && adjustTo ) {
-//                
-//            }
-//        }
-        
+
         // walking right/left
         if ( input.isPressed( goRightButtonType ) && xVelocity >= 0f ) {
             entity.resetAspect( PFState.WALK_LEFT );
@@ -199,10 +193,33 @@ public final class PFMoveController extends EntityController {
                 animationSystem.resetAnimation( startWalkAnimId );
             }
         }
-
-        movement.setVelocityX( xVelocity );
+        
+        
+        if ( input.isPressed( climbUpButtonType ) && collision.hasContact( PFContact.LADDER ) ) {
+            final Contact contact = collision.getFirstContact( PFContact.LADDER );
+            if ( contact.intersectionBounds().width > 3 ) {
+                adjustToLadder( transform, entity, contact );
+                yVelocity = -climbVelocity;
+            }
+        } else if ( input.isPressed( climbDownButtonType ) && collision.hasContact( PFContact.LADDER ) ) {
+            final Contact contact = collision.getFirstContact( PFContact.LADDER );
+            adjustToLadder( transform, entity, contact );
+            yVelocity = climbVelocity;
+        } else {
+            yVelocity = 0;
+            entity.resetAspect( PFState.CLIMB_UP );
+        }
+        
+        movement.setVelocity( xVelocity, yVelocity );
     }
-    
+
+    private void adjustToLadder( final ETransform transform, final EEntity entity, final Contact contact ) {
+        transform.setXpos( contact.contactWorldBounds().x );
+        entity.resetAspects();
+        entity.setAspect( PFState.ON_LADDER );
+        entity.setAspect( PFState.CLIMB_UP );
+    }
+
     @Override
     public final Set<AttributeKey<?>> attributeKeys() {
         Set<AttributeKey<?>> attributeKeys = super.attributeKeys();
@@ -216,6 +233,9 @@ public final class PFMoveController extends EntityController {
         
         goLeftButtonType = attributes.getValue( GO_LEFT_BUTTON_TYPE, goLeftButtonType );
         goRightButtonType = attributes.getValue( GO_RIGHT_BUTTON_TYPE, goRightButtonType );
+        climbUpButtonType = attributes.getValue( CLIMB_UP_BUTTON_TYPE, climbUpButtonType );
+        climbDownButtonType = attributes.getValue( CLIMB_DOWN_BUTTON_TYPE, climbDownButtonType );
+        climbVelocity = attributes.getValue( CLIMB_VELOCITY, climbVelocity );
         easingType = attributes.getValue( EASING_TYPE, easingType );
         maxVelocity = attributes.getValue( MAX_VELOCITY, maxVelocity );
         timeToMax = attributes.getValue( TIME_TO_MAX, timeToMax );
@@ -227,6 +247,9 @@ public final class PFMoveController extends EntityController {
         
         attributes.put( GO_LEFT_BUTTON_TYPE, goLeftButtonType );
         attributes.put( GO_RIGHT_BUTTON_TYPE, goRightButtonType );
+        attributes.put( CLIMB_UP_BUTTON_TYPE, climbUpButtonType );
+        attributes.put( CLIMB_DOWN_BUTTON_TYPE, climbDownButtonType );
+        attributes.put( CLIMB_VELOCITY, climbVelocity );
         attributes.put( EASING_TYPE, easingType );
         attributes.put( MAX_VELOCITY, maxVelocity );
         attributes.put( TIME_TO_MAX, timeToMax );

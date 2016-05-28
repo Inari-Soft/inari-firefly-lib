@@ -5,7 +5,7 @@ import com.inari.commons.lang.aspect.AspectGroup;
 import com.inari.firefly.entity.EEntity;
 
 public enum PFState implements Aspect {
-    GROUND,
+    ON_GROUND,
     WALK_LEFT,
     WALK_RIGHT,
     ON_LADDER,

@@ -102,7 +102,6 @@ public final class PFCollisionResolver extends CollisionResolver {
 
         int yCorrection = 0;
         for ( Contact contact : contacts ) {
-            
             if ( !contact.isSolid() ) {
                 continue;
             }

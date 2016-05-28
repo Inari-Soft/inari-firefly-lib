@@ -16,6 +16,8 @@ import com.inari.firefly.graphics.tile.TileGrid.TileIterator;
 import com.inari.firefly.graphics.tile.TileGridSystem;
 import com.inari.firefly.physics.collision.CollisionConstraint;
 import com.inari.firefly.physics.collision.CollisionSystem;
+import com.inari.firefly.physics.collision.Contact;
+import com.inari.firefly.physics.collision.ContactProvider;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.collision.RayScan;
 import com.inari.firefly.physics.movement.EMovement;
@@ -38,6 +40,10 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
     private int groundScanEdges = 1;
     private final Rectangle groundHScanBounds = new Rectangle( 0, 0, 8, 1 );
     private final RayScan groundVScan = new RayScan( 10, false );
+    
+    private int playerHalfWidth = - 1;
+    private int vScanBoundsHalfHeight;
+    private Contact ladderContact = null;
 
     protected PFPlayerCollisionConstraint( int id ) {
         super( id );
@@ -57,6 +63,7 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
 
     public final void setGroundScanHeight( int groundScanHeight ) {
         groundVScan.bounds.height = groundScanHeight;
+        vScanBoundsHalfHeight = groundScanHeight / 2;
     }
 
     public final int getGroundScanWidth() {
@@ -93,7 +100,7 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
             delegateConstraintId 
         );
         groundHScanBounds.width = attributes.getValue( GROUND_SCAN_WIDTH, groundHScanBounds.width );
-        groundVScan.bounds.height = attributes.getValue( GROUND_SCAN_HEIGHT, groundVScan.bounds.height );
+        setGroundScanHeight( attributes.getValue( GROUND_SCAN_HEIGHT, groundVScan.bounds.height ) );
         groundScanEdges = attributes.getValue( GROUND_SCAN_EDGES, groundScanEdges );
     }
 
@@ -113,68 +120,91 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
             if ( delegateConstraintId >= 0 ) {
                 context.getSystemComponent( CollisionConstraint.TYPE_KEY, delegateConstraintId ).checkCollisions( entityId, false );
             }
+            
+            if ( ladderContact != null ) {
+                final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+                collision.addContact( ladderContact );
+            }
             return;
         }
-        
+
+        final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
+        final IntBag layerIds = collision.getCollisionLayerIds();
+        if ( layerIds == null || layerIds.size() <= 0 ) {
+            return;
+        }
+
         final CollisionSystem collisionSystem = context.getSystem( CollisionSystem.SYSTEM_KEY );
         final TileGridSystem tileGridSystem = context.getSystem( TileGridSystem.SYSTEM_KEY );
         final EEntity entity = context.getEntityComponent( entityId, EEntity.TYPE_KEY );
         final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
         final ETransform transform = context.getEntityComponent( entityId, ETransform.TYPE_KEY );
-        final ECollision collision = context.getEntityComponent( entityId, ECollision.TYPE_KEY );
-
+        
         final int viewId = transform.getViewId();
-        final IntBag layerIds = collision.getCollisionLayerIds();
         final Rectangle bounding = collision.getBounding();
+        if ( playerHalfWidth < 0 ) {
+            playerHalfWidth = bounding.width / 2;
+        }
         
         final int playerXpos = (int) Math.floor( transform.getXpos() );
         final int playerYpos = (int) Math.floor( transform.getYpos() );
-        final float playerYVelocity = movement.getVelocityY();
+        //final float playerYVelocity = movement.getVelocityY();
         
-        final boolean groundContact = entity.hasAspect( PFState.GROUND );
-        entity.resetAspect( PFState.GROUND );
+        final boolean groundContact = entity.hasAspect( PFState.ON_GROUND );
+        entity.resetAspect( PFState.ON_GROUND );
         
         groundHScanBounds.x = playerXpos + bounding.x;
-        groundHScanBounds.y = playerYpos + bounding.y + bounding.height;
-        groundVScan.bounds.x = playerXpos + bounding.x + bounding.width / 2;
-        groundVScan.bounds.y = playerYpos + bounding.y + bounding.height - groundVScan.bounds.height / 2;
+        groundHScanBounds.y = playerYpos + bounding.y + bounding.height + 1;
+        groundVScan.clear();
+        groundVScan.bounds.x = playerXpos + bounding.x + playerHalfWidth;
+        groundVScan.bounds.y = playerYpos + bounding.y + bounding.height - vScanBoundsHalfHeight;
         
-        if ( layerIds == null || layerIds.size() <= 0 ) {
-            return;
+        if ( delegateConstraintId >= 0 ) {
+            context
+                .getSystemComponent( CollisionConstraint.TYPE_KEY, delegateConstraintId )
+                .checkCollisions( entityId, false );
         }
         
+        ladderContact = null;
+        boolean gotFromLadder = false;
+        if ( !collision.hasContact( PFContact.LADDER ) && entity.hasAspect( PFState.ON_LADDER ) ) {
+            entity.resetAspect( PFState.ON_LADDER );
+            gotFromLadder = true;
+        }
+
+        int correction = 0;
         IntIterator layerIterator = layerIds.iterator();
         while ( layerIterator.hasNext() ) {
-            TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerIterator.next() );
-            if ( tileGrid != null && playerYVelocity >= 0 ) {
-                if ( groundContact ) {
-                    TileIterator groundTileScan = tileGridSystem.getTiles( tileGrid.index(), groundHScanBounds );
-                    if ( checkOnGround( groundTileScan ) ) {
-                        entity.setAspect( PFState.GROUND );
-                    } 
+            int layerId = layerIterator.next();
+            TileGrid tileGrid = tileGridSystem.getTileGrid( viewId, layerId );
+            
+            if ( ( groundContact || gotFromLadder ) && checkGround( entityId, tileGrid ) ) {
+                entity.setAspect( PFState.ON_GROUND );
+                if ( ladderContact != null ) {
+                    collision.addContact( ContactProvider.createContact( ladderContact ) );
                 }
-            }
+            } 
+            
+            correction += adjustToGround( collisionSystem.addToRayScan( groundVScan, viewId, layerId ) );
         }
-        
-        final int correction = adjustToGround( collisionSystem.rayScan( groundVScan, viewId, layerIds ) );
+
         if ( correction != 0 && !( correction > 0 && !groundContact ) ) {
             transform.setYpos( playerYpos + correction );
             movement.setVelocityY( 0f );
-            entity.setAspect( PFState.GROUND );
-        }
-        
-        if ( delegateConstraintId >= 0 ) {
-            context.getSystemComponent( CollisionConstraint.TYPE_KEY, delegateConstraintId ).checkCollisions( entityId, false );
+            entity.setAspect( PFState.ON_GROUND );
         }
     }
 
-    private boolean checkOnGround( TileIterator groundTileScanIterator ) {
+    private boolean checkGround( int entityId, TileGrid tileGrid ) {
+        TileIterator groundTileScanIterator = tileGrid.iterator( groundHScanBounds );
         int xIntersection = 0;
         while ( groundTileScanIterator.hasNext() ) {
-            final ECollision tileCollision = context.getEntityComponent( groundTileScanIterator.next(), ECollision.TYPE_KEY );
-            if ( tileCollision == null || !tileCollision.isSolid() ) {
+            int tileId = groundTileScanIterator.next();
+            final ECollision tileCollision = context.getEntityComponent( tileId, ECollision.TYPE_KEY );
+            if ( tileCollision == null || ( !tileCollision.isSolid() && tileCollision.getContactType() != PFContact.LADDER ) ) {
                 continue;
             }
+
             final int groundx = (int) groundTileScanIterator.getWorldXPos();
             final int intersection;
             if ( groundx <= groundHScanBounds.x ) {
@@ -182,6 +212,14 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
             } else {
                 intersection = groundHScanBounds.x - groundx + groundHScanBounds.width;
             }
+            
+            if ( tileCollision.getContactType() == PFContact.LADDER && ladderContact == null && intersection > 3 ) {
+                ladderContact = ContactProvider.createContact( entityId, tileId, PFContact.LADDER, false );
+                Rectangle contactWorldBounds = ladderContact.contactWorldBounds();
+                contactWorldBounds.x = (int) groundTileScanIterator.getWorldXPos();
+                contactWorldBounds.y = (int) groundTileScanIterator.getWorldYPos();
+            }
+            
             xIntersection += intersection;
         }
         

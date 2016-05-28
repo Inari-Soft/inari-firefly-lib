@@ -89,10 +89,15 @@ public final class PFGravityController extends EntityController {
     @Override
     protected final void update( FFTimer timer, int entityId ) {
         final EEntity entity = entitySystem.getComponent( entityId, EEntity.TYPE_KEY );
+        
+        if ( entity.hasAspect( PFState.ON_LADDER ) ) {
+            return;
+        }
+        
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
         float yVelocity = movement.getVelocityY();
         
-        if ( !entity.hasAspect( PFState.GROUND ) ) {
+        if ( !entity.hasAspect( PFState.ON_GROUND ) ) {
             if ( !animationSystem.isActive( gravityAnimId ) ) {
                 animationSystem.activate( gravityAnimId, timer );
             }
