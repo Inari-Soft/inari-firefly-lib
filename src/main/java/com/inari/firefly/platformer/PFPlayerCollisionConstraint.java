@@ -18,9 +18,11 @@ import com.inari.firefly.physics.collision.CollisionConstraint;
 import com.inari.firefly.physics.collision.CollisionSystem;
 import com.inari.firefly.physics.collision.Contact;
 import com.inari.firefly.physics.collision.ContactProvider;
+import com.inari.firefly.physics.collision.ContactScanAdapter;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.collision.RayScan;
 import com.inari.firefly.physics.movement.EMovement;
+import com.inari.firefly.system.FFContext;
 
 public final class PFPlayerCollisionConstraint extends CollisionConstraint {
     
@@ -240,6 +242,22 @@ public final class PFPlayerCollisionConstraint extends CollisionConstraint {
         }
         
         return correction;
+    }
+    
+    
+    private final class VerticalGroundScan extends ContactScanAdapter {
+
+        public VerticalGroundScan( FFContext context ) {
+            super( context );
+        }
+
+        @Override
+        protected final Contact checkContact( int xOffset, int yOffset, int contactEntityId, ECollision contactCollision ) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+        
+        
     }
 
 }
