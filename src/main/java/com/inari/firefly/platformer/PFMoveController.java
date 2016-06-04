@@ -17,6 +17,7 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.physics.collision.Contact;
+import com.inari.firefly.physics.collision.ContactScan;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFInput;
@@ -194,15 +195,15 @@ public final class PFMoveController extends EntityController {
             }
         }
         
-        
-        if ( input.isPressed( climbUpButtonType ) && collision.hasContact( PFContact.LADDER ) ) {
-            final Contact contact = collision.getFirstContact( PFContact.LADDER );
+        ContactScan contactScan = collision.getContactScan();
+        if ( input.isPressed( climbUpButtonType ) && contactScan.hasContact( PFContact.LADDER ) ) {
+            final Contact contact = contactScan.getFirstContact( PFContact.LADDER );
             if ( contact.intersectionBounds().width > 3 ) {
                 adjustToLadder( transform, entity, contact );
                 yVelocity = -climbVelocity;
             }
-        } else if ( input.isPressed( climbDownButtonType ) && collision.hasContact( PFContact.LADDER ) ) {
-            final Contact contact = collision.getFirstContact( PFContact.LADDER );
+        } else if ( input.isPressed( climbDownButtonType ) && contactScan.hasContact( PFContact.LADDER ) ) {
+            final Contact contact = contactScan.getFirstContact( PFContact.LADDER );
             adjustToLadder( transform, entity, contact );
             yVelocity = climbVelocity;
         } else {
@@ -214,7 +215,7 @@ public final class PFMoveController extends EntityController {
     }
 
     private void adjustToLadder( final ETransform transform, final EEntity entity, final Contact contact ) {
-        transform.setXpos( contact.contactWorldBounds().x );
+        transform.setXpos( contact.worldBounds().x );
         entity.resetAspects();
         entity.setAspect( PFState.ON_LADDER );
         entity.setAspect( PFState.CLIMB_UP );
