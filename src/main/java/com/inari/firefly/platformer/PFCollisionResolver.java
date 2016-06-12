@@ -2,14 +2,18 @@ package com.inari.firefly.platformer;
 
 import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
+import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.physics.collision.CollisionResolver;
+import com.inari.firefly.physics.collision.CollisionSystem;
 import com.inari.firefly.physics.collision.ContactScan;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 
 public final class PFCollisionResolver extends CollisionResolver {
+    
+    private CollisionSystem collisionSystem;
     
     private Rectangle vScan = new Rectangle( 0, 0, 1, 5 );
     private Rectangle hScan = new Rectangle( 2, 0, 4, 1 );
@@ -17,6 +21,17 @@ public final class PFCollisionResolver extends CollisionResolver {
     protected PFCollisionResolver( int id ) {
         super( id );
     }
+    
+    
+
+    @Override
+    protected void init() throws FFInitException {
+        super.init();
+        
+        collisionSystem = context.getSystem( CollisionSystem.SYSTEM_KEY );
+    }
+
+
 
     @Override
     public final void resolve( final int entityId ) {
@@ -54,8 +69,9 @@ public final class PFCollisionResolver extends CollisionResolver {
         if ( velocityY >= 0 ) {
             ycorrection = adjustToGround( intersectionMask );
             if ( ycorrection != 0 && !( ycorrection > 0 && !groundContact ) ) {
-                movement.setVelocityY( 0f );
                 entity.setAspect( PFState.ON_GROUND );
+            } else {
+                ycorrection = 0;
             }
         } else if ( velocityY < 0 ) {
             hScan.y = 0;
@@ -71,28 +87,32 @@ public final class PFCollisionResolver extends CollisionResolver {
             } else {
                 transform.setYpos( (float) Math.floor( transform.getYpos() ) + ycorrection );
             }
+            
+            collisionSystem.updateContacts( entityId );
         }
 
         int xcorrection = 0;
         if ( velocityX > 0 ) {
             vScan.x = 7;
-            vScan.y = ycorrection;
             while( intersectionMask.hasIntersection( vScan ) ) {
                 xcorrection++;
                 vScan.x--;
             }
-            transform.setXpos( (float) Math.ceil( transform.getXpos() ) - xcorrection );
+            
+            if ( xcorrection != 0 ) {
+                transform.setXpos( (float) Math.ceil( transform.getXpos() ) - xcorrection );
+            }
         } else if ( velocityX < 0 ) {
             vScan.x = 0;
-            vScan.y = ycorrection;
             while( intersectionMask.hasIntersection( vScan ) ) {
                 xcorrection++;
                 vScan.x++;
             }
-            transform.setXpos( (float) Math.floor( transform.getXpos() ) + xcorrection );
+            
+            if ( xcorrection != 0 ) {
+                transform.setXpos( (float) Math.floor( transform.getXpos() ) + xcorrection );
+            }
         }
-        
-         
     }
     
     private boolean onGround( final BitMask intersectionMask ) {
