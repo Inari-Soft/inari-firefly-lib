@@ -8,6 +8,9 @@ public enum PFContact implements Aspect {
     LADDER,
     SPIKE
     ;
+    
+    public static final String PLATFORMER_SOLID_CONTACT_SCAN = "PLATFORMER_SOLID_CONTACT_SCAN";
+    public static final String PLATFORMER_LADDER_CONTACT_SCAN = "PLATFORMER_LADDER_CONTACT_SCAN";
 
     private Aspect aspect;
     private PFContact() {

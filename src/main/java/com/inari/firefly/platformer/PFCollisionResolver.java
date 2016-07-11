@@ -7,6 +7,7 @@ import com.inari.firefly.entity.EEntity;
 import com.inari.firefly.entity.ETransform;
 import com.inari.firefly.physics.collision.CollisionResolver;
 import com.inari.firefly.physics.collision.CollisionSystem;
+import com.inari.firefly.physics.collision.ContactConstraint;
 import com.inari.firefly.physics.collision.ContactScan;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
@@ -31,8 +32,6 @@ public final class PFCollisionResolver extends CollisionResolver {
         collisionSystem = context.getSystem( CollisionSystem.SYSTEM_KEY );
     }
 
-
-
     @Override
     public final void resolve( final int entityId ) {
         final EEntity entity = context.getEntityComponent( entityId, EEntity.TYPE_KEY );
@@ -41,33 +40,35 @@ public final class PFCollisionResolver extends CollisionResolver {
         final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
         
         final ContactScan contactScan = collision.getContactScan();
-        final BitMask intersectionMask = contactScan.getIntersectionMask();
+        final ContactConstraint solidContacts = contactScan.getContactContstraint( PFContact.PLATFORMER_SOLID_CONTACT_SCAN );
+        final ContactConstraint ladderContacts = contactScan.getContactContstraint( PFContact.PLATFORMER_LADDER_CONTACT_SCAN );
+        final BitMask intersectionMask = solidContacts.getIntersectionMask();
         final boolean groundContact = entity.hasAspect( PFState.ON_GROUND );
 
-        //System.out.println( "contactScan: "+contactScan.getIntersectionMask() );
+        final float velocityY = movement.getVelocityY();
+        final float velocityX = movement.getVelocityX();
 
         entity.resetAspect( PFState.ON_GROUND );
-        boolean onGround = onGround( intersectionMask );
-        
-        boolean gotFromLadder = false;
-        if ( !contactScan.hasContact( PFContact.LADDER ) && entity.hasAspect( PFState.ON_LADDER ) ) {
-            entity.resetAspect( PFState.ON_LADDER );
-            gotFromLadder = true;
-        }
-        if ( ( groundContact || gotFromLadder ) && onGround ) {
+        if ( groundContact && contactScan.hasContact( PFContact.LADDER ) ) {
             entity.setAspect( PFState.ON_GROUND );
         }
         
-        if ( intersectionMask.isEmpty() ) {
+        if ( !ladderContacts.hasAnyContact() && entity.hasAspect( PFState.ON_LADDER ) ) {
+            entity.resetAspect( PFState.ON_LADDER );
+            if ( entity.hasAspect( PFState.CLIMB_UP ) ) {
+                entity.setAspect( PFState.ON_GROUND );
+                entity.resetAspect( PFState.CLIMB_UP );
+                transform.setYpos( (float) Math.ceil( transform.getYpos() ) - movement.getVelocityY() );
+            }
+        }
+
+        if ( intersectionMask.isEmpty() && !contactScan.hasContact( PFContact.LADDER ) ) {
             return;
         }
-        
-        final float velocityY = movement.getVelocityY();
-        final float velocityX = movement.getVelocityX();
-        
+
         int ycorrection = 0;
         if ( velocityY >= 0 ) {
-            ycorrection = adjustToGround( intersectionMask );
+            ycorrection = adjustToGround( intersectionMask, contactScan );
             if ( ycorrection != 0 && !( ycorrection > 0 && !groundContact ) ) {
                 entity.setAspect( PFState.ON_GROUND );
             } else {
@@ -115,17 +116,7 @@ public final class PFCollisionResolver extends CollisionResolver {
         }
     }
     
-    private boolean onGround( final BitMask intersectionMask ) {
-        for ( int i = 1; i < 6; i++ ) {
-            if ( intersectionMask.getBit( i, 8 ) ) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    private int adjustToGround( final BitMask intersectionMask ) {
+    private int adjustToGround( final BitMask intersectionMask, final ContactScan contactScan ) {
         int correction = 0;
         final int halfHeight = 5;
         for ( int i = 0; i < 10; i++ ) {

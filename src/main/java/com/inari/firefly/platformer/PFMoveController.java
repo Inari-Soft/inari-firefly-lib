@@ -17,6 +17,7 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.physics.collision.Contact;
+import com.inari.firefly.physics.collision.ContactConstraint;
 import com.inari.firefly.physics.collision.ContactScan;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
@@ -156,6 +157,8 @@ public final class PFMoveController extends EntityController {
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
         final EEntity entity = entitySystem.getComponent( entityId, EEntity.TYPE_KEY );
         final ECollision collision = entitySystem.getComponent( entityId, ECollision.TYPE_KEY );
+        final ContactScan contactScan = collision.getContactScan();
+        
         float xVelocity = movement.getVelocityX();
         float yVelocity = movement.getVelocityY();
 
@@ -194,16 +197,17 @@ public final class PFMoveController extends EntityController {
                 animationSystem.resetAnimation( startWalkAnimId );
             }
         }
-        
-        ContactScan contactScan = collision.getContactScan();
-        if ( input.isPressed( climbUpButtonType ) && contactScan.hasContact( PFContact.LADDER ) ) {
-            final Contact contact = contactScan.getFirstContact( PFContact.LADDER );
+
+        final ContactConstraint ladderContacts = contactScan.getContactContstraint( PFContact.PLATFORMER_LADDER_CONTACT_SCAN );
+        final boolean hasLadderContact = ladderContacts.hasAnyContact();
+        if ( input.isPressed( climbUpButtonType ) && hasLadderContact ) {
+            final Contact contact = ladderContacts.getFirstContact( PFContact.LADDER );
             if ( contact.intersectionBounds().width > 3 ) {
                 adjustToLadder( transform, entity, contact );
                 yVelocity = -climbVelocity;
             }
-        } else if ( input.isPressed( climbDownButtonType ) && contactScan.hasContact( PFContact.LADDER ) ) {
-            final Contact contact = contactScan.getFirstContact( PFContact.LADDER );
+        } else if ( input.isPressed( climbDownButtonType ) && hasLadderContact ) {
+            final Contact contact = ladderContacts.getFirstContact( PFContact.LADDER );
             adjustToLadder( transform, entity, contact );
             yVelocity = climbVelocity;
         } else {
