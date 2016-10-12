@@ -199,7 +199,7 @@ public final class PFMoveController extends EntityController {
         }
 
         final ContactConstraint ladderContacts = contactScan.getContactContstraint( PFContact.PLATFORMER_LADDER_CONTACT_SCAN );
-        final boolean hasLadderContact = ladderContacts.hasAnyContact();
+        final boolean hasLadderContact = ladderContacts != null && ladderContacts.hasAnyContact();
         if ( input.isPressed( climbUpButtonType ) && hasLadderContact ) {
             final Contact contact = ladderContacts.getFirstContact( PFContact.LADDER );
             if ( contact.intersectionBounds().width > 3 ) {
