@@ -53,7 +53,7 @@ public final class PFCollisionResolver extends CollisionResolver {
             entity.setAspect( PFState.ON_GROUND );
         }
         
-        if ( !ladderContacts.hasAnyContact() && entity.hasAspect( PFState.ON_LADDER ) ) {
+        if ( ladderContacts != null && !ladderContacts.hasAnyContact() && entity.hasAspect( PFState.ON_LADDER ) ) {
             entity.resetAspect( PFState.ON_LADDER );
             if ( entity.hasAspect( PFState.CLIMB_UP ) ) {
                 entity.setAspect( PFState.ON_GROUND );

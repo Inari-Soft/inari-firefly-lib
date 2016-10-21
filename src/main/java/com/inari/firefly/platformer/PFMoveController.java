@@ -211,7 +211,7 @@ public final class PFMoveController extends EntityController {
             adjustToLadder( transform, entity, contact );
             yVelocity = climbVelocity;
         } else {
-            yVelocity = 0;
+            //yVelocity = 0;
             entity.resetAspect( PFState.CLIMB_UP );
         }
         

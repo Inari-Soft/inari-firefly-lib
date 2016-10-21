@@ -21,10 +21,10 @@ import com.inari.firefly.system.external.FFTimer;
 
 public final class PFSimpleJumpController extends EntityController {
     
-    public static final AttributeKey<ButtonType> JUMP_BUTTON_TYPE = new AttributeKey<ButtonType>( "jumpButtonType", ButtonType.class, PFGravityController.class );
-    public static final AttributeKey<Easing.Type> EASING_TYPE = new AttributeKey<Easing.Type>( "easingType", Easing.Type.class, PFGravityController.class );
-    public static final AttributeKey<Float> MAX_VELOCITY  = new AttributeKey<Float>( "maxVelocity", Float.class, PFGravityController.class );
-    public static final AttributeKey<Long> TIME_TO_MAX  = new AttributeKey<Long>( "timeToMax", Long.class, PFGravityController.class );
+    public static final AttributeKey<ButtonType> JUMP_BUTTON_TYPE = new AttributeKey<ButtonType>( "jumpButtonType", ButtonType.class, PFSimpleJumpController.class );
+    public static final AttributeKey<Easing.Type> EASING_TYPE = new AttributeKey<Easing.Type>( "easingType", Easing.Type.class, PFSimpleJumpController.class );
+    public static final AttributeKey<Float> MAX_VELOCITY  = new AttributeKey<Float>( "maxVelocity", Float.class, PFSimpleJumpController.class );
+    public static final AttributeKey<Long> TIME_TO_MAX  = new AttributeKey<Long>( "timeToMax", Long.class, PFSimpleJumpController.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         JUMP_BUTTON_TYPE,
         EASING_TYPE,
