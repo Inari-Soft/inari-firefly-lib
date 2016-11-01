@@ -3,7 +3,7 @@ package com.inari.firefly.controller.view;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.inari.commons.geom.Position;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -24,7 +24,7 @@ public final class SimpleCameraController extends ViewController {
     
     private CameraPivot pivot;
     private Rectangle snapToBounds;
-    private final Rectangle virtualViewBounds = new Rectangle();
+    //private final Rectangle virtualViewBounds = new Rectangle();
     
     private final ViewChangeEvent viewChangeEvent = new ViewChangeEvent( null, Type.ORIENTATION );
 
@@ -77,43 +77,48 @@ public final class SimpleCameraController extends ViewController {
             return;
         }
         
-        final Position following = pivot.getPivot();
+        final PositionF following = pivot.getPivot();
         if ( following == null ) {
             return;
         }
         
-        final Position worldPosition = view.getWorldPosition();
         final Rectangle viewBounds = view.getBounds();
-        final int viewHorizontal = viewBounds.width / 4;
-        final int viewHorizontalHalf = viewHorizontal / 2;
-        final int viewVertical = viewBounds.height / 4;
-        final int viewVerticalHalf = viewVertical / 2;
+        final PositionF worldPosition = view.getWorldPosition();
+        final float zoom = view.getZoom();
+        final float viewHorizontal = viewBounds.width / 4;
+        final float viewHorizontalHalf = viewHorizontal / 2;
+        final float viewVertical = viewBounds.height / 4;
+        final float viewVerticalHalf = viewVertical / 2;
         
-        final int xMax = snapToBounds.width - viewHorizontal;
-        final int yMax = snapToBounds.height - viewVertical;
+        final float xMax = snapToBounds.width - viewHorizontal;
+        final float yMax = snapToBounds.height - viewVertical;
 
         boolean orientationChanged = false;
         
-        virtualViewBounds.x = following.x + 4 - viewHorizontalHalf;
-        virtualViewBounds.y = following.y + 4 - viewVerticalHalf;
+        float xpos = following.x + 4 - viewHorizontalHalf;
+        float ypos = following.y + 4 - viewVerticalHalf;
         
-        if ( virtualViewBounds.x < 0 ) {
-            virtualViewBounds.x = 0;
+        if ( xpos < 0 ) {
+            xpos = 0;
         }
-        if ( virtualViewBounds.y < 0 ) {
-            virtualViewBounds.y = 0;
+        if ( ypos < 0 ) {
+            ypos = 0;
         }
-        if ( virtualViewBounds.x > xMax ) {
-            virtualViewBounds.x = xMax;
+        if ( xpos > xMax ) {
+            xpos = xMax;
         }
-        if ( virtualViewBounds.y > yMax ) {
-            virtualViewBounds.y = yMax;
+        if ( ypos > yMax ) {
+            ypos = yMax;
         }
+
+        // adjust xpos and ypos within the zoom to pixel correct position (otherwise there may be a flickering on texture area rendering while the camera is moving).
+        xpos = ( (int) ( xpos / zoom ) ) * zoom;
+        ypos = ( (int) ( ypos / zoom ) ) * zoom;
         
-        if ( worldPosition.x != virtualViewBounds.x || worldPosition.y != virtualViewBounds.y ) {
+        if ( worldPosition.x != xpos || worldPosition.y != ypos ) {
             orientationChanged = true;
-            worldPosition.x = virtualViewBounds.x;
-            worldPosition.y = virtualViewBounds.y;
+            worldPosition.x = xpos;
+            worldPosition.y = ypos;
         }
         
         if ( orientationChanged ) {

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.inari.commons.geom.Direction;
-import com.inari.commons.geom.Position;
+import com.inari.commons.geom.PositionF;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
@@ -158,14 +158,14 @@ public final class BorderedCameraController extends ViewController {
         if ( pivot == null ) {
             return;
         }
-        Position following = pivot.getPivot();
+        PositionF following = pivot.getPivot();
         if ( following == null ) {
             return;
         }
         
         // TODO find the right bounds, combine worldposition with view bounds
         Rectangle viewBounds = view.getBounds();
-        Position worldPosition = view.getWorldPosition();
+        PositionF worldPosition = view.getWorldPosition();
         virtualViewBounds.setFrom( worldPosition );
         virtualViewBounds.width = viewBounds.width;
         virtualViewBounds.height = viewBounds.height;
@@ -220,12 +220,15 @@ public final class BorderedCameraController extends ViewController {
         }
         
         if ( orientationChanged ) {
+            // adjust xpos and ypos within the zoom to pixel correct position (otherwise there may be a flickering on texture area rendering while the camera is moving).
+            worldPosition.x = ( (int) ( worldPosition.x / zoom ) ) * zoom;
+            worldPosition.y = ( (int) ( worldPosition.y / zoom ) ) * zoom;
             viewChangeEvent.setView( view );
             context.notify( viewChangeEvent );
         }
     }
     
-    private final void updateMoveDirection( Rectangle viewBounds, Position following ) {
+    private final void updateMoveDirection( Rectangle viewBounds, PositionF following ) {
         if ( following.x < viewBounds.x + hOnThreshold ) {
             hMove = Direction.WEST;
         } else if ( following.x > viewBounds.x + viewBounds.width - hOnThreshold ) {
