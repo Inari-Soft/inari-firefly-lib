@@ -99,7 +99,7 @@ public final class PFGravityController extends EntityController {
         
         if ( !entity.hasAspect( PFState.ON_GROUND ) ) {
             if ( !animationSystem.isActive( gravityAnimId ) ) {
-                animationSystem.activate( gravityAnimId, timer );
+                animationSystem.activateAnimation( gravityAnimId );
             }
             
             yVelocity = animationSystem.getValue( gravityAnimId, entityId, yVelocity );

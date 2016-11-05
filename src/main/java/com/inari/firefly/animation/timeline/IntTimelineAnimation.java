@@ -3,14 +3,14 @@ package com.inari.firefly.animation.timeline;
 import java.util.Arrays;
 import java.util.Set;
 
+import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.physics.animation.IntAnimation;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class IntTimelineAnimation extends IntAnimation {
     
-    public static final AttributeKey<IntTimelineData[]> TIMELINE = new AttributeKey<IntTimelineData[]>( "timeline", IntTimelineData[].class, IntTimelineAnimation.class );
+    public static final AttributeKey<DynArray<IntTimelineData>> TIMELINE = AttributeKey.createForDynArray( "timeline", IntTimelineAnimation.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         TIMELINE
     };
@@ -41,8 +41,8 @@ public final class IntTimelineAnimation extends IntAnimation {
     }
     
     @Override
-    public final void update( FFTimer timer ) {
-        long updateTime = timer.getTime();
+    public final void update() {
+        long updateTime = context.getTime();
         
         if ( lastUpdate < 0 ) {
             lastUpdate = updateTime;
@@ -89,14 +89,25 @@ public final class IntTimelineAnimation extends IntAnimation {
     public final void fromAttributes( AttributeMap attributes ) {
         super.fromAttributes( attributes );
         
-        timeline = attributes.getValue( TIMELINE, timeline );
+        DynArray<IntTimelineData> timelineData = attributes.getValue( TIMELINE );
+        if ( timelineData != null ) {
+            timeline = timelineData.toArray( IntTimelineData.class );
+        }
+        
     }
 
     @Override
     public final void toAttributes( AttributeMap attributes ) {
         super.toAttributes( attributes );
         
-        attributes.put( TIMELINE, timeline );
+        if ( timeline != null ) {
+            DynArray<IntTimelineData> result = new DynArray<IntTimelineData>();
+            for ( int i = 0; i < timeline.length; i++ ) {
+                result.set( i, timeline[ i ] );
+            }
+            attributes.put( TIMELINE, result );
+        }
+        
     }
 
 }

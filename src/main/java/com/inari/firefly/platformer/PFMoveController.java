@@ -167,7 +167,7 @@ public final class PFMoveController extends EntityController {
             entity.resetAspect( PFState.WALK_LEFT );
             entity.setAspect( PFState.WALK_RIGHT );
             if ( xVelocity == 0f && !animationSystem.isActive( startWalkAnimId ) ) {
-                animationSystem.activate( startWalkAnimId, timer );
+                animationSystem.activateAnimation( startWalkAnimId );
             }
             
            if ( animationSystem.isActive( startWalkAnimId ) ) {
@@ -179,7 +179,7 @@ public final class PFMoveController extends EntityController {
             entity.setAspect( PFState.WALK_LEFT );
             entity.resetAspect( PFState.WALK_RIGHT );
             if ( xVelocity == 0f && !animationSystem.isActive( startWalkAnimId ) ) {
-                animationSystem.activate( startWalkAnimId, timer );
+                animationSystem.activateAnimation( startWalkAnimId );
             }
             
             if ( animationSystem.isActive( startWalkAnimId ) ) {

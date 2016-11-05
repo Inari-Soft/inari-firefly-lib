@@ -191,11 +191,11 @@ public class SceneSystem
             return Scene.TYPE_KEY;
         }
         @Override
-        public final Scene getComponent( int id ) {
+        public final Scene get( int id ) {
             return scenes.get( id );
         }
         @Override
-        public final void deleteComponent( int id ) {
+        public final void delete( int id ) {
             deleteScene( id );
         }
         @Override
@@ -203,13 +203,16 @@ public class SceneSystem
             return scenes.iterator();
         }
         @Override
-        public final void deleteComponent( String name ) {
-           deleteScene( getSceneId( name ) );
-            
+        public int getId( String name ) {
+            return getSceneId( name );
         }
         @Override
-        public final Scene getComponent( String name ) {
-            return getScene( getSceneId( name ) );
+        public void activate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public void deactivate( int id ) {
+            throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
         }
     }
 

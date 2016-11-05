@@ -7,7 +7,6 @@ import com.inari.commons.geom.Easing;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.physics.animation.FloatAnimation;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class EasingAnimation extends FloatAnimation {
     
@@ -39,8 +38,8 @@ public final class EasingAnimation extends FloatAnimation {
     }
 
     @Override
-    public final void activate( final FFTimer timer ) {
-        super.activate( timer );
+    public final void activate() {
+        super.activate();
         
         inverse = easingData.changeInValue - easingData.startValue < 0f;
         if ( easingData.startValue < 0f ) {
@@ -51,11 +50,11 @@ public final class EasingAnimation extends FloatAnimation {
     }
 
     @Override
-    public final void update( final FFTimer timer ) {
+    public final void update() {
         if ( runningTime > easingData.duration ) {
             if ( looping ) {
                 reset();
-                activate( timer );
+                activate();
             } else {
                 stop();
             }

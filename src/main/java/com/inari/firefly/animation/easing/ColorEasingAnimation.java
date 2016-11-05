@@ -7,7 +7,6 @@ import com.inari.commons.graphics.RGBColor;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.physics.animation.ValueAnimation;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class ColorEasingAnimation extends ValueAnimation<RGBColor> {
 
@@ -38,8 +37,8 @@ public final class ColorEasingAnimation extends ValueAnimation<RGBColor> {
     }
     
     @Override
-    public final void update( final FFTimer timer ) {
-        time = timer.getTime() - startTime;
+    public final void update() {
+        time = context.getTime() - startTime;
         boolean active = update( easingDataRed ) || 
                          update( easingDataGreen ) || 
                          update( easingDataBlue ) || 

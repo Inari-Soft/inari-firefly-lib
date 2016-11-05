@@ -117,7 +117,7 @@ public final class PFSimpleJumpController extends EntityController {
             entity.resetAspect( PFState.JUMP );
             
             if ( !animationSystem.isActive( jumpAnimId ) && input.typed( jumpButtonType ) ) {
-                animationSystem.activate( jumpAnimId, timer );
+                animationSystem.activateAnimation( jumpAnimId );
                 yVelocity += animationSystem.getValue( jumpAnimId, entityId, yVelocity );
                 entity.resetAspects();
                 entity.setAspect( PFState.JUMP );

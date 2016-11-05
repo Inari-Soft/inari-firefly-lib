@@ -1,10 +1,8 @@
 package com.inari.firefly.composite.sprite;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,8 +17,8 @@ import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.AnimatedEntityAttribute;
+import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
 import com.inari.firefly.physics.animation.AnimationSystem;
@@ -95,7 +93,7 @@ public class AnimatedSprite extends Asset {
         
         checkConsistency();
         int textureId = context.getSystem( AssetSystem.SYSTEM_KEY ).getAssetInstanceId( textureAssetId );
-        Map<String, List<IntTimelineData>> spriteMapping = createSpriteMapping( textureId );
+        Map<String, DynArray<IntTimelineData>> spriteMapping = createSpriteMapping( textureId );
         
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
@@ -103,12 +101,12 @@ public class AnimatedSprite extends Asset {
         
         DynArray<NameMapping> stateAnimationNameMapping = new DynArray<NameMapping>( spriteMapping.size(), 2 );
         for ( String stateName : spriteMapping.keySet() ) {
-            List<IntTimelineData> timeLineDataList = spriteMapping.get( stateName );
+            DynArray<IntTimelineData> timeLineDataList = spriteMapping.get( stateName );
             String animationName = getName() + ANIMATION_NAME_PREFIX + stateName;
             animationBuilder
                 .set( IntTimelineAnimation.NAME, animationName )
                 .set( IntTimelineAnimation.LOOPING, looping )
-                .set( IntTimelineAnimation.TIMELINE, timeLineDataList.toArray( new IntTimelineData[ timeLineDataList.size() ] ) )
+                .set( IntTimelineAnimation.TIMELINE, timeLineDataList )
             .activate( IntTimelineAnimation.class );
             
             stateAnimationNameMapping.add( new NameMapping( stateName, animationName ) );
@@ -221,9 +219,9 @@ public class AnimatedSprite extends Asset {
         }
     }
     
-    private Map<String, List<IntTimelineData>> createSpriteMapping( int textureId ) {
+    private Map<String, DynArray<IntTimelineData>> createSpriteMapping( int textureId ) {
         spriteData.textureId = textureId;
-        Map<String, List<IntTimelineData>> mapping = new HashMap<String, List<IntTimelineData>>();
+        Map<String, DynArray<IntTimelineData>> mapping = new HashMap<String, DynArray<IntTimelineData>>();
         
         FFGraphics graphics = context.getGraphics();
         for ( int i = 0; i < animatedSpriteData.capacity(); i++ ) {
@@ -236,9 +234,9 @@ public class AnimatedSprite extends Asset {
             if ( stateName == null ) {
                 stateName = "";
             }
-            List<IntTimelineData> timelineData = mapping.get( stateName );
+            DynArray<IntTimelineData> timelineData = mapping.get( stateName );
             if ( timelineData == null ) {
-                timelineData = new ArrayList<IntTimelineData>();
+                timelineData = new DynArray<IntTimelineData>();
                 mapping.put( stateName, timelineData );
             }
             
