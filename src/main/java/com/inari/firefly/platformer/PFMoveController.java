@@ -23,7 +23,6 @@ import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class PFMoveController extends EntityController {
     
@@ -151,7 +150,7 @@ public final class PFMoveController extends EntityController {
     }
 
     @Override
-    protected final void update( FFTimer timer, int entityId ) {
+    protected final void update( int entityId ) {
         final FFInput input = context.getInput();
         final ETransform transform = entitySystem.getComponent( entityId, ETransform.TYPE_KEY );
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );

@@ -21,7 +21,6 @@ import com.inari.firefly.entity.EntityAttributeMap;
 import com.inari.firefly.graphics.sprite.ESprite;
 import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.physics.animation.IntAnimation;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class SpriteIdAnimationController extends AnimatedEntityAttribute {
     
@@ -52,7 +51,8 @@ public final class SpriteIdAnimationController extends AnimatedEntityAttribute {
     }
 
     @Override
-    protected final void update( final FFTimer timer, int entityId ) {
+    protected final void update( int entityId ) {
+        updateAnimationId( animationSystem );
         ESprite sprite = context.getEntityComponent( entityId, ESprite.TYPE_KEY );
         sprite.setSpriteId( animationSystem.getValue( animationId, entityId, sprite.getSpriteId() ) );
     }

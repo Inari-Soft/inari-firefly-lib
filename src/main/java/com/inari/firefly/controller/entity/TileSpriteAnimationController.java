@@ -6,7 +6,6 @@ import com.inari.firefly.entity.EntityAttributeMap;
 import com.inari.firefly.graphics.tile.ETile;
 import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.physics.animation.IntAnimation;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class TileSpriteAnimationController extends AnimatedEntityAttribute {
     
@@ -36,7 +35,8 @@ public final class TileSpriteAnimationController extends AnimatedEntityAttribute
     }
 
     @Override
-    protected final void update( final FFTimer timer, int entityId ) {
+    protected final void update( int entityId ) {
+        updateAnimationId( animationSystem );
         ETile tile = context.getEntityComponent( entityId, ETile.TYPE_KEY );
         tile.setSpriteId( animationSystem.getValue( animationId, entityId, tile.getSpriteId() ) );
     }

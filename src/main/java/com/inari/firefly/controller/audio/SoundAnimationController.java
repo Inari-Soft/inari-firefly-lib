@@ -26,7 +26,6 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.system.external.FFAudio;
-import com.inari.firefly.system.external.FFTimer;
 
 
 public final class SoundAnimationController extends SoundController {
@@ -112,7 +111,7 @@ public final class SoundAnimationController extends SoundController {
     }
 
     @Override
-    public final void update( final FFTimer timer, final Sound sound ) {
+    public final void update( final Sound sound ) {
         if ( volumeAnimationId >= 0 && animationSystem.exists( volumeAnimationId ) ) {
             float volume = sound.getVolume();
             float newVolume = animationSystem.getValue( volumeAnimationId, sound.index(), volume );

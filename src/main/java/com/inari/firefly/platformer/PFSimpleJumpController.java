@@ -17,7 +17,6 @@ import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFInput;
 import com.inari.firefly.system.external.FFInput.ButtonType;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class PFSimpleJumpController extends EntityController {
     
@@ -100,7 +99,7 @@ public final class PFSimpleJumpController extends EntityController {
     }
 
     @Override
-    protected final void update( FFTimer timer, int entityId ) {
+    protected final void update( int entityId ) {
         final FFInput input = context.getInput();
         final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
         final EEntity entity = entitySystem.getComponent( entityId, EEntity.TYPE_KEY );

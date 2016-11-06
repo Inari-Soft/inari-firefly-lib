@@ -11,7 +11,6 @@ import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewChangeEvent;
 import com.inari.firefly.graphics.view.ViewChangeEvent.Type;
 import com.inari.firefly.graphics.view.ViewController;
-import com.inari.firefly.system.external.FFTimer;
 
 public final class SimpleCameraController extends ViewController {
     
@@ -72,7 +71,7 @@ public final class SimpleCameraController extends ViewController {
     }
 
     @Override
-    public final void update( FFTimer timer, View view ) {
+    public final void update( View view ) {
         if ( pivot == null ) {
             return;
         }
