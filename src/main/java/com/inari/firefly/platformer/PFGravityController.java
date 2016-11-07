@@ -92,41 +92,63 @@ public final class PFGravityController extends EntityController {
     protected final void update( int entityId ) {
         final EEntity entity = entitySystem.getComponent( entityId, EEntity.TYPE_KEY );
         
-        // TODO check against a group of aspects that skip gravity
         if ( entity.hasAspect( PFState.ON_LADDER ) ) {
-            if ( active ) {
-                finish( entityId );
-            }
             return;
         }
-
+        
+        final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
+        float yVelocity = movement.getVelocityY();
+        
         if ( !entity.hasAspect( PFState.ON_GROUND ) ) {
-            
-            final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
-            if ( !animationSystem.isActive( gravityAnimId ) && !active ) {
+            if ( !animationSystem.isActive( gravityAnimId ) ) {
                 animationSystem.activateAnimation( gravityAnimId );
-                active = true;
-                return;
             }
             
-            if ( active ) {
-                if ( animationSystem.isActive( gravityAnimId ) ) {
-                    float yVelocity = movement.getVelocityY();
-                    yVelocity -= value;
-                    value = animationSystem.getValue( gravityAnimId, entityId, value );
-                    yVelocity += value;
-                    movement.setVelocityY( yVelocity );
-                } else if ( value < maxVelocity ) {
-                    float yVelocity = movement.getVelocityY();
-                    yVelocity -= value;
-                    value = maxVelocity;
-                    yVelocity += value;
-                    movement.setVelocityY( yVelocity );
-                }
-            } 
-        } else if ( active ) {
-            finish( entityId );
+            yVelocity = animationSystem.getValue( gravityAnimId, entityId, yVelocity );
+        } else {
+            yVelocity = 0f;
+            animationSystem.resetAnimation( gravityAnimId );
         }
+        
+        movement.setVelocityY( yVelocity );
+        
+//        final EEntity entity = entitySystem.getComponent( entityId, EEntity.TYPE_KEY );
+//        
+//        // TODO check against a group of aspects that skip gravity
+//        if ( entity.hasAspect( PFState.ON_LADDER ) ) {
+//            if ( active ) {
+//                finish( entityId );
+//            }
+//            return;
+//        }
+//
+//        if ( !entity.hasAspect( PFState.ON_GROUND ) ) {
+//            
+//            final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
+//            if ( !animationSystem.isActive( gravityAnimId ) && !active ) {
+//                animationSystem.activateAnimation( gravityAnimId );
+//                active = true;
+//                return;
+//            }
+//            
+//            if ( active ) {
+//                if ( animationSystem.isActive( gravityAnimId ) ) {
+//                    float yVelocity = movement.getVelocityY();
+//                    yVelocity -= value;
+//                    value = animationSystem.getValue( gravityAnimId, entityId, value );
+//                    yVelocity += value;
+//                    movement.setVelocityY( yVelocity );
+//                } else if ( value < maxVelocity ) {
+//                    float yVelocity = movement.getVelocityY();
+//                    yVelocity -= value;
+//                    value = maxVelocity;
+//                    yVelocity += value;
+//                    movement.setVelocityY( yVelocity );
+//                }
+//            } 
+//        } else if ( active ) {
+//            finish( entityId );
+//        }
     }
 
     private final void finish( int entityId ) {
