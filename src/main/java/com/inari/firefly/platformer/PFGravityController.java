@@ -35,6 +35,9 @@ public final class PFGravityController extends EntityController {
     private long timeToMax;
     
     private int gravityAnimId;
+    
+    private float value;
+    private boolean active = false;
 
     protected PFGravityController( int id ) {
         super( id );
@@ -89,25 +92,49 @@ public final class PFGravityController extends EntityController {
     protected final void update( int entityId ) {
         final EEntity entity = entitySystem.getComponent( entityId, EEntity.TYPE_KEY );
         
+        // TODO check against a group of aspects that skip gravity
         if ( entity.hasAspect( PFState.ON_LADDER ) ) {
+            if ( active ) {
+                finish( entityId );
+            }
             return;
         }
-        
-        final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
-        float yVelocity = movement.getVelocityY();
-        
+
         if ( !entity.hasAspect( PFState.ON_GROUND ) ) {
-            if ( !animationSystem.isActive( gravityAnimId ) ) {
+            
+            final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
+            if ( !animationSystem.isActive( gravityAnimId ) && !active ) {
                 animationSystem.activateAnimation( gravityAnimId );
+                active = true;
+                return;
             }
             
-            yVelocity = animationSystem.getValue( gravityAnimId, entityId, yVelocity );
-        } else {
-            yVelocity = 0f;
-            animationSystem.resetAnimation( gravityAnimId );
+            if ( active ) {
+                if ( animationSystem.isActive( gravityAnimId ) ) {
+                    float yVelocity = movement.getVelocityY();
+                    yVelocity -= value;
+                    value = animationSystem.getValue( gravityAnimId, entityId, value );
+                    yVelocity += value;
+                    movement.setVelocityY( yVelocity );
+                } else if ( value < maxVelocity ) {
+                    float yVelocity = movement.getVelocityY();
+                    yVelocity -= value;
+                    value = maxVelocity;
+                    yVelocity += value;
+                    movement.setVelocityY( yVelocity );
+                }
+            } 
+        } else if ( active ) {
+            finish( entityId );
         }
-        
-        movement.setVelocityY( yVelocity );
+    }
+
+    private final void finish( int entityId ) {
+        final EMovement movement = entitySystem.getComponent( entityId, EMovement.TYPE_KEY );
+        value = 0f;
+        animationSystem.resetAnimation( gravityAnimId );
+        movement.setVelocityY( 0 );
+        active = false;
     }
 
     @Override
