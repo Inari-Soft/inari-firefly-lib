@@ -14,7 +14,7 @@ public enum PFContact implements Aspect {
 
     private Aspect aspect;
     private PFContact() {
-        aspect = CollisionSystem.CONTACT_ASPECT_GROUP.createAspect( name() );
+        aspect = CollisionSystem.MATERIAL_ASPECT_GROUP.createAspect( name() );
     }
     
     @Override
