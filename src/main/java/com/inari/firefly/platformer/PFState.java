@@ -12,7 +12,8 @@ public enum PFState implements Aspect {
     CLIMB_UP,
     CLIMB_DOWN,
     JUMP,
-    DOUBLE_JUMP
+    DOUBLE_JUMP,
+    IN_WATER
     ;
     
     private Aspect aspect;
