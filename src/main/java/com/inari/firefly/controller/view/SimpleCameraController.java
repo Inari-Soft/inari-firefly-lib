@@ -84,9 +84,10 @@ public final class SimpleCameraController extends ViewController {
         final Rectangle viewBounds = view.getBounds();
         final PositionF worldPosition = view.getWorldPosition();
         final float zoom = view.getZoom();
-        final float viewHorizontal = viewBounds.width / 4;
+        final float oneDivZoom = 1 / zoom;
+        final float viewHorizontal = viewBounds.width / oneDivZoom;
         final float viewHorizontalHalf = viewHorizontal / 2;
-        final float viewVertical = viewBounds.height / 4;
+        final float viewVertical = viewBounds.height / oneDivZoom;
         final float viewVerticalHalf = viewVertical / 2;
         
         final float xMax = snapToBounds.width - viewHorizontal;
@@ -94,8 +95,8 @@ public final class SimpleCameraController extends ViewController {
 
         boolean orientationChanged = false;
         
-        float xpos = following.x + 4 - viewHorizontalHalf;
-        float ypos = following.y + 4 - viewVerticalHalf;
+        float xpos = following.x + oneDivZoom - viewHorizontalHalf;
+        float ypos = following.y + oneDivZoom - viewVerticalHalf;
         
         if ( xpos < 0 ) {
             xpos = 0;
