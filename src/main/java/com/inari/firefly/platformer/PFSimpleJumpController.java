@@ -20,7 +20,7 @@ public final class PFSimpleJumpController extends EntityController {
     public static final AttributeKey<ButtonType> JUMP_BUTTON_TYPE = new AttributeKey<ButtonType>( "jumpButtonType", ButtonType.class, PFSimpleJumpController.class );
     public static final AttributeKey<Float> MAX_VELOCITY  = new AttributeKey<Float>( "maxVelocity", Float.class, PFSimpleJumpController.class );
     public static final AttributeKey<Long> TIME_TO_MAX  = new AttributeKey<Long>( "timeToMax", Long.class, PFSimpleJumpController.class );
-    public static final AttributeKey<DynArray<Aspect>> NO_JUMP_ASPECTS = AttributeKey.createForDynArray( "noJumpAspects", PFSimpleJumpController.class );
+    public static final AttributeKey<DynArray<Aspect>> NO_JUMP_ASPECTS = AttributeKey.createDynArray( "noJumpAspects", PFSimpleJumpController.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         JUMP_BUTTON_TYPE,
         MAX_VELOCITY,

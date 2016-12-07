@@ -10,7 +10,7 @@ import com.inari.firefly.physics.animation.IntAnimation;
 
 public final class IntTimelineAnimation extends IntAnimation {
     
-    public static final AttributeKey<DynArray<IntTimelineData>> TIMELINE = AttributeKey.createForDynArray( "timeline", IntTimelineAnimation.class );
+    public static final AttributeKey<DynArray<IntTimelineData>> TIMELINE = AttributeKey.createDynArray( "timeline", IntTimelineAnimation.class );
     private static final AttributeKey<?>[] ATTRIBUTE_KEYS = new AttributeKey[] {
         TIMELINE
     };
