@@ -98,11 +98,11 @@ public final class SimpleCameraController extends ViewController {
         float xpos = following.x + oneDivZoom - viewHorizontalHalf;
         float ypos = following.y + oneDivZoom - viewVerticalHalf;
         
-        if ( xpos < 0 ) {
-            xpos = 0;
+        if ( xpos < snapToBounds.x ) {
+            xpos = snapToBounds.x;
         }
-        if ( ypos < 0 ) {
-            ypos = 0;
+        if ( ypos < snapToBounds.y ) {
+            ypos = snapToBounds.y;
         }
         if ( xpos > xMax ) {
             xpos = xMax;
