@@ -159,14 +159,14 @@ public class SceneSystem
     @Override
     public final SystemBuilderAdapter<?>[] getSupportedBuilderAdapter() {
         return new SystemBuilderAdapter<?>[] {
-            new SceneBuilderHelper( this )
+            new SceneBuilderHelper()
         };
     }
 
     public final class SceneBuilder extends SystemComponentBuilder {
         
-        public SceneBuilder() {
-            super( context );
+        public SceneBuilder( Class<? extends Scene> componentType ) {
+            super( context, componentType );
         }
 
         @Override
@@ -183,12 +183,8 @@ public class SceneSystem
     }
     
     private final class SceneBuilderHelper extends SystemBuilderAdapter<Scene> {
-        public SceneBuilderHelper( SceneSystem system ) {
-            super( system, new SceneBuilder() );
-        }
-        @Override
-        public final SystemComponentKey<Scene> componentTypeKey() {
-            return Scene.TYPE_KEY;
+        private SceneBuilderHelper() {
+            super( SceneSystem.this, Scene.TYPE_KEY );
         }
         @Override
         public final Scene get( int id ) {
@@ -213,6 +209,13 @@ public class SceneSystem
         @Override
         public void deactivate( int id ) {
             throw new UnsupportedOperationException( componentTypeKey() + " is not activable" );
+        }
+        @Override
+        public SystemComponentBuilder createComponentBuilder( Class<? extends Scene> componentType ) {
+            if ( componentType == null ) {
+                throw new IllegalArgumentException( "componentType is needed for SystemComponentBuilder for component: " + componentTypeKey().name() );
+            }
+            return new SceneBuilder( componentType );
         }
     }
 

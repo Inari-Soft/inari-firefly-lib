@@ -22,9 +22,9 @@ import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.controller.entity.SpriteIdAnimationController;
 import com.inari.firefly.physics.animation.AnimationSystem;
-import com.inari.firefly.physics.animation.AnimationSystem.AnimationBuilder;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.NameMapping;
+import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.SpriteData;
 import com.inari.firefly.system.utils.Disposable;
@@ -97,7 +97,7 @@ public class AnimatedSprite extends Asset {
         
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
-        AnimationBuilder animationBuilder = animationSystem.getAnimationBuilder();
+        SystemComponentBuilder animationBuilder = animationSystem.getAnimationBuilder( IntTimelineAnimation.class );
         
         DynArray<NameMapping> stateAnimationNameMapping = new DynArray<NameMapping>( spriteMapping.size(), 2 );
         for ( String stateName : spriteMapping.keySet() ) {
@@ -107,26 +107,26 @@ public class AnimatedSprite extends Asset {
                 .set( IntTimelineAnimation.NAME, animationName )
                 .set( IntTimelineAnimation.LOOPING, looping )
                 .set( IntTimelineAnimation.TIMELINE, timeLineDataList )
-            .activate( IntTimelineAnimation.class );
+            .activate();
             
             stateAnimationNameMapping.add( new NameMapping( stateName, animationName ) );
         }
         
         int animationResolverId = -1;
         if ( workflowId >= 0 ) {
-            animationResolverId = animationSystem.getAnimationResolverBuilder()
+            animationResolverId = animationSystem.getAnimationResolverBuilder( WorkflowAnimationResolver.class )
                 .set( WorkflowAnimationResolver.NAME, getName() + ANIMATION_RESOLVER_NAME )
                 .set( WorkflowAnimationResolver.WORKFLOW_ID, workflowId )
                 .set( WorkflowAnimationResolver.STATE_ANIMATION_NAME_MAPPING, stateAnimationNameMapping )
-            .build( WorkflowAnimationResolver.class );
+            .build();
         }
         
-        controllerId = controllerSystem.getControllerBuilder()
+        controllerId = controllerSystem.getControllerBuilder( getControllerType() )
             .set( AnimatedEntityAttribute.NAME, getName() + ANIMATION_CONTROLLER_NAME )
             .set( AnimatedEntityAttribute.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping.iterator().next().name2 ) )
             .set( AnimatedEntityAttribute.ANIMATION_RESOLVER_ID, animationResolverId )
             .set( AnimatedEntityAttribute.UPDATE_RESOLUTION, updateResolution )
-        .build( getControllerType() );
+        .build(  );
         
         loaded = true;
         

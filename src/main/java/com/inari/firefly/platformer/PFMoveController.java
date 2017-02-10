@@ -71,11 +71,11 @@ public final class PFMoveController extends EntityController {
         animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         entitySystem = context.getSystem( EntitySystem.SYSTEM_KEY );
         
-        startWalkAnimId = context.getComponentBuilder( Animation.TYPE_KEY )
+        startWalkAnimId = context.getComponentBuilder( Animation.TYPE_KEY, EasingAnimation.class )
             .set( EasingAnimation.NAME, "SimplePlatformerMoveControllerAnimation" )
             .set( EasingAnimation.LOOPING, false )
             .set( EasingAnimation.EASING_DATA, new EasingData( Easing.Type.LINEAR, 0f, maxVelocity, timeToMax ) )
-        .build( EasingAnimation.class );
+        .build();
     }
 
     @Override
