@@ -4,7 +4,7 @@ import com.inari.commons.geom.BitMask;
 import com.inari.commons.geom.Rectangle;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.entity.EEntity;
-import com.inari.firefly.entity.ETransform;
+import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.physics.collision.CollisionResolver;
 import com.inari.firefly.physics.collision.CollisionSystem;
 import com.inari.firefly.physics.collision.ContactConstraint;

@@ -10,17 +10,15 @@ import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.animation.WorkflowAnimationResolver;
+import com.inari.firefly.animation.WorkflowAnimationController;
 import com.inari.firefly.animation.timeline.IntTimelineAnimation;
 import com.inari.firefly.animation.timeline.IntTimelineData;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
-import com.inari.firefly.control.AnimatedEntityAttribute;
 import com.inari.firefly.control.ControllerSystem;
 import com.inari.firefly.control.state.StateSystem;
-import com.inari.firefly.controller.entity.SpriteIdAnimationController;
 import com.inari.firefly.physics.animation.AnimationSystem;
 import com.inari.firefly.system.FFContext;
 import com.inari.firefly.system.NameMapping;
@@ -29,6 +27,7 @@ import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.SpriteData;
 import com.inari.firefly.system.utils.Disposable;
 
+@Deprecated
 public class AnimatedSprite extends Asset {
     
     public static final AttributeKey<String> TEXTURE_ASSET_NAME = new AttributeKey<String>( "textureAssetName", String.class, AnimatedSprite.class );
@@ -46,8 +45,6 @@ public class AnimatedSprite extends Asset {
     } ) );
     
     private static final String ANIMATION_NAME_PREFIX = "_ANIMATION_";
-    private static final String ANIMATION_RESOLVER_NAME = ANIMATION_NAME_PREFIX + "RESOLVER";
-    private static final String ANIMATION_CONTROLLER_NAME = ANIMATION_NAME_PREFIX + "CONTROLLER";
     
     private int textureAssetId;
     private float updateResolution;
@@ -58,6 +55,7 @@ public class AnimatedSprite extends Asset {
     private int controllerId;
     private final IntBag dependsOn;
     private final InternalSpriteData spriteData = new InternalSpriteData();
+    private WorkflowAnimationController workflowAnimationController;
 
     protected AnimatedSprite( int assetIntId ) {
         super( assetIntId );
@@ -96,7 +94,6 @@ public class AnimatedSprite extends Asset {
         Map<String, DynArray<IntTimelineData>> spriteMapping = createSpriteMapping( textureId );
         
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
-        ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         SystemComponentBuilder animationBuilder = animationSystem.getAnimationBuilder( IntTimelineAnimation.class );
         
         DynArray<NameMapping> stateAnimationNameMapping = new DynArray<NameMapping>( spriteMapping.size(), 2 );
@@ -112,21 +109,10 @@ public class AnimatedSprite extends Asset {
             stateAnimationNameMapping.add( new NameMapping( stateName, animationName ) );
         }
         
-        int animationResolverId = -1;
         if ( workflowId >= 0 ) {
-            animationResolverId = animationSystem.getAnimationResolverBuilder( WorkflowAnimationResolver.class )
-                .set( WorkflowAnimationResolver.NAME, getName() + ANIMATION_RESOLVER_NAME )
-                .set( WorkflowAnimationResolver.WORKFLOW_ID, workflowId )
-                .set( WorkflowAnimationResolver.STATE_ANIMATION_NAME_MAPPING, stateAnimationNameMapping )
-            .build();
+            workflowAnimationController = new WorkflowAnimationController( workflowId, stateAnimationNameMapping );
+            workflowAnimationController.init( context );
         }
-        
-        controllerId = controllerSystem.getControllerBuilder( getControllerType() )
-            .set( AnimatedEntityAttribute.NAME, getName() + ANIMATION_CONTROLLER_NAME )
-            .set( AnimatedEntityAttribute.ANIMATION_ID, animationSystem.getAnimationId( stateAnimationNameMapping.iterator().next().name2 ) )
-            .set( AnimatedEntityAttribute.ANIMATION_RESOLVER_ID, animationResolverId )
-            .set( AnimatedEntityAttribute.UPDATE_RESOLUTION, updateResolution )
-        .build(  );
         
         loaded = true;
         
@@ -139,18 +125,12 @@ public class AnimatedSprite extends Asset {
             return;
         }
         
-        AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         
         controllerSystem.deleteController( controllerId );
         if ( workflowId >= 0 ) {
-            WorkflowAnimationResolver resolver = animationSystem.getAnimationResolverAs( 
-                animationSystem.getAnimationResolverId( getName() + ANIMATION_RESOLVER_NAME ), 
-                WorkflowAnimationResolver.class
-            );
-
-            DynArray<NameMapping> stateAnimationMapping = resolver.getStateAnimationNameMapping();
-            animationSystem.deleteAnimationResolver( resolver.index() );
+            workflowAnimationController.dispose( context );
+            DynArray<NameMapping> stateAnimationMapping = workflowAnimationController.getStateAnimationNameMapping();
             
             for ( NameMapping nameMapping : stateAnimationMapping ) {
                 deleteAnimation( nameMapping.name2 );
@@ -253,10 +233,6 @@ public class AnimatedSprite extends Asset {
         }
 
         return mapping;
-    }
-    
-    protected Class<? extends AnimatedEntityAttribute> getControllerType() {
-        return SpriteIdAnimationController.class;
     }
     
     private final class InternalSpriteData implements SpriteData {
