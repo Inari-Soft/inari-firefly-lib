@@ -31,7 +31,7 @@ public class SceneSystem
     
     public SceneSystem() {
         super( SYSTEM_KEY );
-        scenes = new DynArray<Scene>();
+        scenes = DynArray.create( Scene.class );
     }
     
     @Override

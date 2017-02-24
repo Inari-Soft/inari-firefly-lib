@@ -91,7 +91,8 @@ public final class IntTimelineAnimation extends IntAnimation {
         
         DynArray<IntTimelineData> timelineData = attributes.getValue( TIMELINE );
         if ( timelineData != null ) {
-            timeline = timelineData.toArray( IntTimelineData.class );
+            timelineData.trim();
+            timeline = timelineData.getArray();
         }
         
     }
@@ -101,7 +102,7 @@ public final class IntTimelineAnimation extends IntAnimation {
         super.toAttributes( attributes );
         
         if ( timeline != null ) {
-            DynArray<IntTimelineData> result = new DynArray<IntTimelineData>();
+            DynArray<IntTimelineData> result = DynArray.create( IntTimelineData.class );
             for ( int i = 0; i < timeline.length; i++ ) {
                 result.set( i, timeline[ i ] );
             }

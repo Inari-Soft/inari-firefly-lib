@@ -96,7 +96,7 @@ public class AnimatedSprite extends Asset {
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         SystemComponentBuilder animationBuilder = animationSystem.getAnimationBuilder( IntTimelineAnimation.class );
         
-        DynArray<NameMapping> stateAnimationNameMapping = new DynArray<NameMapping>( spriteMapping.size(), 2 );
+        DynArray<NameMapping> stateAnimationNameMapping = DynArray.create( NameMapping.class, spriteMapping.size(), 2 );
         for ( String stateName : spriteMapping.keySet() ) {
             DynArray<IntTimelineData> timeLineDataList = spriteMapping.get( stateName );
             String animationName = getName() + ANIMATION_NAME_PREFIX + stateName;
@@ -216,7 +216,7 @@ public class AnimatedSprite extends Asset {
             }
             DynArray<IntTimelineData> timelineData = mapping.get( stateName );
             if ( timelineData == null ) {
-                timelineData = new DynArray<IntTimelineData>();
+                timelineData = DynArray.create( IntTimelineData.class ); 
                 mapping.put( stateName, timelineData );
             }
             
