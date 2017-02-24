@@ -91,7 +91,6 @@ public final class IntTimelineAnimation extends IntAnimation {
         
         DynArray<IntTimelineData> timelineData = attributes.getValue( TIMELINE );
         if ( timelineData != null ) {
-            timelineData.trim();
             timeline = timelineData.getArray();
         }
         
