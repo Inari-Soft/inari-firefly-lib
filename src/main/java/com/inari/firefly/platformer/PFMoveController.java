@@ -6,8 +6,6 @@ import java.util.Set;
 
 import com.inari.commons.geom.Easing;
 import com.inari.firefly.FFInitException;
-import com.inari.firefly.animation.easing.EasingAnimation;
-import com.inari.firefly.animation.easing.EasingData;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.entity.EEntity;
@@ -16,6 +14,8 @@ import com.inari.firefly.entity.EntitySystem;
 import com.inari.firefly.graphics.ETransform;
 import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
+import com.inari.firefly.physics.animation.easing.EasingAnimation;
+import com.inari.firefly.physics.animation.easing.EasingData;
 import com.inari.firefly.physics.collision.Contact;
 import com.inari.firefly.physics.collision.ContactConstraint;
 import com.inari.firefly.physics.collision.ContactScan;
