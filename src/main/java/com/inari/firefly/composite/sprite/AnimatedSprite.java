@@ -35,7 +35,7 @@ public class AnimatedSprite extends Asset {
     public static final AttributeKey<Float> UPDATE_RESOLUTION  = new AttributeKey<Float>( "updateResolution", Float.class, AnimatedSprite.class );
     public static final AttributeKey<Boolean> LOOPING  = new AttributeKey<Boolean>( "looping", Boolean.class, AnimatedSprite.class );
     public static final AttributeKey<Integer> WORKFLOW_ID  = new AttributeKey<Integer>( "workflowId", Integer.class, AnimatedSprite.class );
-    public static final AttributeKey<DynArray<AnimatedSpriteData>> ANIMATED_SPRITE_DATA  = AttributeKey.createDynArray( "animatedSpriteData", AnimatedSprite.class );
+    public static final AttributeKey<DynArray<AnimatedSpriteData>> ANIMATED_SPRITE_DATA  = AttributeKey.createDynArray( "animatedSpriteData", AnimatedSprite.class, AnimatedSpriteData.class );
     private static final Set<AttributeKey<?>> ATTRIBUTE_KEYS = new HashSet<AttributeKey<?>>( Arrays.<AttributeKey<?>>asList( new AttributeKey[] { 
         TEXTURE_ASSET_ID,
         UPDATE_RESOLUTION,
