@@ -251,11 +251,6 @@ public class AnimatedSprite extends Asset {
         }
 
         @Override
-        public final <A> A getDynamicAttribute( AttributeKey<A> key ) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public final boolean isHorizontalFlip() {
             return false;
         }
