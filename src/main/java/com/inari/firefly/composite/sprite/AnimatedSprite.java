@@ -8,7 +8,6 @@ import java.util.Set;
 
 import com.inari.commons.geom.Rectangle;
 import com.inari.commons.lang.list.DynArray;
-import com.inari.commons.lang.list.IntBag;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.WorkflowAnimationController;
 import com.inari.firefly.animation.timeline.IntTimelineAnimation;
@@ -53,7 +52,6 @@ public class AnimatedSprite extends Asset {
     private DynArray<AnimatedSpriteData> animatedSpriteData;
     
     private int controllerId;
-    private final IntBag dependsOn;
     private final InternalSpriteData spriteData = new InternalSpriteData();
     private WorkflowAnimationController workflowAnimationController;
 
@@ -67,7 +65,7 @@ public class AnimatedSprite extends Asset {
         animatedSpriteData = null;
         controllerId = -1;
         controllerId = -1;
-        dependsOn = new IntBag( 1 );
+        dependsOn = -1;
     }
     
     @Override
@@ -77,10 +75,6 @@ public class AnimatedSprite extends Asset {
 
     public final int getAnimationControllerId() {
         return controllerId;
-    }
-    
-    protected IntBag dependsOn() {
-        return dependsOn;
     }
     
     @Override
@@ -159,7 +153,7 @@ public class AnimatedSprite extends Asset {
         super.fromAttributes( attributes );
         
         textureAssetId = attributes.getIdForName( TEXTURE_ASSET_NAME, TEXTURE_ASSET_ID, Asset.TYPE_KEY, textureAssetId );
-        dependsOn.add( textureAssetId );
+        dependsOn = textureAssetId;
         updateResolution = attributes.getValue( UPDATE_RESOLUTION, updateResolution );
         looping = attributes.getValue( LOOPING, looping );
         workflowId = attributes.getValue( WORKFLOW_ID, workflowId );
