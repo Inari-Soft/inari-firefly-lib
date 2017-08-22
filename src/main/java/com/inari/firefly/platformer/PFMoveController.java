@@ -200,13 +200,13 @@ public final class PFMoveController extends EntityController {
         final ContactConstraint ladderContacts = contactScan.getContactContstraint( PFContact.PLATFORMER_LADDER_CONTACT_SCAN );
         final boolean hasLadderContact = ladderContacts != null && ladderContacts.hasAnyContact();
         if ( input.isPressed( climbUpButtonType ) && hasLadderContact ) {
-            final Contact contact = ladderContacts.getFirstContact( PFContact.LADDER );
+            final Contact contact = ladderContacts.getFirstContactOfMaterial( PFContact.LADDER );
             if ( contact.intersectionBounds().width > 3 ) {
                 adjustToLadder( transform, entity, contact );
                 yVelocity = -climbVelocity;
             }
         } else if ( input.isPressed( climbDownButtonType ) && hasLadderContact ) {
-            final Contact contact = ladderContacts.getFirstContact( PFContact.LADDER );
+            final Contact contact = ladderContacts.getFirstContactOfMaterial( PFContact.LADDER );
             adjustToLadder( transform, entity, contact );
             yVelocity = climbVelocity;
         } else {
