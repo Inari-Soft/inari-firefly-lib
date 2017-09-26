@@ -1,25 +1,26 @@
 package com.inari.firefly.animation;
 
+import com.inari.commons.lang.functional.Tuple;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.control.state.StateSystem;
 import com.inari.firefly.control.state.WorkflowEvent;
 import com.inari.firefly.control.state.WorkflowEventListener;
-import com.inari.firefly.physics.animation.AnimationSystem;
+import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystemEvent;
 import com.inari.firefly.physics.animation.AnimationSystemEvent.Type;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.NameMapping;
 
+@Deprecated
 public final class WorkflowAnimationController implements WorkflowEventListener {
     
     private FFContext context;
     
     private int workflowId;
-    private DynArray<NameMapping> stateAnimationNameMapping;
+    private DynArray<Tuple<String, String>> stateAnimationNameMapping;
     
     private int animationId;
 
-    public WorkflowAnimationController( int workflowId, DynArray<NameMapping> stateAnimationNameMapping ) {
+    public WorkflowAnimationController( int workflowId, DynArray<Tuple<String, String>> stateAnimationNameMapping ) {
         super();
         this.workflowId = workflowId;
         this.stateAnimationNameMapping = stateAnimationNameMapping;
@@ -43,11 +44,11 @@ public final class WorkflowAnimationController implements WorkflowEventListener 
         this.workflowId = workflowId;
     }
 
-    public final DynArray<NameMapping> getStateAnimationNameMapping() {
+    public final DynArray<Tuple<String, String>> getStateAnimationNameMapping() {
         return stateAnimationNameMapping;
     }
 
-    public final void setStateAnimationNameMapping( DynArray<NameMapping> stateAnimationNameMapping ) {
+    public final void setStateAnimationNameMapping( DynArray<Tuple<String, String>> stateAnimationNameMapping ) {
         this.stateAnimationNameMapping = stateAnimationNameMapping;
     }
 
@@ -56,9 +57,9 @@ public final class WorkflowAnimationController implements WorkflowEventListener 
             return -1;
         }
         
-        for ( NameMapping nameMapping : stateAnimationNameMapping ) {
-            if ( stateName.equals( nameMapping.name1 ) ) {
-                return context.getSystem( AnimationSystem.SYSTEM_KEY ).getAnimationId( nameMapping.name2 );
+        for ( Tuple<String, String> nameMapping : stateAnimationNameMapping ) {
+            if ( stateName.equals( nameMapping.left ) ) {
+                return context.getSystemComponentId( Animation.TYPE_KEY, nameMapping.right );
             }
         }
         

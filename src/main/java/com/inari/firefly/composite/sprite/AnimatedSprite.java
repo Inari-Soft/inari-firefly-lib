@@ -7,21 +7,23 @@ import java.util.Map;
 import java.util.Set;
 
 import com.inari.commons.geom.Rectangle;
+import com.inari.commons.lang.functional.Tuple;
 import com.inari.commons.lang.list.DynArray;
 import com.inari.firefly.FFInitException;
 import com.inari.firefly.animation.WorkflowAnimationController;
-import com.inari.firefly.animation.timeline.IntTimelineAnimation;
-import com.inari.firefly.animation.timeline.IntTimelineData;
 import com.inari.firefly.asset.Asset;
 import com.inari.firefly.asset.AssetSystem;
 import com.inari.firefly.component.attr.AttributeKey;
 import com.inari.firefly.component.attr.AttributeMap;
+import com.inari.firefly.component.build.ComponentBuilder;
+import com.inari.firefly.control.Controller;
 import com.inari.firefly.control.ControllerSystem;
-import com.inari.firefly.control.state.StateSystem;
+import com.inari.firefly.control.state.Workflow;
+import com.inari.firefly.physics.animation.Animation;
 import com.inari.firefly.physics.animation.AnimationSystem;
+import com.inari.firefly.physics.animation.timeline.IntTimelineAnimation;
+import com.inari.firefly.physics.animation.timeline.IntTimelineData;
 import com.inari.firefly.system.FFContext;
-import com.inari.firefly.system.NameMapping;
-import com.inari.firefly.system.component.SystemComponentBuilder;
 import com.inari.firefly.system.external.FFGraphics;
 import com.inari.firefly.system.external.SpriteData;
 import com.inari.firefly.system.utils.Disposable;
@@ -88,9 +90,9 @@ public class AnimatedSprite extends Asset {
         Map<String, DynArray<IntTimelineData>> spriteMapping = createSpriteMapping( textureId );
         
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
-        SystemComponentBuilder animationBuilder = animationSystem.getAnimationBuilder( IntTimelineAnimation.class );
+        ComponentBuilder animationBuilder = context.getComponentBuilder( Animation.TYPE_KEY, IntTimelineAnimation.class );
         
-        DynArray<NameMapping> stateAnimationNameMapping = DynArray.create( NameMapping.class, spriteMapping.size(), 2 );
+        DynArray<Tuple<String, String>> stateAnimationNameMapping = DynArray.createTyped( Tuple.class, spriteMapping.size(), 2 );
         for ( String stateName : spriteMapping.keySet() ) {
             DynArray<IntTimelineData> timeLineDataList = spriteMapping.get( stateName );
             String animationName = getName() + ANIMATION_NAME_PREFIX + stateName;
@@ -100,7 +102,7 @@ public class AnimatedSprite extends Asset {
                 .set( IntTimelineAnimation.TIMELINE, timeLineDataList )
             .activate();
             
-            stateAnimationNameMapping.add( new NameMapping( stateName, animationName ) );
+            stateAnimationNameMapping.add( new Tuple<String, String>( stateName, animationName ) );
         }
         
         if ( workflowId >= 0 ) {
@@ -121,13 +123,13 @@ public class AnimatedSprite extends Asset {
         
         ControllerSystem controllerSystem = context.getSystem( ControllerSystem.SYSTEM_KEY );
         
-        controllerSystem.deleteController( controllerId );
+        context.deleteSystemComponent( Controller.TYPE_KEY, controllerId );
         if ( workflowId >= 0 ) {
             workflowAnimationController.dispose( context );
-            DynArray<NameMapping> stateAnimationMapping = workflowAnimationController.getStateAnimationNameMapping();
+            DynArray<Tuple<String, String>> stateAnimationMapping = workflowAnimationController.getStateAnimationNameMapping();
             
-            for ( NameMapping nameMapping : stateAnimationMapping ) {
-                deleteAnimation( nameMapping.name2 );
+            for ( Tuple<String, String> nameMapping : stateAnimationMapping ) {
+                deleteAnimation( nameMapping.right );
             }
         } else {
             deleteAnimation( getName() + ANIMATION_NAME_PREFIX );
@@ -175,9 +177,9 @@ public class AnimatedSprite extends Asset {
         FFGraphics graphics = context.getGraphics();
         AnimationSystem animationSystem = context.getSystem( AnimationSystem.SYSTEM_KEY );
         
-        IntTimelineAnimation animation = animationSystem.getAnimationAs( animationName, IntTimelineAnimation.class );
+        IntTimelineAnimation animation = context.getSystemComponent( Animation.TYPE_KEY, animationName, IntTimelineAnimation.class );
         IntTimelineData[] timeline = animation.getTimeline();
-        animationSystem.deleteAnimation( animation.index() );
+        context.deleteSystemComponent( Animation.TYPE_KEY, animation.index() );
         
         for ( IntTimelineData timlineData : timeline ) {
             graphics.disposeSprite( timlineData.getValue() );
@@ -188,7 +190,7 @@ public class AnimatedSprite extends Asset {
         if ( !context.getSystem( AssetSystem.SYSTEM_KEY ).isLoaded( textureAssetId ) ) {
             throw new FFInitException( "The TextureAsset with id: " + textureAssetId + " is not loaded yet" );
         }
-        if ( workflowId >= 0 && !context.getSystem( StateSystem.SYSTEM_KEY ).hasWorkflow( workflowId ) ) {
+        if ( workflowId >= 0 && context.getSystemComponent( Workflow.TYPE_KEY, workflowId ) == null ) {
             throw new FFInitException( "The Workflow with id: " + workflowId + " does not exist" );
         }
     }

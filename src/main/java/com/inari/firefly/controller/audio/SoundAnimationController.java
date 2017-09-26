@@ -112,7 +112,7 @@ public final class SoundAnimationController extends SoundController {
 
     @Override
     public final void update( final Sound sound ) {
-        if ( volumeAnimationId >= 0 && animationSystem.exists( volumeAnimationId ) ) {
+        if ( volumeAnimationId >= 0 ) {
             float volume = sound.getVolume();
             float newVolume = animationSystem.getValue( volumeAnimationId, sound.index(), volume );
             if ( newVolume != volume ) {
@@ -122,7 +122,7 @@ public final class SoundAnimationController extends SoundController {
             volumeAnimationId = -1;
         }
 
-        if ( pitchAnimationId >= 0 && animationSystem.exists( pitchAnimationId ) ) {
+        if ( pitchAnimationId >= 0 ) {
             float pitch = sound.getPitch();
             float newPitch = animationSystem.getValue( pitchAnimationId, sound.index(), pitch );
             if ( newPitch != pitch ) {
@@ -132,7 +132,7 @@ public final class SoundAnimationController extends SoundController {
             pitchAnimationId = -1;
         }
 
-        if ( panAnimationId >= 0 && animationSystem.exists( panAnimationId ) ) {
+        if ( panAnimationId >= 0 ) {
             float pan = sound.getPan();
             float newPan = animationSystem.getValue( panAnimationId, sound.index(), pan );
             if ( newPan != pan ) {

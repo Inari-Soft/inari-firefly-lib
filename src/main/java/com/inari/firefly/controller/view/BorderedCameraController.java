@@ -11,6 +11,7 @@ import com.inari.firefly.component.attr.AttributeMap;
 import com.inari.firefly.graphics.view.View;
 import com.inari.firefly.graphics.view.ViewChangeEvent;
 import com.inari.firefly.graphics.view.ViewChangeEvent.Type;
+import com.inari.firefly.graphics.view.camera.CameraPivot;
 import com.inari.firefly.graphics.view.ViewController;
 
 public final class BorderedCameraController extends ViewController {

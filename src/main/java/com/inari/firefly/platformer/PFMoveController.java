@@ -80,7 +80,7 @@ public final class PFMoveController extends EntityController {
 
     @Override
     public final void dispose() {
-        animationSystem.deleteAnimation( startWalkAnimId );
+        context.deleteSystemComponent( Animation.TYPE_KEY, startWalkAnimId );
         
         super.dispose();
     }
@@ -166,7 +166,7 @@ public final class PFMoveController extends EntityController {
             entity.resetAspect( PFState.WALK_LEFT );
             entity.setAspect( PFState.WALK_RIGHT );
             if ( xVelocity == 0f && !animationSystem.isActive( startWalkAnimId ) ) {
-                animationSystem.activateAnimation( startWalkAnimId );
+                context.activateSystemComponent( Animation.TYPE_KEY, startWalkAnimId );
             }
             
            if ( animationSystem.isActive( startWalkAnimId ) ) {
@@ -178,7 +178,7 @@ public final class PFMoveController extends EntityController {
             entity.setAspect( PFState.WALK_LEFT );
             entity.resetAspect( PFState.WALK_RIGHT );
             if ( xVelocity == 0f && !animationSystem.isActive( startWalkAnimId ) ) {
-                animationSystem.activateAnimation( startWalkAnimId );
+                context.activateSystemComponent( Animation.TYPE_KEY, startWalkAnimId );
             }
             
             if ( animationSystem.isActive( startWalkAnimId ) ) {
@@ -193,7 +193,7 @@ public final class PFMoveController extends EntityController {
                 xVelocity = ( xVelocity > 0f )? xVelocity - 0.3f : xVelocity + 0.3f;
             } else {
                 xVelocity = 0f;
-                animationSystem.resetAnimation( startWalkAnimId );
+                context.getSystemComponent( Animation.TYPE_KEY, startWalkAnimId ).reset();
             }
         }
 
