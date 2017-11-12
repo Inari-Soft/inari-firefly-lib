@@ -9,6 +9,7 @@ import com.inari.firefly.physics.collision.CollisionResolver;
 import com.inari.firefly.physics.collision.CollisionSystem;
 import com.inari.firefly.physics.collision.ContactConstraint;
 import com.inari.firefly.physics.collision.ContactScan;
+import com.inari.firefly.physics.collision.Contacts;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 
@@ -40,8 +41,8 @@ public final class PFCollisionResolver extends CollisionResolver {
         final EMovement movement = context.getEntityComponent( entityId, EMovement.TYPE_KEY );
         
         final ContactScan contactScan = collision.getContactScan();
-        final ContactConstraint solidContacts = contactScan.getContactContstraint( PFContact.PLATFORMER_SOLID_CONTACT_SCAN );
-        final ContactConstraint ladderContacts = contactScan.getContactContstraint( PFContact.PLATFORMER_LADDER_CONTACT_SCAN );
+        final Contacts solidContacts = contactScan.getContacts( context.getSystemComponentId( ContactConstraint.TYPE_KEY, PFContact.PLATFORMER_SOLID_CONTACT_SCAN ) );
+        final Contacts ladderContacts = contactScan.getContacts( context.getSystemComponentId( ContactConstraint.TYPE_KEY, PFContact.PLATFORMER_LADDER_CONTACT_SCAN ) );
         final BitMask intersectionMask = solidContacts.getIntersectionMask();
         final boolean groundContact = entity.hasAspect( PFState.ON_GROUND );
 

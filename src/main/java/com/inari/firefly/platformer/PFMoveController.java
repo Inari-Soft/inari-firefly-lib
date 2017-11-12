@@ -19,6 +19,7 @@ import com.inari.firefly.physics.animation.easing.EasingData;
 import com.inari.firefly.physics.collision.Contact;
 import com.inari.firefly.physics.collision.ContactConstraint;
 import com.inari.firefly.physics.collision.ContactScan;
+import com.inari.firefly.physics.collision.Contacts;
 import com.inari.firefly.physics.collision.ECollision;
 import com.inari.firefly.physics.movement.EMovement;
 import com.inari.firefly.system.external.FFInput;
@@ -197,7 +198,7 @@ public final class PFMoveController extends EntityController {
             }
         }
 
-        final ContactConstraint ladderContacts = contactScan.getContactContstraint( PFContact.PLATFORMER_LADDER_CONTACT_SCAN );
+        final Contacts ladderContacts = contactScan.getContacts( context.getSystemComponentId( ContactConstraint.TYPE_KEY, PFContact.PLATFORMER_LADDER_CONTACT_SCAN ) );
         final boolean hasLadderContact = ladderContacts != null && ladderContacts.hasAnyContact();
         if ( input.isPressed( climbUpButtonType ) && hasLadderContact ) {
             final Contact contact = ladderContacts.getFirstContactOfMaterial( PFContact.LADDER );
